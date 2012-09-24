@@ -1,9 +1,9 @@
 package player;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.Scanner;
-
 import proto.ProtoPlayer.Command;
 import proto.ProtoPlayer.Command.Information;
 
@@ -45,18 +45,28 @@ public class Player {
 			@Override
 			public void run() {
 				// TODO(cmihail): change this with proto file
-				Scanner scanner = new Scanner(in);
-				while (true) {
-					if (!scanner.hasNext()) {
-						break;
-					}
-					String line = scanner.nextLine();
-					if (line.equals("play")) { // synchronize and use PlayerModel
-						playerModel.getMediaPlayer().play();
-					} else if (line.equals("pause")) {
-						playerModel.getMediaPlayer().pause();
-					}
-				}
+			  try {
+			    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+			    String line;
+	        while ((line = reader.readLine()) != null) {
+	          // TODO(cmihail): use logger + error at reading with a plus 1 char
+	          // (maybe from "\n" sent by server
+	          System.out.println("[CLIENT]: " + line + " " + line.length());
+
+	          if ("play".equals(line.substring(1))) { // TODO(cmihail): synchronize and use PlayerModel
+	            playerModel.getMediaPlayer().play();
+	          } else if ("pause".equals(line.substring(1))) {
+	            playerModel.getMediaPlayer().pause();
+	            System.out.println("[CLIENT] pause command!");
+	          }
+	        }
+	        System.err.println("Not Good"); // TODO(cmihail): use logger
+        } catch (Exception e) {
+          // TODO: handle exception
+          System.err.println(e.getMessage()); // TODO(cmihail): use logger
+          System.exit(1);
+        }
 			}
 		};
 		thread.start();

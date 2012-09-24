@@ -1,21 +1,23 @@
 CC = g++
-CPPFLAGS = -Wall -g
-VPATH = player/ server/
+CFLAGS = -Wall -g
 
 .PHONY: build clean
 
-.build: bin/Server
+.build: bin/Main
 
-bin/Server: bin/Server.o bin/MediaPlayer.o bin/Process.o
+bin/Main: bin/Main.o bin/Process.o bin/ServerMac.o bin/ServerUnixCommon.o
 
-bin/Server.o: src/server/Server.cpp
-	$(CC) $^ $(CPPFLAGS) -c -o $@
-
-bin/MediaPlayer.o: src/player/MediaPlayer.cpp
-	$(CC) $^ $(CPPFLAGS) -c -o $@
+bin/Main.o: src/server/Main.cpp
+	$(CC) $^ $(CFLAGS) -c -o $@
 
 bin/Process.o: src/player/Process.cpp
-	$(CC) $^ $(CPPFLAGS) -c -o $@
+	$(CC) $^ $(CFLAGS) -c -o $@
+
+bin/ServerMac.o: src/server/ServerMac.cpp 
+	$(CC) $^ $(CFLAGS) -c -o $@
+
+bin/ServerUnixCommon.o: src/server/ServerUnixCommon.cpp
+	$(CC) $^ $(CFLAGS) -c -o $@
 
 clean:
 	rm -rf bin/*.o bin/Server
