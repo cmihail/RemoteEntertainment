@@ -1,10 +1,8 @@
 package player;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SocketChannel;
 
 import javax.swing.SwingUtilities;
 
@@ -20,28 +18,26 @@ public class Main {
 		final String pathToMovie = args[0];
 
 		// Connect to server.
-		final Socket socket;
-		InputStream inputStream = null;
+		SocketChannel socketChannel = null;
 		try {
-		  InetAddress address = InetAddress.getByName("localhost");
-		  socket = new Socket(address, Integer.parseInt(args[1]));
-		  inputStream = socket.getInputStream();
+	    socketChannel = SocketChannel.open();
+	    socketChannel.socket().setReuseAddress(true);
+	    socketChannel.socket().connect(
+	        new InetSocketAddress("localhost", Integer.parseInt(args[1])));
+	    socketChannel.configureBlocking(true);
+    } catch (IOException e) {
+      System.out.println(e.getMessage());
+      System.exit(1);
+    }
 
-		  System.out.println("[CLIENT] Connection was successful"); // TODO(cmihail): use logger
-		} catch (UnknownHostException e) {
-		  System.err.println("Wrong server address: " + e.getMessage());
-		  System.exit(1);
-		} catch (IOException e) {
-		  System.err.println(e.getMessage());
-		  System.exit(1);
-		}
+		System.out.println("[CLIENT] Connection was successful"); // TODO(cmihail): use logger
 
-		final InputStream playerInputStream = inputStream;
 		// Create media player.
+		final SocketChannel finalSocketChannel = socketChannel;
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				Player player = new Player(playerInputStream, System.out);
+				Player player = new Player(finalSocketChannel);
 				player.getModel().startMovie(pathToMovie);
 			}
 		});

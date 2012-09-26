@@ -9,7 +9,7 @@
 #define SERVER_H_
 
 class ServerCommon {
-  int listenSocketFileDescriptor;
+  unsigned int listenSocketFileDescriptor;
 
 public:
   ServerCommon(int serverPort);

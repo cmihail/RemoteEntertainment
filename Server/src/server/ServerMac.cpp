@@ -7,6 +7,7 @@
 
 #include "ServerCommon.h"
 #include "ServerUnixCommon.h"
+#include "../proto/player.pb.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -18,23 +19,28 @@
 #include <sys/event.h>
 #include <sys/socket.h>
 
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+
 #define MAX_NUM_OF_CLIENTS 5
 
 using namespace std;
 
-int maxNumOfConnections;
+unsigned int maxNumOfConnections;
 int kqueueFileDescriptor;
-int currectNumOfChangeEvents = 0;
+unsigned int currectNumOfChangeEvents = 0;
 struct kevent * changeList;
 struct kevent * eventList;
 
 int mediaPlayerSocket; // TODO(cmihail): only for dev
 
 ServerCommon::ServerCommon(int serverPort) {
-  maxNumOfConnections = MAX_NUM_OF_CLIENTS + 1; // nubmer of clients + server socket listener
+  GOOGLE_PROTOBUF_VERIFY_VERSION; // TODO(cmihail): make this common
+
+  // Number of clients * 2 for read and write on socket and a server socket listener.
+  maxNumOfConnections = MAX_NUM_OF_CLIENTS * 2 + 1;
 
   // Init server.
-  listenSocketFileDescriptor = serverUnixCommon_init(serverPort, maxNumOfConnections);
+  listenSocketFileDescriptor = serverUnixCommon_init(serverPort, MAX_NUM_OF_CLIENTS);
 
   // Create event notifier.
   kqueueFileDescriptor = kqueue();
@@ -53,24 +59,62 @@ ServerCommon::ServerCommon(int serverPort) {
   currectNumOfChangeEvents++;
 }
 
-static void registerNewClient(int listenSocketFileDescriptor, int maxNumOfConnections) {
+static void registerNewClient(int listenSocketFileDescriptor) {
   if (currectNumOfChangeEvents == maxNumOfConnections) {
     cout << "Maxmum number of clients received" << endl;
     return;
   }
+
+  // Add both read and write events for the newly created socket.
   int socketFileDescriptor = serverUnixCommon_newConnection(listenSocketFileDescriptor);
   EV_SET(&changeList[currectNumOfChangeEvents], socketFileDescriptor,
+      EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
+  currectNumOfChangeEvents++;
+  EV_SET(&changeList[currectNumOfChangeEvents], socketFileDescriptor,
       EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, 0);
-  // TODO(cmihail): problem with having both EVFILT_READ and EVFILT_WRITE
-  // so split them into 2 separate events
   currectNumOfChangeEvents++;
 
   // TODO(cmihail): create a client list
   mediaPlayerSocket = socketFileDescriptor;
 }
 
+static void stdinDev() { // TODO(cmihail): only for dev
+  string commandLine;
+  getline(cin, commandLine);
+  cout << "[SERVER] Command: " << commandLine << "\n";
+
+  proto::Command * command = new proto::Command();
+  if (commandLine.compare("play") == 0) {
+    command->set_type(proto::Command_Type_PLAY);
+  } else if (commandLine.compare("pause") == 0) {
+    command->set_type(proto::Command_Type_PAUSE);
+  } else {
+    // TODO(cmihail) default behavior
+    command->set_type(proto::Command_Type_STOP);
+  }
+
+  // Buffer has enough space for message + a 32bit delimiter.
+  int commandSize = command->ByteSize() + 4;
+  char * commandBuffer = new char[commandSize];
+  cout << "[SERVER] Size: " << commandSize << "\n";
+
+
+  // Write varint delimiter and message to buffer.
+  google::protobuf::io::ArrayOutputStream arrayOutput(commandBuffer, commandSize);
+  google::protobuf::io::CodedOutputStream codedOutput(&arrayOutput);
+  codedOutput.WriteVarint32(command->ByteSize());
+  assert(command->SerializeToCodedStream(&codedOutput) == true);
+
+  // Write protobuf command to buffer and send it.
+//  assert(send(mediaPlayerSocket, &commandSize, sizeof(commandSize), 0)); // TODO
+
+  assert(send(mediaPlayerSocket, command, commandSize, 0) >= 0);
+  delete commandBuffer;
+}
+
 void ServerCommon::run() {
   while(true) {
+    // Retrieve event list.
     int n = kevent(kqueueFileDescriptor, changeList, currectNumOfChangeEvents,
         eventList, currectNumOfChangeEvents, NULL);
     assert(n != -1);
@@ -79,20 +123,17 @@ void ServerCommon::run() {
       _exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < currectNumOfChangeEvents; i++) {
-//      cout << "[Server] new event " << i << "\n";
+    // Check the event type and execute correspondent action.
+    for (unsigned int i = 0; i < currectNumOfChangeEvents; i++) {
       if (eventList[i].ident == listenSocketFileDescriptor &&
           eventList[i].filter == EVFILT_READ) {
         cout << "[SERVER] New Client\n";
-        registerNewClient(listenSocketFileDescriptor, maxNumOfConnections);
+        registerNewClient(listenSocketFileDescriptor);
+        continue;
       }
-      else if (eventList[i].ident == STDIN_FILENO && // TODO(cmihail): only for dev
-          eventList[i].filter == EVFILT_READ) {
-        string command;
-        getline(cin, command);
-        cout << "[SERVER] Command: " << command << "\n";
-        command += "\n";
-        assert(send(mediaPlayerSocket, command.c_str(), command.length() + 1, 0) >= 0);
+      // TODO(cmihail): only for dev
+      if (eventList[i].ident == STDIN_FILENO && eventList[i].filter == EVFILT_READ) {
+        stdinDev();
       }
     }
   }
