@@ -26,7 +26,7 @@ public class Main {
 	        new InetSocketAddress("localhost", Integer.parseInt(args[1])));
 	    socketChannel.configureBlocking(true);
     } catch (IOException e) {
-      System.out.println(e.getMessage());
+      System.out.println(e.getMessage()); // TODO(cmihail): use logger
       System.exit(1);
     }
 
@@ -37,8 +37,14 @@ public class Main {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				Player player = new Player(finalSocketChannel);
-				player.getModel().startMovie(pathToMovie);
+			  try {
+			    Player player = new Player(finalSocketChannel, finalSocketChannel.socket().getInputStream(),
+			        finalSocketChannel.socket().getOutputStream());
+			    player.getModel().startMovie(pathToMovie);
+			  } catch (IOException e) {
+		      System.out.println(e.getMessage()); // TODO(cmihail): use logger
+		      System.exit(1);
+			  }
 			}
 		});
 	}

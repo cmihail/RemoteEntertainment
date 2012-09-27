@@ -31,7 +31,8 @@ unsigned int currectNumOfChangeEvents = 0;
 struct kevent * changeList;
 struct kevent * eventList;
 
-int mediaPlayerSocket; // TODO(cmihail): only for dev
+unsigned int mediaPlayerSocket; // TODO(cmihail): only for dev
+bool hasClient = false; // TODO(cmihail): delete
 
 ServerCommon::ServerCommon(int serverPort) {
   GOOGLE_PROTOBUF_VERIFY_VERSION; // TODO(cmihail): make this common
@@ -71,11 +72,12 @@ static void registerNewClient(int listenSocketFileDescriptor) {
       EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
   currectNumOfChangeEvents++;
   EV_SET(&changeList[currectNumOfChangeEvents], socketFileDescriptor,
-      EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, 0);
+      EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, 0); // TODO(cmihail): not sure if needed
   currectNumOfChangeEvents++;
 
   // TODO(cmihail): create a client list
   mediaPlayerSocket = socketFileDescriptor;
+  hasClient = true;
 }
 
 static void stdinDev() { // TODO(cmihail): only for dev
@@ -93,23 +95,56 @@ static void stdinDev() { // TODO(cmihail): only for dev
     command->set_type(proto::Command_Type_STOP);
   }
 
-  // Buffer has enough space for message + a 32bit delimiter.
-  int commandSize = command->ByteSize() + 4;
-  char * commandBuffer = new char[commandSize];
-  cout << "[SERVER] Size: " << commandSize << "\n";
+  ////////
+  int dataBufferSize = command->ByteSize() + sizeof(dataBufferSize);
+  char * dataBuffer = new char[dataBufferSize];
 
+  google::protobuf::io::ZeroCopyOutputStream * zeroCopyOutputStream =
+      new google::protobuf::io::ArrayOutputStream(dataBuffer, dataBufferSize);
+  google::protobuf::io::CodedOutputStream * codedOutputStream =
+      new google::protobuf::io::CodedOutputStream(zeroCopyOutputStream);
+  codedOutputStream->WriteVarint32(command->ByteSize());
+  assert(command->SerializeToCodedStream(codedOutputStream));
 
-  // Write varint delimiter and message to buffer.
-  google::protobuf::io::ArrayOutputStream arrayOutput(commandBuffer, commandSize);
-  google::protobuf::io::CodedOutputStream codedOutput(&arrayOutput);
-  codedOutput.WriteVarint32(command->ByteSize());
-  assert(command->SerializeToCodedStream(&codedOutput) == true);
+  assert(send(mediaPlayerSocket, dataBuffer, dataBufferSize, 0) >= 0);
 
-  // Write protobuf command to buffer and send it.
-//  assert(send(mediaPlayerSocket, &commandSize, sizeof(commandSize), 0)); // TODO
+  delete codedOutputStream;
+  delete zeroCopyOutputStream;
+  delete dataBuffer;
+  delete command;
+}
 
-  assert(send(mediaPlayerSocket, command, commandSize, 0) >= 0);
-  delete commandBuffer;
+static void receiveCommand() {
+  int BUFFER_SIZE = 2000; // TODO(cmihail): change 2000
+  char * dataBuffer = new char[BUFFER_SIZE];
+  assert(recv(mediaPlayerSocket, dataBuffer, BUFFER_SIZE, 0));
+
+  google::protobuf::io::ZeroCopyInputStream * zeroCopyInputStream =
+      new google::protobuf::io::ArrayInputStream(dataBuffer, BUFFER_SIZE);
+  google::protobuf::io::CodedInputStream * codedInputStream =
+      new google::protobuf::io::CodedInputStream(zeroCopyInputStream);
+  google::protobuf::uint32 size;
+  codedInputStream->ReadVarint32(&size);
+  google::protobuf::io::CodedInputStream::Limit commandLimit =
+      codedInputStream->PushLimit(size);
+
+  proto::Command * command = new proto::Command();
+  command->ParseFromCodedStream(codedInputStream);
+  codedInputStream->PopLimit(size);
+
+  ////////
+  if (command->type() == command->PAUSE) {
+    cout << "[SERVER] Pause\n";
+  } else if (command->type() == command->PLAY) {
+    cout << "[SERVER] Play\n";
+  } else {
+    cout << "[SERVER] Other command\n";
+  }
+
+  delete command;
+  delete codedInputStream;
+  delete zeroCopyInputStream;
+  delete dataBuffer;
 }
 
 void ServerCommon::run() {
@@ -125,15 +160,26 @@ void ServerCommon::run() {
 
     // Check the event type and execute correspondent action.
     for (unsigned int i = 0; i < currectNumOfChangeEvents; i++) {
+      // Receive new connection.
       if (eventList[i].ident == listenSocketFileDescriptor &&
           eventList[i].filter == EVFILT_READ) {
         cout << "[SERVER] New Client\n";
         registerNewClient(listenSocketFileDescriptor);
         continue;
       }
+
       // TODO(cmihail): only for dev
       if (eventList[i].ident == STDIN_FILENO && eventList[i].filter == EVFILT_READ) {
         stdinDev();
+        continue;
+      }
+
+      // TODO(cmihail): Receive commands from clients.
+      if (hasClient && eventList[i].ident == mediaPlayerSocket
+          && eventList[i].filter == EVFILT_READ) {
+        cout << "[SERVER] Command received\n";
+        receiveCommand();
+        continue;
       }
     }
   }

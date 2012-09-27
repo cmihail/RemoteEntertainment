@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">Remote Entertainment</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="play_button">Play</string>
+    <string name="rewind_button">Rewind</string>
+    <string name="fast_forward_button">Foward</string>
+
+</resources>

@@ -42,7 +42,7 @@ int main(int argc, char ** argv) {
     return 1;
   }
 
-  ServerCommon * server = new ServerCommon(atof(argv[1]));
+  ServerCommon * server = new ServerCommon(atoi(argv[1]));
   createMediaPlayer(argv[1]);
   server->run();
 }
