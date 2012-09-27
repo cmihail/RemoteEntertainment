@@ -1,10 +1,8 @@
 package player;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.channels.SocketChannel;
-
 import javax.swing.SwingUtilities;
+
+import proto.Client;
 
 public class Main {
 
@@ -14,37 +12,17 @@ public class Main {
 			System.err.println("Usage: ./Player <path_to_movie> <port>");
 			System.exit(1);
 		}
-
 		final String pathToMovie = args[0];
 
-		// Connect to server.
-		SocketChannel socketChannel = null;
-		try {
-	    socketChannel = SocketChannel.open();
-	    socketChannel.socket().setReuseAddress(true);
-	    socketChannel.socket().connect(
-	        new InetSocketAddress("localhost", Integer.parseInt(args[1])));
-	    socketChannel.configureBlocking(true);
-    } catch (IOException e) {
-      System.out.println(e.getMessage()); // TODO(cmihail): use logger
-      System.exit(1);
-    }
-
-		System.out.println("[CLIENT] Connection was successful"); // TODO(cmihail): use logger
+		// Create a client to connect to server.
+		final Client client = new Client("localhost", Integer.parseInt(args[1]));
 
 		// Create media player.
-		final SocketChannel finalSocketChannel = socketChannel;
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-			  try {
-			    Player player = new Player(finalSocketChannel, finalSocketChannel.socket().getInputStream(),
-			        finalSocketChannel.socket().getOutputStream());
-			    player.getModel().startMovie(pathToMovie);
-			  } catch (IOException e) {
-		      System.out.println(e.getMessage()); // TODO(cmihail): use logger
-		      System.exit(1);
-			  }
+        Player player = new Player(client);
+        player.getModel().startMovie(pathToMovie);
 			}
 		});
 	}

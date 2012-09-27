@@ -1,15 +1,7 @@
 package player;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
-
-import com.google.protobuf.CodedInputStream;
-import proto.ProtoPlayer.Command;
-import proto.ProtoPlayer.Command.Information;
+import proto.Client;
+import proto.PlayerCommand;
 import proto.ProtoPlayer.Command.Type;
 
 /**
@@ -20,15 +12,11 @@ import proto.ProtoPlayer.Command.Type;
 public class Player {
 
   private final PlayerView playerView;
-  private final InputStream inputStream;
-  private final OutputStream outputStream;
-  private final SocketChannel socketChannel;
+  private final Client client;
   private PlayerModel playerModel;
 
-  public Player(SocketChannel socketChannel, InputStream inputStream, OutputStream outputStream) {
-    this.socketChannel = socketChannel;
-    this.inputStream = inputStream;
-    this.outputStream = outputStream;
+  public Player(Client client) {
+    this.client = client;
 
     playerView = new PlayerView(new PlayerView.Handler() {
       @Override
@@ -53,23 +41,15 @@ public class Player {
       @Override
       public void run() {
         while (true) {
-          try {
-            CodedInputStream codedInputStream = CodedInputStream.newInstance(inputStream);
-            int varint32 = codedInputStream.readInt32();
-            byte[] bytes = codedInputStream.readRawBytes(varint32);
-            Command command = Command.parseFrom(bytes);
+          PlayerCommand playerCommmand = client.recvCommand();
 
-            // Execute command. TODO(cmihail): elaborate
-            if (command.getType() == Type.PLAY) {
-              playerModel.getMediaPlayer().play();
-            } else if (command.getType() == Type.PAUSE) {
-              playerModel.getMediaPlayer().pause();
-            } else {
-              System.out.println("[PLAYER]: Wrong command!!!"); // TODO(cmihail): use logger
-            }
-          } catch (IOException e) {
-            System.out.println("ERR: " + e.getMessage()); // TODO(cmihail): use logger
-            System.exit(1);
+          // Execute command. TODO(cmihail): elaborate
+          if (playerCommmand.getType() == Type.PLAY) {
+            playerModel.getMediaPlayer().play();
+          } else if (playerCommmand.getType() == Type.PAUSE) {
+            playerModel.getMediaPlayer().pause();
+          } else {
+            System.out.println("[PLAYER]: Wrong command!!!"); // TODO(cmihail): use logger
           }
         }
       }
@@ -85,94 +65,63 @@ public class Player {
 
       @Override
       public void onToggleFullScreen() {
-        sendCommand(Command.Type.TOGGLE_FULL_SCREEN);
+        client.sendCommand(new PlayerCommand(Type.TOGGLE_FULL_SCREEN));
       }
 
       @Override
       public void onStop() {
-        sendCommand(Command.Type.STOP);
+        client.sendCommand(new PlayerCommand(Type.STOP));
       }
 
       @Override
       public void onStartMovie(String pathToMovie) {
-//        sendCommand(Command.Type.START_MOVIE, pathToMovie); TODO
+        // TODO(cmihail)
       }
 
       @Override
       public void onSetVolume(int value) {
-//        sendCommand(Command.Type.SET_VOLUME, value + ""); TODO
+        // TODO(cmihail)
       }
 
       @Override
       public void onSetPosition(float position) {
-        sendCommand(Command.Type.SET_POSITION, position + "");
+        client.sendCommand(new PlayerCommand(Type.SET_POSITION, position + ""));
       }
 
       @Override
       public void onRewind() {
-        sendCommand(Command.Type.REWIND);
+        client.sendCommand(new PlayerCommand(Type.REWIND));
       }
 
       @Override
       public void onPreviousChapter() {
-        sendCommand(Command.Type.PREVIOUS_CHAPTER);
+        client.sendCommand(new PlayerCommand(Type.PREVIOUS_CHAPTER));
       }
 
       @Override
       public void onPlay() {
-        sendCommand(Command.Type.PLAY);
+        client.sendCommand(new PlayerCommand(Type.PLAY));
       }
 
       @Override
       public void onPause() {
-        sendCommand(Command.Type.PAUSE);
+        client.sendCommand(new PlayerCommand(Type.PAUSE));
       }
 
       @Override
       public void onNextChapter() {
-        sendCommand(Command.Type.NEXT_CHAPTER);
+        client.sendCommand(new PlayerCommand(Type.NEXT_CHAPTER));
       }
 
       @Override
       public void onMute() {
-        sendCommand(Command.Type.MUTE);
+        client.sendCommand(new PlayerCommand(Type.MUTE));
       }
 
       @Override
       public void onFastForward() {
-        sendCommand(Command.Type.FAST_FORWARD);
+        client.sendCommand(new PlayerCommand(Type.FAST_FORWARD));
       }
     };
-  }
-
-  private void sendCommand(Command.Type type) { // TODO(cmihail): move this into a common class
-    Command command = Command.newBuilder()
-        .setType(type)
-        .build();
-    writeCommand(command);
-  }
-
-  private void sendCommand(Command.Type type, String info) {
-    Command command = Command.newBuilder()
-        .setType(type)
-        .setInfo(Information.newBuilder().setValue(info).build())
-        .build();
-    writeCommand(command);
-  }
-
-  private void writeCommand(Command command) {
-    try {
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      command.writeDelimitedTo(out);
-
-      ByteBuffer commandBuffer = ByteBuffer.wrap(out.toByteArray());
-      while (commandBuffer.hasRemaining()) {
-        socketChannel.write(commandBuffer);
-      }
-      System.out.println("[Player] Command sent: " + command.getType().toString());
-    } catch (IOException e) {
-      System.out.println("[Player] Command error"); // TODO(cmihail): use logger
-      e.printStackTrace();
-    }
   }
 }
