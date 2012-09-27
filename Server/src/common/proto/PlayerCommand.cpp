@@ -6,11 +6,14 @@
  */
 
 #include "PlayerCommand.h"
-#include "player.pb.h"
+
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+
+#define EMPTY_STRING ""
 
 using namespace std;
 
-PlayerCommand::PlayerCommand(proto::Command::Type type) : type(type), info(NULL) {
+PlayerCommand::PlayerCommand(proto::Command::Type type) : type(type), info(EMPTY_STRING) {
   // Nothing to do
 }
 
@@ -31,19 +34,19 @@ PlayerCommand::PlayerCommand(string commandBuffer) {
       new google::protobuf::io::CodedInputStream(zeroCopyInputStream);
   google::protobuf::uint32 size;
   codedInputStream->ReadVarint32(&size);
-  google::protobuf::io::CodedInputStream::Limit commandLimit =
-      codedInputStream->PushLimit(size);
+//  google::protobuf::io::CodedInputStream::Limit commandLimit = TODO(cmihail): see if needed
+  codedInputStream->PushLimit(size);
 
-  proto::Command command = new proto::Command();
+  proto::Command command;
   command.ParseFromCodedStream(codedInputStream);
   codedInputStream->PopLimit(size);
 
   // Set type and info and free space.
   type = command.type();
   if (command.has_info()) {
-    info = command.info();
+    info = command.info().value();
   } else {
-    info = NULL;
+    info = EMPTY_STRING;
   }
 
   delete codedInputStream;
@@ -54,7 +57,7 @@ PlayerCommand::PlayerCommand(string commandBuffer) {
 proto::Command PlayerCommand::toProto() {
   proto::Command command;
   command.set_type(type);
-  if (info != NULL) {
+  if (info.compare(EMPTY_STRING)) {
     proto::Command::Information commandInfo = command.info();
     commandInfo.set_value(info);
   }
@@ -85,7 +88,7 @@ string PlayerCommand::toCodedBuffer() {
   assert(command.SerializeToCodedStream(codedOutputStream));
 
   // Create coded buffer and free space.
-  string codedBuffer(bufferSize);
+  string codedBuffer(buffer);
 
   delete codedOutputStream;
   delete zeroCopyOutputStream;

@@ -5,9 +5,12 @@
  *      Author: cmihail
  */
 
-#include "../../common/ServerCommon.h"
-#include "../ServerUnixCommon.h"
+#include "../../common/Server.h" // TODO(cmihail): maybe to this using -I at compilation
 #include "../../common/proto/player.pb.h"
+#include "../../common/proto/PlayerCommand.h"
+#include "../ServerUnixCommon.h"
+
+#include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #include <cassert>
 #include <cstdlib>
@@ -18,8 +21,6 @@
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/socket.h>
-
-#include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #define MAX_NUM_OF_CLIENTS 5
 
@@ -34,7 +35,7 @@ struct kevent * eventList;
 unsigned int mediaPlayerSocket; // TODO(cmihail): only for dev
 bool hasClient = false; // TODO(cmihail): delete
 
-ServerCommon::ServerCommon(int serverPort) {
+Server::Server(int serverPort) {
   GOOGLE_PROTOBUF_VERIFY_VERSION; // TODO(cmihail): make this common
 
   // Number of clients * 2 for read and write on socket and a server socket listener.
@@ -85,69 +86,45 @@ static void stdinDev() { // TODO(cmihail): only for dev
   getline(cin, commandLine);
   cout << "[SERVER] Command: " << commandLine << "\n";
 
-  proto::Command * command = new proto::Command();
+  // Create command from STDIN.
+  PlayerCommand * playerCommand;
   if (commandLine.compare("play") == 0) {
-    command->set_type(proto::Command_Type_PLAY);
+    playerCommand = new PlayerCommand(proto::Command_Type_PLAY);
   } else if (commandLine.compare("pause") == 0) {
-    command->set_type(proto::Command_Type_PAUSE);
+    playerCommand = new PlayerCommand(proto::Command_Type_PAUSE);
   } else {
-    // TODO(cmihail) default behavior
-    command->set_type(proto::Command_Type_STOP);
+    // TODO(cmihail) default behavior -> add NONE to enum
+    playerCommand = new PlayerCommand(proto::Command_Type_STOP);
   }
 
-  ////////
-  int dataBufferSize = command->ByteSize() + sizeof(dataBufferSize);
-  char * dataBuffer = new char[dataBufferSize];
-
-  google::protobuf::io::ZeroCopyOutputStream * zeroCopyOutputStream =
-      new google::protobuf::io::ArrayOutputStream(dataBuffer, dataBufferSize);
-  google::protobuf::io::CodedOutputStream * codedOutputStream =
-      new google::protobuf::io::CodedOutputStream(zeroCopyOutputStream);
-  codedOutputStream->WriteVarint32(command->ByteSize());
-  assert(command->SerializeToCodedStream(codedOutputStream));
-
-  assert(send(mediaPlayerSocket, dataBuffer, dataBufferSize, 0) >= 0);
-
-  delete codedOutputStream;
-  delete zeroCopyOutputStream;
-  delete dataBuffer;
-  delete command;
+  // Send the command to the player.
+  string codedBuffer = playerCommand->toCodedBuffer();
+  assert(send(mediaPlayerSocket, codedBuffer.c_str(), codedBuffer.length(), 0) >= 0);
+  delete playerCommand;
 }
 
 static void receiveCommand() {
+  // Receive command from server.
   int BUFFER_SIZE = 2000; // TODO(cmihail): change 2000
   char * dataBuffer = new char[BUFFER_SIZE];
+  memset(dataBuffer, 0, BUFFER_SIZE);
   assert(recv(mediaPlayerSocket, dataBuffer, BUFFER_SIZE, 0));
+  // TODO(cmihail): see if string(dataBuffer) can produce problems
+  PlayerCommand * playerCommand = new PlayerCommand(string(dataBuffer));
 
-  google::protobuf::io::ZeroCopyInputStream * zeroCopyInputStream =
-      new google::protobuf::io::ArrayInputStream(dataBuffer, BUFFER_SIZE);
-  google::protobuf::io::CodedInputStream * codedInputStream =
-      new google::protobuf::io::CodedInputStream(zeroCopyInputStream);
-  google::protobuf::uint32 size;
-  codedInputStream->ReadVarint32(&size);
-  google::protobuf::io::CodedInputStream::Limit commandLimit =
-      codedInputStream->PushLimit(size);
-
-  proto::Command * command = new proto::Command();
-  command->ParseFromCodedStream(codedInputStream);
-  codedInputStream->PopLimit(size);
-
-  ////////
-  if (command->type() == command->PAUSE) {
+  // TODO(cmihail): only for dev, it should be send to all other clients
+  if (playerCommand->getType() == proto::Command::PAUSE) {
     cout << "[SERVER] Pause\n";
-  } else if (command->type() == command->PLAY) {
+  } else if (playerCommand->getType() == proto::Command::PLAY) {
     cout << "[SERVER] Play\n";
   } else {
     cout << "[SERVER] Other command\n";
   }
 
-  delete command;
-  delete codedInputStream;
-  delete zeroCopyInputStream;
-  delete dataBuffer;
+  delete playerCommand;
 }
 
-void ServerCommon::run() {
+void Server::run() {
   while(true) {
     // Retrieve event list.
     int n = kevent(kqueueFileDescriptor, changeList, currectNumOfChangeEvents,
@@ -185,7 +162,7 @@ void ServerCommon::run() {
   }
 }
 
-ServerCommon::~ServerCommon() {
+Server::~Server() {
   delete changeList;
   delete eventList;
 }

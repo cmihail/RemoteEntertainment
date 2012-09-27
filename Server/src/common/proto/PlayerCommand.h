@@ -8,6 +8,8 @@
 #ifndef PLAYERCOMMAND_H
 #define PLAYERCOMMAND_H
 
+#include "player.pb.h"
+
 class PlayerCommand {
   proto::Command_Type type;
   std::string info;
@@ -16,7 +18,6 @@ public:
   PlayerCommand(proto::Command::Type type);
   PlayerCommand(proto::Command::Type type, std::string info);
   PlayerCommand(std::string codedBuffer);
-  ~PlayerCommand();
 
   proto::Command toProto();
   proto::Command::Type getType();
