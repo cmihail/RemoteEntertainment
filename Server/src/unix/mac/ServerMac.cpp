@@ -6,6 +6,7 @@
  */
 
 #include "../../common/Server.h" // TODO(cmihail): maybe to this using -I at compilation
+#include "../../common/Client.h"
 #include "../../common/proto/player.pb.h"
 #include "../../common/proto/PlayerCommand.h"
 #include "../ServerUnixCommon.h"
@@ -16,6 +17,7 @@
 #include <cstdlib>
 
 #include <iostream>  // TODO(cmihail): use logger instead
+#include <map>
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -32,17 +34,16 @@ unsigned int currectNumOfChangeEvents = 0;
 struct kevent * changeList;
 struct kevent * eventList;
 
-unsigned int mediaPlayerSocket; // TODO(cmihail): only for dev
-bool hasClient = false; // TODO(cmihail): delete
+map<socket_descriptor_t, Client> clientsMap;
 
 Server::Server(int serverPort) {
   GOOGLE_PROTOBUF_VERIFY_VERSION; // TODO(cmihail): make this common
 
   // Number of clients * 2 for read and write on socket and a server socket listener.
-  maxNumOfConnections = MAX_NUM_OF_CLIENTS * 2 + 1;
+  maxNumOfConnections = MAX_NUM_OF_CLIENTS + 1;
 
   // Init server.
-  listenSocketFileDescriptor = serverUnixCommon_init(serverPort, MAX_NUM_OF_CLIENTS);
+  listenSocket = serverUnixCommon_init(serverPort, MAX_NUM_OF_CLIENTS);
 
   // Create event notifier.
   kqueueFileDescriptor = kqueue();
@@ -51,34 +52,29 @@ Server::Server(int serverPort) {
   eventList = new struct kevent[maxNumOfConnections];
 
   // Create event for the server socket used for listening incoming connections.
-  EV_SET(&changeList[currectNumOfChangeEvents], listenSocketFileDescriptor,
+  EV_SET(&changeList[currectNumOfChangeEvents], listenSocket,
       EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
   currectNumOfChangeEvents = 1;
 
-  // TODO(cmihail): register STDIN, only for dev
+  // TODO(cmihail): registering STDIN, only for dev
   EV_SET(&changeList[currectNumOfChangeEvents], STDIN_FILENO, EVFILT_READ,
       EV_ADD | EV_ENABLE, 0, 0, 0);
   currectNumOfChangeEvents++;
 }
 
-static void registerNewClient(int listenSocketFileDescriptor) {
+static void registerNewClient(int listenSocket) {
   if (currectNumOfChangeEvents == maxNumOfConnections) {
     cout << "Maxmum number of clients received" << endl;
     return;
   }
 
-  // Add both read and write events for the newly created socket.
-  int socketFileDescriptor = serverUnixCommon_newConnection(listenSocketFileDescriptor);
-  EV_SET(&changeList[currectNumOfChangeEvents], socketFileDescriptor,
+  // Add read event for the newly created socket.
+  int clientSocket = serverUnixCommon_newConnection(listenSocket);
+  EV_SET(&changeList[currectNumOfChangeEvents], clientSocket,
       EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
   currectNumOfChangeEvents++;
-  EV_SET(&changeList[currectNumOfChangeEvents], socketFileDescriptor,
-      EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, 0); // TODO(cmihail): not sure if needed
-  currectNumOfChangeEvents++;
 
-  // TODO(cmihail): create a client list
-  mediaPlayerSocket = socketFileDescriptor;
-  hasClient = true;
+  clientsMap.insert(pair<socket_descriptor_t, Client>(clientSocket, Client(clientSocket)));
 }
 
 static void stdinDev() { // TODO(cmihail): only for dev
@@ -97,19 +93,22 @@ static void stdinDev() { // TODO(cmihail): only for dev
     playerCommand = new PlayerCommand(proto::Command_Type_STOP);
   }
 
-  // Send the command to the player.
+  // Send command to all clients.
   string codedBuffer = playerCommand->toCodedBuffer();
-  assert(send(mediaPlayerSocket, codedBuffer.c_str(), codedBuffer.length(), 0) >= 0);
+  map<socket_descriptor_t, Client>::iterator it = clientsMap.begin();
+  map<socket_descriptor_t, Client>::iterator itEnd = clientsMap.end();
+  for (; it != itEnd; it++) {
+    assert(send(it->first, codedBuffer.c_str(), codedBuffer.length(), 0) >= 0);
+  }
   delete playerCommand;
 }
 
-static void receiveCommand() {
+static void receiveCommand(socket_descriptor_t fileDescriptor) {
   // Receive command from server.
   int BUFFER_SIZE = 2000; // TODO(cmihail): change 2000
   char * dataBuffer = new char[BUFFER_SIZE];
   memset(dataBuffer, 0, BUFFER_SIZE);
-  assert(recv(mediaPlayerSocket, dataBuffer, BUFFER_SIZE, 0));
-  // TODO(cmihail): see if string(dataBuffer) can produce problems
+  assert(recv(fileDescriptor, dataBuffer, BUFFER_SIZE, 0));
   PlayerCommand * playerCommand = new PlayerCommand(string(dataBuffer));
 
   // TODO(cmihail): only for dev, it should be send to all other clients
@@ -119,6 +118,16 @@ static void receiveCommand() {
     cout << "[SERVER] Play\n";
   } else {
     cout << "[SERVER] Other command\n";
+  }
+
+  // Send command to all other clients.
+  map<socket_descriptor_t, Client>::iterator it = clientsMap.begin();
+  map<socket_descriptor_t, Client>::iterator itEnd = clientsMap.end();
+  string codedBuffer = playerCommand->toCodedBuffer();
+  for (; it != itEnd; it++) {
+    if (it->first != fileDescriptor) {
+      assert(send(it->first, codedBuffer.c_str(), codedBuffer.length(), 0) >= 0);
+    }
   }
 
   delete playerCommand;
@@ -138,10 +147,9 @@ void Server::run() {
     // Check the event type and execute correspondent action.
     for (unsigned int i = 0; i < currectNumOfChangeEvents; i++) {
       // Receive new connection.
-      if (eventList[i].ident == listenSocketFileDescriptor &&
-          eventList[i].filter == EVFILT_READ) {
+      if (eventList[i].ident == listenSocket && eventList[i].filter == EVFILT_READ) {
         cout << "[SERVER] New Client\n";
-        registerNewClient(listenSocketFileDescriptor);
+        registerNewClient(listenSocket);
         continue;
       }
 
@@ -151,11 +159,11 @@ void Server::run() {
         continue;
       }
 
-      // TODO(cmihail): Receive commands from clients.
-      if (hasClient && eventList[i].ident == mediaPlayerSocket
-          && eventList[i].filter == EVFILT_READ) {
+      // Receive commands from clients.
+      map<socket_descriptor_t, Client>::iterator it = clientsMap.find(eventList[i].ident);
+      if (it != clientsMap.end() && eventList[i].filter == EVFILT_READ) {
         cout << "[SERVER] Command received\n";
-        receiveCommand();
+        receiveCommand(it->first);
         continue;
       }
     }

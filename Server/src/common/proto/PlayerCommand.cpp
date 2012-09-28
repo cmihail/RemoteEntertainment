@@ -21,6 +21,7 @@ PlayerCommand::PlayerCommand(proto::Command::Type type, string info) : type(type
   // Nothing to do
 }
 
+// TODO(cmihail): see if string(dataBuffer) can produce problems
 PlayerCommand::PlayerCommand(string commandBuffer) {
   // Create a temporary buffer to contain the coded command.
   int bufferSize = commandBuffer.length();
@@ -72,12 +73,14 @@ string PlayerCommand::getInformation() {
   return info;
 }
 
+// TODO(cmihail): see if string(dataBuffer) can produce problems
 string PlayerCommand::toCodedBuffer() {
   proto::Command command = this->toProto();
 
   // Create a temporary buffer to contain the coded command.
-  int bufferSize = command.ByteSize() + sizeof(bufferSize);
+  int bufferSize = command.ByteSize() + sizeof(bufferSize) + 1;
   char * buffer = new char[bufferSize];
+  memset(buffer, 0, bufferSize);
 
   // Serialize the command to the temporary coded buffer.
   google::protobuf::io::ZeroCopyOutputStream * zeroCopyOutputStream =

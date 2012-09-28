@@ -5,10 +5,13 @@ CFLAGS = -Wall -g
 
 .build: Main
 
-Main: bin/Main.o bin/player.pb.o bin/PlayerCommand.o bin/Process.o bin/ServerMac.o bin/ServerUnixCommon.o
+Main: bin/Main.o bin/Client.o bin/player.pb.o bin/PlayerCommand.o bin/Process.o bin/ServerMac.o bin/ServerUnixCommon.o
 	$(CC) $^ -o $@ -lprotobuf
 
 bin/Main.o: src/common/Main.cpp
+	$(CC) $^ $(CFLAGS) -c -o $@
+
+bin/Client.o: src/common/Client.cpp
 	$(CC) $^ $(CFLAGS) -c -o $@
 
 bin/player.pb.o: src/common/proto/player.pb.cc

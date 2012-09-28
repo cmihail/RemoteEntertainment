@@ -26,11 +26,22 @@ public class ClientThread extends Thread {
 
   @Override
   public void run() {
-    // Create a client to connect to server. // TODO(cmihail): set params into settings activit
+    // Create a client to connect to server. // TODO(cmihail): set params into settings activity
     client = new Client("192.168.2.2", 10000);
-    // TODO(cmihail): read server commands
-  }
 
+    while (true) {
+      PlayerCommand playerCommmand = client.recvCommand();
+
+      // Execute command. TODO(cmihail): elaborate
+      if (playerCommmand.getType() == Type.PLAY) {
+        System.out.println("[Android] Play");
+      } else if (playerCommmand.getType() == Type.PAUSE) {
+        System.out.println("[Android] Pause");
+      } else {
+        System.out.println("[Player]: Wrong command!!!"); // TODO(cmihail): use logger
+      }
+    }
+  }
 
   private ServerCallback createServerCallback() {
     return new ServerCallback() {

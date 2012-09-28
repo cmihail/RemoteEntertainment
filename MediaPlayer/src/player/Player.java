@@ -49,7 +49,7 @@ public class Player {
           } else if (playerCommmand.getType() == Type.PAUSE) {
             playerModel.getMediaPlayer().pause();
           } else {
-            System.out.println("[PLAYER]: Wrong command!!!"); // TODO(cmihail): use logger
+            System.out.println("[Player]: Wrong command!!!"); // TODO(cmihail): use logger
           }
         }
       }
