@@ -4,18 +4,19 @@ option java_outer_classname = "ProtoPlayer";
 
 message Command {
   enum Type {
-    SET_POSITION = 1;
-    PREVIOUS_CHAPTER = 2;
-    NEXT_CHAPTER = 3;
-    REWIND = 4;
-    FAST_FORWARD = 5;
-    STOP = 6;
-    PLAY = 7;
-    PAUSE = 8;
-    MUTE = 9;
-    SET_VOLUME = 10;
-    TOGGLE_FULL_SCREEN = 11;
-    START_MOVIE = 12; // TODO(cmihail): only for dev, move it into another message
+    NONE = 1;
+    SET_POSITION = 2;
+    PREVIOUS_CHAPTER = 3;
+    NEXT_CHAPTER = 4;
+    REWIND = 5;
+    FAST_FORWARD = 6;
+    STOP = 7;
+    PLAY = 8;
+    PAUSE = 9;
+    MUTE = 10;
+    SET_VOLUME = 11;
+    TOGGLE_FULL_SCREEN = 12;
+    START_MOVIE = 13; // TODO(cmihail): only for dev, move it into another message
   }
 
   required Type type = 1;

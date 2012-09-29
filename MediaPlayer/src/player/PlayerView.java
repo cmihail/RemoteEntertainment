@@ -8,6 +8,9 @@ import java.awt.event.MouseListener;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import proto.ProtoPlayer.Command.Type;
+
+import client.PlayerCommandExecutor;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.DefaultFullScreenStrategy;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
@@ -16,18 +19,15 @@ import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
 
 public class PlayerView {
 
-	public interface Handler {
-		void onCreatePlayerModel(PlayerModel playerModel);
-	}
-
-	private boolean isFullScreen;
-
 	private final Canvas canvas;
 	private final JFrame frame;
+	private final EmbeddedMediaPlayer mediaPlayer;
 	private final PlayerControlsPanel playerControlsPanel;
-	private final PlayerModel playerModel;
+	private final PlayerCommandExecutor commandExecutor;
 
-	public PlayerView(Handler viewHandler, PlayerModel.Handler modelHandler) {
+	public PlayerView(PlayerCommandExecutor commandExecutor) {
+	  this.commandExecutor = commandExecutor;
+
 		// Create main frame that will contain the media player and the controls panel
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,34 +43,32 @@ public class PlayerView {
 
 		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
 		FullScreenStrategy fullScreenStrategy = new DefaultFullScreenStrategy(frame);
-		EmbeddedMediaPlayer mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer(fullScreenStrategy);
+		mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer(fullScreenStrategy);
 		CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
 		mediaPlayer.setVideoSurface(videoSurface);
-		playerModel = new PlayerModel(mediaPlayer, modelHandler);
-		viewHandler.onCreatePlayerModel(playerModel);
 
 		// Create player controls panel
-		playerControlsPanel = new PlayerControlsPanel(playerModel);
+		playerControlsPanel = new PlayerControlsPanel(commandExecutor, mediaPlayer);
 		frame.add(playerControlsPanel, BorderLayout.SOUTH);
 
 		canvas.addMouseListener(createMouseListener());
 	}
 
 	/**
-	 * Update view and player controls panel.
+	 * @return the media player associated with this view
 	 */
-	public void update() {
-		final boolean isFullScreen = playerModel.getMediaPlayer().isFullScreen();
-		if (PlayerView.this.isFullScreen != isFullScreen) {
-			enableFullScreen(isFullScreen);
-		}
+	public EmbeddedMediaPlayer getMediaPlayer() {
+	  return mediaPlayer;
 	}
 
-	private void enableFullScreen(final boolean enabled) {
+	/**
+	 * @param enabled true if view should prepare for full screen, or false if it should
+	 * prepare for normal state
+	 */
+	public void prepareForFullScreen(final boolean enabled) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				isFullScreen = enabled;
 				playerControlsPanel.setVisible(!enabled);
 			}
 		});
@@ -96,8 +94,8 @@ public class PlayerView {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-					enableFullScreen(!playerModel.getMediaPlayer().isFullScreen());
-					playerModel.toggleFullScreen();
+				  prepareForFullScreen(!mediaPlayer.isFullScreen());
+					commandExecutor.executeCommand(Type.TOGGLE_FULL_SCREEN, null, true);
 				}
 			}
 		};

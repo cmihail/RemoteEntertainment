@@ -2,7 +2,7 @@ package player;
 
 import javax.swing.SwingUtilities;
 
-import proto.Client;
+import client.Client;
 
 public class Main {
 
@@ -15,14 +15,15 @@ public class Main {
 		final String pathToMovie = args[0];
 
 		// Create a client to connect to server.
-		final Client client = new Client("localhost", Integer.parseInt(args[1]));
+		final Client client = new Client();
+		client.connect("localhost", Integer.parseInt(args[1]));
 
 		// Create media player.
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-        Player player = new Player(client);
-        player.getModel().startMovie(pathToMovie);
+			  Player player = new Player(client);
+        player.startMovie(pathToMovie);
 			}
 		});
 	}

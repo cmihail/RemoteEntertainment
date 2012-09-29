@@ -1,8 +1,11 @@
 package player;
 
-import proto.Client;
-import proto.PlayerCommand;
 import proto.ProtoPlayer.Command.Type;
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import client.Client;
+import client.PlayerCommand;
+import client.PlayerCommandExecutor;
+import client.PlayerCommandHandler;
 
 /**
  * TODO(cmihail): comments
@@ -11,117 +14,128 @@ import proto.ProtoPlayer.Command.Type;
  */
 public class Player {
 
-  private final PlayerView playerView;
+  private static final int SKIP_TIME_MS = 10 * 1000;
+
   private final Client client;
-  private PlayerModel playerModel;
+  private final PlayerCommandExecutor commandExecutor;
+  private final PlayerView playerView;
 
   public Player(Client client) {
     this.client = client;
+    commandExecutor = new PlayerCommandExecutor(createCommandHandler());
+    playerView = new PlayerView(commandExecutor);
 
-    playerView = new PlayerView(new PlayerView.Handler() {
-      @Override
-      public void onCreatePlayerModel(PlayerModel playerModel) {
-        Player.this.playerModel = playerModel;
-      }
-    }, createModelHandler());
-
-    bindInputTheard();
+    bindExternalCommandsThread();
   }
 
-  /**
-   * @return the model associated with this player
-   */
-  public PlayerModel getModel() {
-    return playerModel;
+  public void startMovie(String pathToMovie) { // TODO(cmihail): only for dev
+    playerView.getMediaPlayer().playMedia(pathToMovie);
   }
 
   // TODO(cmihail): notify main thread if this has failed
-  private void bindInputTheard() {
+  private void bindExternalCommandsThread() {
     Thread thread = new Thread() {
       @Override
       public void run() {
         while (true) {
-          PlayerCommand playerCommmand = client.recvCommand();
+          PlayerCommand playerCommmand = client.receiveCommand();
 
-          // Execute command. TODO(cmihail): elaborate
-          if (playerCommmand.getType() == Type.PLAY) {
-            playerModel.getMediaPlayer().play();
-          } else if (playerCommmand.getType() == Type.PAUSE) {
-            playerModel.getMediaPlayer().pause();
-          } else {
-            System.out.println("[Player]: Wrong command!!!"); // TODO(cmihail): use logger
-          }
+          // Execute command.
+          commandExecutor.executeCommand(playerCommmand.getType(),
+              playerCommmand.getInfo(), false);
         }
       }
     };
     thread.start();
   }
 
-  /**
-   * @return the handler for internal commands
-   */
-  private PlayerModel.Handler createModelHandler() {
-    return new PlayerModel.Handler() {
+  private PlayerCommandHandler createCommandHandler() {
+    return new PlayerCommandHandler() {
 
       @Override
-      public void onToggleFullScreen() {
-        client.sendCommand(new PlayerCommand(Type.TOGGLE_FULL_SCREEN));
+      public void onToggleFullScreen(boolean notifyExecution) {
+        EmbeddedMediaPlayer mediaPlayer = playerView.getMediaPlayer();
+        playerView.prepareForFullScreen(!mediaPlayer.isFullScreen());
+        mediaPlayer.toggleFullScreen();
+        sendCommand(Type.TOGGLE_FULL_SCREEN, notifyExecution);
       }
 
       @Override
-      public void onStop() {
-        client.sendCommand(new PlayerCommand(Type.STOP));
+      public void onStop(boolean notifyExecution) {
+        playerView.getMediaPlayer().stop();
+        sendCommand(Type.STOP, notifyExecution);
       }
 
       @Override
-      public void onStartMovie(String pathToMovie) {
+      public void onStartMovie(String notifyExecution) {
+        // TODO(cmihail): delete this method from interface
+      }
+
+      @Override
+      public void onSetVolume(int value, boolean notifyExecution) {
+        playerView.getMediaPlayer().setVolume(value);
         // TODO(cmihail)
       }
 
       @Override
-      public void onSetVolume(int value) {
-        // TODO(cmihail)
+      public void onSetPosition(float position, boolean notifyExecution) {
+        playerView.getMediaPlayer().setPosition(position);
+        sendCommand(Type.SET_POSITION, position + "", notifyExecution);
       }
 
       @Override
-      public void onSetPosition(float position) {
-        client.sendCommand(new PlayerCommand(Type.SET_POSITION, position + ""));
+      public void onRewind(boolean notifyExecution) {
+        playerView.getMediaPlayer().skip(SKIP_TIME_MS);
+        sendCommand(Type.REWIND, notifyExecution);
       }
 
       @Override
-      public void onRewind() {
-        client.sendCommand(new PlayerCommand(Type.REWIND));
+      public void onPreviousChapter(boolean notifyExecution) {
+        playerView.getMediaPlayer().previousChapter();
+        sendCommand(Type.PREVIOUS_CHAPTER, notifyExecution);
       }
 
       @Override
-      public void onPreviousChapter() {
-        client.sendCommand(new PlayerCommand(Type.PREVIOUS_CHAPTER));
+      public void onPlay(boolean notifyExecution) {
+        playerView.getMediaPlayer().play();
+        sendCommand(Type.PLAY, notifyExecution);
       }
 
       @Override
-      public void onPlay() {
-        client.sendCommand(new PlayerCommand(Type.PLAY));
+      public void onPause(boolean notifyExecution) {
+        playerView.getMediaPlayer().pause();
+        sendCommand(Type.PAUSE, notifyExecution);
       }
 
       @Override
-      public void onPause() {
-        client.sendCommand(new PlayerCommand(Type.PAUSE));
+      public void onNextChapter(boolean notifyExecution) {
+        playerView.getMediaPlayer().nextChapter();
+        sendCommand(Type.NEXT_CHAPTER, notifyExecution);
       }
 
       @Override
-      public void onNextChapter() {
-        client.sendCommand(new PlayerCommand(Type.NEXT_CHAPTER));
+      public void onMute(boolean notifyExecution) {
+        playerView.getMediaPlayer().mute();
+        sendCommand(Type.MUTE, notifyExecution);
       }
 
       @Override
-      public void onMute() {
-        client.sendCommand(new PlayerCommand(Type.MUTE));
-      }
-
-      @Override
-      public void onFastForward() {
-        client.sendCommand(new PlayerCommand(Type.FAST_FORWARD));
+      public void onFastForward(boolean notifyExecution) {
+        playerView.getMediaPlayer().skip(SKIP_TIME_MS);
+        sendCommand(Type.FAST_FORWARD, notifyExecution);
       }
     };
+  }
+
+  private void sendCommand(Type type, boolean shouldSend) {
+    if (shouldSend) {
+      client.sendCommand(new PlayerCommand(type));
+    }
+  }
+
+  private void sendCommand(Type type, String info, boolean shouldSend) {
+    if (shouldSend) {
+      client.sendCommand(new PlayerCommand(type, info));
+    }
   }
 }

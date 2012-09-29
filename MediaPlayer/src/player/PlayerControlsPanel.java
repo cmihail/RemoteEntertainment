@@ -20,6 +20,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import proto.ProtoPlayer.Command.Type;
+
+import client.PlayerCommandExecutor;
+
 import uk.co.caprica.vlcj.binding.LibVlcConst;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
@@ -27,17 +31,19 @@ import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 public class PlayerControlsPanel extends JPanel {
   private static final long serialVersionUID = 1L;
 
-	private final ScheduledExecutorService executorService =
-			Executors.newSingleThreadScheduledExecutor();
+  private final ScheduledExecutorService executorService =
+      Executors.newSingleThreadScheduledExecutor();
 
-	private final PlayerModel playerModel;
+  private final PlayerCommandExecutor commandExecutor;
+  private final MediaPlayer mediaPlayer;
 
-	private boolean isPlaying;
+
   // Guard to prevent the position slider firing spurious change events when
   // the position changes during play-back - events are only needed when the
   // user actually drags the slider and without the guard the play-back
   // position will jump around
-	private boolean setPositionValue;
+  private boolean setPositionValue;
+  private boolean isPlaying;
 
   private JLabel timeLabel;
   private JSlider positionSlider;
@@ -57,33 +63,34 @@ public class PlayerControlsPanel extends JPanel {
   private ImageIcon playIcon;
   private ImageIcon pauseIcon;
 
-	public PlayerControlsPanel(PlayerModel playerModel) {
-		this.playerModel = playerModel;
+  public PlayerControlsPanel(PlayerCommandExecutor commandExecutor, MediaPlayer mediaPlayer) {
+    this.commandExecutor = commandExecutor;
+    this.mediaPlayer = mediaPlayer;
 
-		createUI();
+    createUI();
 
-	  // Define the thread that will update the players controls based on movie running.
-		executorService.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				update();
-			}
-		}, 0L, 1L, TimeUnit.SECONDS);
-	}
+    // Define the thread that will update the players controls based on movie running.
+    executorService.scheduleAtFixedRate(new Runnable() {
+      @Override
+      public void run() {
+        update();
+      }
+    }, 0L, 1L, TimeUnit.SECONDS);
+  }
 
-	/**
-	 * Creates the UI which consists in creating the player controls, positioning them
-	 * and registering their listeners.
-	 */
-	private void createUI() {
+  /**
+   * Creates the UI which consists in creating the player controls, positioning them
+   * and registering their listeners.
+   */
+  private void createUI() {
     createControls();
     layoutControls();
     registerListeners();
-	}
+  }
 
-	/**
-	 * Creates player controls.
-	 */
+  /**
+   * Creates player controls.
+   */
   private void createControls() {
     timeLabel = new JLabel("hh:mm:ss");
     positionSlider = new JSlider();
@@ -94,16 +101,16 @@ public class PlayerControlsPanel extends JPanel {
     chapterLabel = new JLabel("00/00");
 
     previousChapterButton = createButton(createIcon("icons/control_start_blue.png"),
-    		"Go to previous chapter");
+        "Go to previous chapter");
     rewindButton = createButton(createIcon("icons/control_rewind_blue.png"), "Skip back");
     stopButton = createButton(createIcon("icons/control_stop_blue.png"), "Stop");
     playIcon = createIcon("icons/control_play_blue.png");
     pauseIcon = createIcon("icons/control_pause_blue.png");
     playPauseButton = createButton(playIcon, "Play/pause");
     fastForwardButton = createButton(createIcon("icons/control_fastforward_blue.png"),
-    		"Skip forward");
+        "Skip forward");
     nextChapterButton = createButton(createIcon("icons/control_end_blue.png"),
-    		"Go to next chapter");
+        "Go to next chapter");
 
     toggleMuteButton = createButton(createIcon("icons/sound_mute.png"), "Toggle Mute");
     volumeSlider = new JSlider();
@@ -116,21 +123,21 @@ public class PlayerControlsPanel extends JPanel {
   }
 
   private JButton createButton(ImageIcon icon, String toolTipText) {
-  	JButton button = new JButton();
-  	button.setIcon(icon);
-  	button.setToolTipText(toolTipText);
-  	return button;
+    JButton button = new JButton();
+    button.setIcon(icon);
+    button.setToolTipText(toolTipText);
+    return button;
   }
 
   private ImageIcon createIcon(String imagePath) {
-  	return new ImageIcon(getClass().getClassLoader().getResource(imagePath));
+    return new ImageIcon(getClass().getClassLoader().getResource(imagePath));
   }
 
   /**
    * Sets the positions of player controls in the panel.
    */
   private void layoutControls() {
-  	// Main container
+    // Main container
     setBorder(new EmptyBorder(4, 4, 4, 4));
     setLayout(new BorderLayout());
 
@@ -173,20 +180,20 @@ public class PlayerControlsPanel extends JPanel {
    * Registers listeners for player controls.
    */
   private void registerListeners() {
-  	playerModel.getMediaPlayer().addMediaPlayerEventListener(
-  			new MediaPlayerEventAdapter() {
-		      @Override
-		      public void playing(MediaPlayer mediaPlayer) {
-		        volumeSlider.setValue(playerModel.getMediaPlayer().getVolume());
-		      }
-		    });
+    mediaPlayer.addMediaPlayerEventListener(
+        new MediaPlayerEventAdapter() {
+          @Override
+          public void playing(MediaPlayer mediaPlayer) {
+            volumeSlider.setValue(mediaPlayer.getVolume());
+          }
+        });
 
     positionSlider.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
         if(!positionSlider.getValueIsAdjusting() && !setPositionValue) {
           float positionValue = positionSlider.getValue() / 100.0f;
-          playerModel.setPosition(positionValue);
+          commandExecutor.executeCommand(Type.SET_POSITION, positionValue + "", true);
         }
       }
     });
@@ -194,57 +201,57 @@ public class PlayerControlsPanel extends JPanel {
     previousChapterButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-      	playerModel.previousChapter();
+        commandExecutor.executeCommand(Type.PREVIOUS_CHAPTER, null, true);
       }
     });
 
     rewindButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-      	playerModel.rewindButton();
+        commandExecutor.executeCommand(Type.REWIND, null, true);
       }
     });
 
     stopButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-      	playerModel.stop();
+        commandExecutor.executeCommand(Type.STOP, null, true);
       }
     });
 
     playPauseButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-      	boolean isPlaying = playerModel.getMediaPlayer().isPlaying();
-      	PlayerControlsPanel.this.isPlaying = isPlaying;
-      	if (isPlaying) {
-      		playerModel.pause();
-      		playPauseButton.setIcon(pauseIcon);
-      	} else {
-      		playerModel.play();
-      		playPauseButton.setIcon(playIcon);
-      	}
+        boolean isPlaying = mediaPlayer.isPlaying();
+        PlayerControlsPanel.this.isPlaying = isPlaying;
+        if (isPlaying) {
+          commandExecutor.executeCommand(Type.PAUSE, null, true);
+          playPauseButton.setIcon(pauseIcon);
+        } else {
+          commandExecutor.executeCommand(Type.PLAY, null, true);
+          playPauseButton.setIcon(playIcon);
+        }
       }
     });
 
     fastForwardButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-      	playerModel.fastForward();
+        commandExecutor.executeCommand(Type.FAST_FORWARD, null, true);
       }
     });
 
     nextChapterButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-      	playerModel.nextChapter();
+        commandExecutor.executeCommand(Type.NEXT_CHAPTER, null, true);
       }
     });
 
     toggleMuteButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-      	playerModel.mute();
+        commandExecutor.executeCommand(Type.MUTE, null, true);
       }
     });
 
@@ -253,7 +260,7 @@ public class PlayerControlsPanel extends JPanel {
       public void stateChanged(ChangeEvent e) {
         JSlider source = (JSlider)e.getSource();
         if(!source.getValueIsAdjusting()) {
-        	playerModel.setVolume(source.getValue());
+          commandExecutor.executeCommand(Type.SET_VOLUME, source.getValue() + "", true);
         }
       }
     });
@@ -261,17 +268,16 @@ public class PlayerControlsPanel extends JPanel {
     fullScreenButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-      	playerModel.toggleFullScreen();
+        commandExecutor.executeCommand(Type.TOGGLE_FULL_SCREEN, null, true);
       }
     });
   }
 
-	/**
-	 * Updates play/pause button, time, position slider and volume slider.
-	 */
-	private void update() {
-		MediaPlayer mediaPlayer = playerModel.getMediaPlayer();
-		final boolean isPlaying = mediaPlayer.isPlaying();
+  /**
+   * Updates play/pause button, time, position slider and volume slider.
+   */
+  private void update() {
+    final boolean isPlaying = mediaPlayer.isPlaying();
 
     final long time = mediaPlayer.getTime();
 
@@ -285,21 +291,21 @@ public class PlayerControlsPanel extends JPanel {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-      	if (PlayerControlsPanel.this.isPlaying != isPlaying) {
-      		PlayerControlsPanel.this.isPlaying = isPlaying;
-      		if (isPlaying) {
-      			playPauseButton.setIcon(playIcon);
-      		} else {
-      			playPauseButton.setIcon(pauseIcon);
-      		}
-      	}
+        if (PlayerControlsPanel.this.isPlaying != isPlaying) {
+          PlayerControlsPanel.this.isPlaying = isPlaying;
+          if (isPlaying) {
+            playPauseButton.setIcon(playIcon);
+          } else {
+            playPauseButton.setIcon(pauseIcon);
+          }
+        }
 
-      	updateTime(time);
+        updateTime(time);
         updatePosition(position);
         updateChapter(chapter, chapterCount);
       }
     });
-	}
+  }
 
   private void updateTime(long millis) {
     String s = String.format("%02d:%02d:%02d",
