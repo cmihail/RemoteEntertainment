@@ -36,21 +36,22 @@ class Command;
 class Command_Information;
 
 enum Command_Type {
-  Command_Type_SET_POSITION = 1,
-  Command_Type_PREVIOUS_CHAPTER = 2,
-  Command_Type_NEXT_CHAPTER = 3,
-  Command_Type_REWIND = 4,
-  Command_Type_FAST_FORWARD = 5,
-  Command_Type_STOP = 6,
-  Command_Type_PLAY = 7,
-  Command_Type_PAUSE = 8,
-  Command_Type_MUTE = 9,
-  Command_Type_SET_VOLUME = 10,
-  Command_Type_TOGGLE_FULL_SCREEN = 11,
-  Command_Type_START_MOVIE = 12
+  Command_Type_NONE = 1,
+  Command_Type_SET_POSITION = 2,
+  Command_Type_PREVIOUS_CHAPTER = 3,
+  Command_Type_NEXT_CHAPTER = 4,
+  Command_Type_REWIND = 5,
+  Command_Type_FAST_FORWARD = 6,
+  Command_Type_STOP = 7,
+  Command_Type_PLAY = 8,
+  Command_Type_PAUSE = 9,
+  Command_Type_MUTE = 10,
+  Command_Type_SET_VOLUME = 11,
+  Command_Type_TOGGLE_FULL_SCREEN = 12,
+  Command_Type_START_MOVIE = 13
 };
 bool Command_Type_IsValid(int value);
-const Command_Type Command_Type_Type_MIN = Command_Type_SET_POSITION;
+const Command_Type Command_Type_Type_MIN = Command_Type_NONE;
 const Command_Type Command_Type_Type_MAX = Command_Type_START_MOVIE;
 const int Command_Type_Type_ARRAYSIZE = Command_Type_Type_MAX + 1;
 
@@ -207,6 +208,7 @@ class Command : public ::google::protobuf::Message {
   typedef Command_Information Information;
   
   typedef Command_Type Type;
+  static const Type NONE = Command_Type_NONE;
   static const Type SET_POSITION = Command_Type_SET_POSITION;
   static const Type PREVIOUS_CHAPTER = Command_Type_PREVIOUS_CHAPTER;
   static const Type NEXT_CHAPTER = Command_Type_NEXT_CHAPTER;

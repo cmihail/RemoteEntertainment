@@ -116,6 +116,10 @@ static void receiveCommand(socket_descriptor_t fileDescriptor) {
     cout << "[SERVER] Pause\n";
   } else if (playerCommand->getType() == proto::Command::PLAY) {
     cout << "[SERVER] Play\n";
+  } else  if (playerCommand->getType() == proto::Command::REWIND) {
+    cout << "[SERVER] Rewind\n";
+  } else  if (playerCommand->getType() == proto::Command::FAST_FORWARD) {
+    cout << "[SERVER] Fast Forward\n";
   } else {
     cout << "[SERVER] Other command\n";
   }
