@@ -4,6 +4,11 @@ import client.Client;
 import client.PlayerCommand;
 import proto.ProtoPlayer.Command.Type;
 
+/**
+ * TODO(cmihail): comments
+ *
+ * @author cmihail (Mihail Costea)
+ */
 public class ClientThread extends Thread {
 
   private Client client;
@@ -15,8 +20,9 @@ public class ClientThread extends Thread {
   @Override
   public void run() {
     // Create a client to connect to server. // TODO(cmihail): set params into settings activity
-    client.connect("192.168.2.2", 10001);
-    // TODO(Cmihail): problem, client reconnects when changing layout vertically / horizontally
+    client.connect("192.168.2.2", 10000);
+    // TODO(cmihail): problem, client reconnects when changing layout vertically / horizontally
+    // and doesn't close old socket either
 
     while (true) {
       PlayerCommand playerCommmand = client.receiveCommand();
@@ -33,7 +39,7 @@ public class ClientThread extends Thread {
   }
 
   public void sendCommand(final Type type) {
-    Thread thread = new Thread() {
+    Thread thread = new Thread() { // TODO(cmihail): use only one thread, not multiple
       @Override
       public void run() {
         client.sendCommand(new PlayerCommand(type));

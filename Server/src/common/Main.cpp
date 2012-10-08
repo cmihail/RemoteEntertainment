@@ -5,7 +5,7 @@
  *      Author: cmihail
  */
 
-#include "../unix/Process.h"
+#include "Process.h"
 #include "Server.h"
 
 #include <cassert>
@@ -20,29 +20,27 @@
 
 using namespace std;
 
-Process * createMediaPlayer(string port) {
+Process * createMediaPlayer(string pathToMovie, string port) {
   // TODO(cmihail): only for dev
   string program = "java";
-  string * programArgs = new string[6];
-  programArgs[0] = "-cp";
-  programArgs[1] = ".:../MediaPlayer/lib/vlcj-2.1.0.jar:" +
-      string(":../proto/protobuf-java-2.4.1.jar:../proto/common-client.jar");
-  programArgs[2] = "-Djna.library.path=/Applications/VLC.app/Contents/MacOS/lib";
-  programArgs[3] = "player/Main";
-  programArgs[4] = "/Users/cmihail/Downloads/Lockout.UNRATED.720p.BluRay.x264-BLOW [PublicHD]" +
-      string("/Lockout.UNRATED.720p.BluRay.x264-BLOW.PublicHD.mkv");
-  programArgs[5] = port;
+  string * programArgs = new string[5];
+  programArgs[0] = "-Djna.library.path=/Applications/VLC.app/Contents/MacOS/lib";
+  programArgs[1] = "-jar";
+  programArgs[2] = "media-player.jar";
+  programArgs[3] = pathToMovie;
+  programArgs[4] = port;
 
-  return new Process(program, 6, programArgs);
+  return new Process(program, 5, programArgs);
 }
 
 int main(int argc, char ** argv) {
-  if (argc != 2) {
-    cerr << "Usage: ./Main <port>\n";
+  if (argc != 3) {
+    cerr << "Usage: ./MainServer <path_to_movie> <port>\n";
     return 1;
   }
 
-  Server * server = new Server(atoi(argv[1]));
-  createMediaPlayer(argv[1]);
+  Server * server = new Server(atoi(argv[2]));
+  createMediaPlayer(argv[1], argv[2]);
   server->run();
+  delete server;
 }

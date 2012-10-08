@@ -85,7 +85,7 @@ public class Player {
 
       @Override
       public void onRewind(boolean notifyExecution) {
-        playerView.getMediaPlayer().skip(SKIP_TIME_MS);
+        playerView.getMediaPlayer().skip(-SKIP_TIME_MS);
         sendCommand(Type.REWIND, notifyExecution);
       }
 

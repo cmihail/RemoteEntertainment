@@ -8,13 +8,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#ifdef _WIN32
-typedef HANDLE socket_descriptor_t;
-#elif __linux__ || __APPLE__
-typedef unsigned int socket_descriptor_t;
-#else
-  // TODO(cmihail): error
-#endif
+#include "Common.h"
 
 class Client {
   socket_descriptor_t socketDescriptor;

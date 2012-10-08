@@ -5,10 +5,24 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ImageButton;
 
+/**
+ * TODO(cmihail): comments
+ *
+ * @author cmihail (Mihail Costea)
+ */
 public class MainActivity extends Activity {
 
   private final ClientThread clientThread;
+
+  private ImageButton rewindButton;
+  private ImageButton forwardButton;
+  private ImageButton playPauseButton;
+  private ImageButton previousButton;
+  private ImageButton nextButton;
+
+  private boolean isPlaying = true; // TODO(cmihail): move this into it's own class
 
   public MainActivity() {
     clientThread = new ClientThread();
@@ -17,9 +31,20 @@ public class MainActivity extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+    setContentView(R.layout.player);
 
+    // Start client thread which communicates with the server.
     clientThread.start();
+
+    // Assign button.
+    rewindButton = (ImageButton) findViewById(R.id.rewindButton);
+    forwardButton = (ImageButton) findViewById(R.id.forwardButton);
+    playPauseButton = (ImageButton) findViewById(R.id.playPauseButton);
+    previousButton = (ImageButton) findViewById(R.id.previousButton);
+    nextButton = (ImageButton) findViewById(R.id.nextButton);
+
+    // Bind listeners to buttons.
+    bindListeners();
   }
 
   @Override
@@ -28,19 +53,39 @@ public class MainActivity extends Activity {
       return true;
   }
 
-  public void onPlayPauseButtonClick(View view) {
-    clientThread.sendCommand(Type.PAUSE); // TODO(cmihail): keep state of player
+  public void bindListeners() {
+    imageButtonAction(rewindButton, Type.REWIND); // TODO(cmihail): Maybe backward instead of rewind
+    imageButtonAction(forwardButton, Type.FAST_FORWARD); // TODO(cmihail): forward instead of fast forward
+
+    playPauseButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if (isPlaying) {
+          clientThread.sendCommand(Type.PAUSE);
+          playPauseButton.setImageResource(R.drawable.btn_pause);
+        } else {
+          clientThread.sendCommand(Type.PAUSE);
+          playPauseButton.setImageResource(R.drawable.btn_play);
+        }
+        isPlaying = !isPlaying;
+      }
+    });
+
+    imageButtonAction(previousButton, Type.PREVIOUS_CHAPTER); // TODO(cmihail): no chapter
+    imageButtonAction(nextButton, Type.NEXT_CHAPTER); // TODO(cmihail): no chapter
   }
 
-  public void onRewindButtonClick(View view) {
-    clientThread.sendCommand(Type.REWIND);
+  // TODO(cmihail): temporary solution
+  public void imageButtonAction(ImageButton button, final Type type) {
+    button.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        clientThread.sendCommand(type); // TODO(cmihail): keep state of player
+      }
+    });
   }
 
-  public void onFastForwardButtonClick(View view) {
-    clientThread.sendCommand(Type.FAST_FORWARD);
-  }
-
-  public void onToggleFullScreenButtonClick(View view) {
-    clientThread.sendCommand(Type.TOGGLE_FULL_SCREEN);
-  }
+//  public void onToggleFullScreenButtonClick(View view) { TODO
+//    clientThread.sendCommand(Type.TOGGLE_FULL_SCREEN);
+//  }
 }

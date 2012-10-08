@@ -9,7 +9,7 @@ public class Main {
 	public static void main(String[] args) {
 		if (args.length != 2) {
 			// TODO(cmihail): just for dev, delete when not needed any more
-			System.err.println("Usage: ./Player <path_to_movie> <port>");
+			System.err.println("Usage: ./PlayerMain <path_to_movie> <port>");
 			System.exit(1);
 		}
 		final String pathToMovie = args[0];

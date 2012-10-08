@@ -9,11 +9,9 @@
 #define SERVER_H_
 
 class Server {
-  unsigned int listenSocket; // TODO(cmihail): change to file_descriptor_t
-
 public:
   Server(int serverPort);
-  ~Server();
+  virtual ~Server();
 
   void run();
 };

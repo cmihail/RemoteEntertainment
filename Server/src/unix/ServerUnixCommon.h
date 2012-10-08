@@ -10,7 +10,7 @@
 
 int serverUnixCommon_init(int serverPort, int maxNumOfClients);
 
-int serverUnixCommon_newConnection(int listenSocketFileDescriptor);
-void serverUnixCommon_endConnection();
+int serverUnixCommon_newConnection(int listenSocket);
+void serverUnixCommon_endConnection(int socket);
 
 #endif /* SERVERUNIXCOMMON_H_ */

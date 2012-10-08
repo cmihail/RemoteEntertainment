@@ -16,6 +16,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <sys/types.h>
+
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
@@ -43,19 +44,18 @@ int serverUnixCommon_init(int serverPort, int maxNumOfClients) {
   return socketFileDescriptor;
 }
 
-int serverUnixCommon_newConnection(int listenSocketFileDescriptor) {
-  // TODO(cmiahil): memorize new client into a class
+int serverUnixCommon_newConnection(int listenSocket) {
   struct sockaddr_in clientAddr;
   int clientLength = sizeof(clientAddr);
 
   // Accept new connection.
-  int newSocketFileDescriptor = accept(listenSocketFileDescriptor,
+  int newSocketFileDescriptor = accept(listenSocket,
       (struct sockaddr *) &clientAddr, (socklen_t *) &clientLength);
   assert(newSocketFileDescriptor != -1);
 
   return newSocketFileDescriptor;
 }
 
-void serverUnixCommon_endConnection() {
-
+void serverUnixCommon_endConnection(int socket) {
+  close(socket);
 }
