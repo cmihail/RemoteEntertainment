@@ -11,6 +11,7 @@
 #include "../common/proto/PlayerCommand.h"
 #include "ServerUnixCommon.h"
 #include "EventListener.h"
+#include "../common/Message.h"
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
@@ -19,31 +20,24 @@
 #include <iostream>  // TODO(cmihail): use logger instead
 #include <map>
 
-#include <fcntl.h>
-#include <sys/socket.h>
-
 #define MAX_NUM_OF_CLIENTS 5
 
 using namespace std;
 
-unsigned int maxNumOfEvents;
-
-socket_descriptor_t listenSocket;
-map<socket_descriptor_t, Client> clientsMap;
+int listenSocket;
 
 EventListener * eventListener;
+map<socket_descriptor_t, Client> clientsMap;
 
 Server::Server(int serverPort) {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  // Number of clients for read events on sockets + a server socket listener.
-  maxNumOfEvents = MAX_NUM_OF_CLIENTS + 1;
-
   // Init server and event listener.
   listenSocket = serverUnixCommon_init(serverPort, MAX_NUM_OF_CLIENTS);
-  eventListener = new EventListener(maxNumOfEvents);
+  eventListener = new EventListener(MAX_NUM_OF_CLIENTS + 1);
+
   // Add event for the server socket used for listening incoming connections.
-  eventListener->addEvent(listenSocket);
+  assert(eventListener->addEvent(listenSocket) == true);
 }
 
 Server::~Server() {
@@ -51,15 +45,17 @@ Server::~Server() {
 }
 
 static void registerNewClient(int listenSocket) {
-//  if (currectNumOfChangeEvents == maxNumOfEvents) { TODO(cmihail): add this to addEvent
-//    cout << "Maxmum number of clients received" << endl;
-//    return;
-//  }
-
-  // Add read event for the newly created socket.;
+  // Create new socket for the new connection and add read event for it.
   int clientSocket = serverUnixCommon_newConnection(listenSocket);
-  eventListener->addEvent(clientSocket);
+  if (clientSocket == -1) {
+    cout << "Maxmum number of clients received" << endl;
+    // TODO(cmihail): alternative for workaround and must be tested more
+    eventListener->deleteEvent(listenSocket);
+    eventListener->addEvent(listenSocket);
+    return;
+  }
 
+  assert(eventListener->addEvent(clientSocket) == true);
   clientsMap.insert(pair<socket_descriptor_t, Client>(clientSocket, Client(clientSocket)));
 }
 
@@ -79,15 +75,11 @@ static void printCommand(PlayerCommand * playerCommand) {
 }
 
 static void receiveCommand(socket_descriptor_t clientSocket) {
-  // Receive command from server.
-  int BUFFER_SIZE = 2000; // TODO(cmihail): change 2000
-  char * dataBuffer = new char[BUFFER_SIZE];
-  memset(dataBuffer, 0, BUFFER_SIZE);
-  int n = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
-  assert(n >= 0);
+  // Receive data from server.
+  Message inputMessage = serverUnixCommon_receive(clientSocket);
 
   // Check if connection with client has ended.
-  if (n == 0) {
+  if (!inputMessage.hasContent()) {
     cout << "[Server] Connection ended\n";
     eventListener->deleteEvent(clientSocket);
     serverUnixCommon_endConnection(clientSocket);
@@ -95,17 +87,18 @@ static void receiveCommand(socket_descriptor_t clientSocket) {
     return;
   }
 
-  PlayerCommand * playerCommand = new PlayerCommand(string(dataBuffer));
+  PlayerCommand * playerCommand = new PlayerCommand(string(inputMessage.getContent()));
   printCommand(playerCommand);
 
   // Send command to all other clients.
   map<socket_descriptor_t, Client>::iterator it = clientsMap.begin();
   map<socket_descriptor_t, Client>::iterator itEnd = clientsMap.end();
   string codedBuffer = playerCommand->toCodedBuffer();
+  Message outputMessage(codedBuffer.length()); // TODO(cmihail): length calculated twice
+  outputMessage.setContent(codedBuffer.c_str(), codedBuffer.length());
   for (; it != itEnd; it++) {
     if (it->first != clientSocket) {
-      // TODO(cmihail): check value returned by <send>
-      assert(send(it->first, codedBuffer.c_str(), codedBuffer.length(), 0) >= 0);
+      serverUnixCommon_send(it->first, outputMessage);
     }
   }
 

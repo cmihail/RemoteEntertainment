@@ -9,9 +9,9 @@
 #define COMMON_H
 
 #ifdef _WIN32
-typedef HANDLE socket_descriptor_t;
+  typedef HANDLE socket_descriptor_t;
 #elif __linux__ || __APPLE__
-typedef unsigned int socket_descriptor_t;
+  typedef unsigned int socket_descriptor_t;
 #else
   // TODO(cmihail): error
 #endif

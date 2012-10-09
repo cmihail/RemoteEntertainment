@@ -5,7 +5,7 @@ CFLAGS = -Wall -g
 
 .build: Main
 
-Main: bin/Main.o bin/Client.o bin/player.pb.o bin/PlayerCommand.o bin/Process.o bin/EventListener.o bin/ServerUnix.o bin/ServerUnixCommon.o
+Main: bin/Main.o bin/Client.o bin/Message.o bin/player.pb.o bin/PlayerCommand.o bin/Process.o bin/EventListener.o bin/ServerUnix.o bin/ServerUnixCommon.o
 	$(CC) $^ -o $@ -lprotobuf
 
 bin/Main.o: src/common/Main.cpp
@@ -23,8 +23,8 @@ bin/PlayerCommand.o: src/common/proto/PlayerCommand.cpp
 bin/Process.o: src/unix/Process.cpp
 	$(CC) $^ $(CFLAGS) -c -o $@
 
-#bin/ServerMac.o: src/unix/mac/ServerMac.cpp 
-#	$(CC) $^ $(CFLAGS) -c -o $@
+bin/Message.o: src/common/Message.cpp
+	$(CC) $^ $(CFLAGS) -c -o $@
 
 bin/EventListener.o: src/unix/mac/EventListener.cpp
 	$(CC) $^ $(CFLAGS) -c -o $@

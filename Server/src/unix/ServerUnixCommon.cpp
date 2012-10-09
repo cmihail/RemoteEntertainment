@@ -22,7 +22,11 @@
 #include <dirent.h>
 #include <netdb.h>
 
-int serverUnixCommon_init(int serverPort, int maxNumOfClients) {
+int currectNumOfClients = 0;
+int maxNumOfClients = 0;
+
+int serverUnixCommon_init(int serverPort, int maximumNumOfClients) {
+  maxNumOfClients = maximumNumOfClients;
   struct sockaddr_in serverAddr;
 
   // Create socket.
@@ -45,6 +49,10 @@ int serverUnixCommon_init(int serverPort, int maxNumOfClients) {
 }
 
 int serverUnixCommon_newConnection(int listenSocket) {
+  if (currectNumOfClients == maxNumOfClients) {
+    return -1;
+  }
+
   struct sockaddr_in clientAddr;
   int clientLength = sizeof(clientAddr);
 
@@ -53,9 +61,27 @@ int serverUnixCommon_newConnection(int listenSocket) {
       (struct sockaddr *) &clientAddr, (socklen_t *) &clientLength);
   assert(newSocketFileDescriptor != -1);
 
+  currectNumOfClients++;
   return newSocketFileDescriptor;
 }
 
 void serverUnixCommon_endConnection(int socket) {
   close(socket);
+  currectNumOfClients--;
+}
+
+Message serverUnixCommon_receive(int socket) {
+  Message message(2000); // TODO(cmihail): change 2000
+  int n = recv(socket, message.getContent(), message.getLength(), 0);
+  assert(n >= 0);
+
+  if (n == 0) {
+    message = Message(0); // TODO(cmihail): check if this produces memory leaks
+  }
+  return message;
+}
+
+void serverUnixCommon_send(int socket, Message & message) {
+  // TODO(cmihail): check value returned by <send>
+  assert(send(socket, message.getContent(), message.getLength(), 0) >= 0);
 }
