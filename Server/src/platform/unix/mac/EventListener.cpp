@@ -5,7 +5,7 @@
  *      Author: cmihail
  */
 
-#include "../../common/EventListener.h"
+#include "../../EventListener.h"
 
 #include <cassert>
 #include <cstdlib>

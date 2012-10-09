@@ -5,7 +5,7 @@
  *      Author: cmihail
  */
 
-#include "../common/Process.h"
+#include "../Process.h"
 
 #include <cassert>
 #include <cstdlib>

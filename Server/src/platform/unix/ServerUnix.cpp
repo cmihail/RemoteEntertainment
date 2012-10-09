@@ -1,6 +1,6 @@
 // TODO
 
-#include "../common/Server.h"
+#include "../../server/Server.h"
 
 #include <cassert>
 #include <cstdlib>

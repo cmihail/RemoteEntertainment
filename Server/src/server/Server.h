@@ -8,9 +8,11 @@
 #ifndef SERVER_H_
 #define SERVER_H_
 
-#include "Common.h"
-#include "Message.h"
+#include "../Common.h"
+#include "../Message.h"
 
+// TODO(cmihail): split server in order to have what is common separate from what is
+// platform dependent
 class Server {
   int serverPort;
   int maxNumOfClients;

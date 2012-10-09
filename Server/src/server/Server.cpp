@@ -7,10 +7,10 @@
 
 #include "Server.h" // TODO(cmihail): maybe to this using -I at compilation
 #include "Client.h" // TODO(cmihail): create a new package
-#include "EventListener.h"
-#include "Message.h"
-#include "proto/player.pb.h"
-#include "proto/PlayerCommand.h"
+#include "../platform/EventListener.h"
+#include "../Message.h"
+#include "../proto/player.pb.h"
+#include "../proto/PlayerCommand.h"
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 

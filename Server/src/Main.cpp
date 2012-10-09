@@ -5,8 +5,8 @@
  *      Author: cmihail
  */
 
-#include "Process.h"
-#include "Server.h"
+#include "platform/Process.h"
+#include "server/Server.h"
 
 #include <cassert>
 
