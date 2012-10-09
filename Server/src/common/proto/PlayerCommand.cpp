@@ -21,28 +21,27 @@ PlayerCommand::PlayerCommand(proto::Command::Type type, string info) : type(type
   // Nothing to do
 }
 
-// TODO(cmihail): see if string(dataBuffer) can produce problems
-PlayerCommand::PlayerCommand(string commandBuffer) {
+PlayerCommand::PlayerCommand(Message & codedMessage) {
   // Create a temporary buffer to contain the coded command.
-  int bufferSize = commandBuffer.length();
-  char * buffer = new char[bufferSize];
-  memcpy(buffer, commandBuffer.c_str(), bufferSize);
+//  int bufferSize = commandBuffer.length(); TODO(cmihail): see if necessary
+//  char * buffer = new char[bufferSize];
+//  memcpy(buffer, commandBuffer.c_str(), bufferSize);
 
   // Read the command from the temporary buffer.
   google::protobuf::io::ZeroCopyInputStream * zeroCopyInputStream =
-      new google::protobuf::io::ArrayInputStream(buffer, bufferSize);
+      new google::protobuf::io::ArrayInputStream(codedMessage.getContent(),
+          codedMessage.getLength());
   google::protobuf::io::CodedInputStream * codedInputStream =
       new google::protobuf::io::CodedInputStream(zeroCopyInputStream);
   google::protobuf::uint32 size;
   codedInputStream->ReadVarint32(&size);
-//  google::protobuf::io::CodedInputStream::Limit commandLimit = TODO(cmihail): see if needed
   codedInputStream->PushLimit(size);
 
   proto::Command command;
   command.ParseFromCodedStream(codedInputStream);
   codedInputStream->PopLimit(size);
 
-  // Set type and info and free space.
+  // Set type and info.
   type = command.type();
   if (command.has_info()) {
     info = command.info().value();
@@ -50,9 +49,9 @@ PlayerCommand::PlayerCommand(string commandBuffer) {
     info = EMPTY_STRING;
   }
 
+  // Free space.
   delete codedInputStream;
   delete zeroCopyInputStream;
-  delete buffer;
 }
 
 proto::Command PlayerCommand::toProto() {
@@ -74,28 +73,24 @@ string PlayerCommand::getInformation() {
 }
 
 // TODO(cmihail): see if string(dataBuffer) can produce problems
-string PlayerCommand::toCodedBuffer() {
+Message PlayerCommand::toCodedMessage() {
   proto::Command command = this->toProto();
 
-  // Create a temporary buffer to contain the coded command.
-  int bufferSize = command.ByteSize() + sizeof(bufferSize) + 1;
-  char * buffer = new char[bufferSize];
-  memset(buffer, 0, bufferSize);
+  // Create a message that will contain the coded command.
+  Message codedMessage(command.ByteSize() + sizeof(int) + 1);
 
   // Serialize the command to the temporary coded buffer.
   google::protobuf::io::ZeroCopyOutputStream * zeroCopyOutputStream =
-      new google::protobuf::io::ArrayOutputStream(buffer, bufferSize);
+      new google::protobuf::io::ArrayOutputStream(codedMessage.getContent(),
+          codedMessage.getLength());
   google::protobuf::io::CodedOutputStream * codedOutputStream =
       new google::protobuf::io::CodedOutputStream(zeroCopyOutputStream);
   codedOutputStream->WriteVarint32(command.ByteSize());
   assert(command.SerializeToCodedStream(codedOutputStream));
 
-  // Create coded buffer and free space.
-  string codedBuffer(buffer);
-
+  // Free space.
   delete codedOutputStream;
   delete zeroCopyOutputStream;
-  delete buffer;
 
-  return codedBuffer;
+  return codedMessage;
 }

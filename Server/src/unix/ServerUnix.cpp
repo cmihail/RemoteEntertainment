@@ -87,15 +87,13 @@ static void receiveCommand(socket_descriptor_t clientSocket) {
     return;
   }
 
-  PlayerCommand * playerCommand = new PlayerCommand(string(inputMessage.getContent()));
+  PlayerCommand * playerCommand = new PlayerCommand(inputMessage);
   printCommand(playerCommand);
 
   // Send command to all other clients.
   map<socket_descriptor_t, Client>::iterator it = clientsMap.begin();
   map<socket_descriptor_t, Client>::iterator itEnd = clientsMap.end();
-  string codedBuffer = playerCommand->toCodedBuffer();
-  Message outputMessage(codedBuffer.length()); // TODO(cmihail): length calculated twice
-  outputMessage.setContent(codedBuffer.c_str(), codedBuffer.length());
+  Message outputMessage = playerCommand->toCodedMessage();
   for (; it != itEnd; it++) {
     if (it->first != clientSocket) {
       serverUnixCommon_send(it->first, outputMessage);
