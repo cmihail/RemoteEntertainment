@@ -8,12 +8,24 @@
 #ifndef SERVER_H_
 #define SERVER_H_
 
+#include "Common.h"
+#include "Message.h"
+
 class Server {
+  int serverPort;
+  int maxNumOfClients;
+  socket_descriptor_t init();
+
 public:
   Server(int serverPort);
   virtual ~Server();
 
   void run();
+
+  socket_descriptor_t newConnection(socket_descriptor_t listenSocket);
+  void endConnection(socket_descriptor_t socketDescriptor);
+  Message receiveMessage(socket_descriptor_t socketDescriptor);
+  void sendMessage(socket_descriptor_t socketDescriptor, Message & message);
 };
 
 

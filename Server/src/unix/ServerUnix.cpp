@@ -1,138 +1,80 @@
-/*
- * ServerUnix.cpp
- *
- *  Created on: Oct 8, 2012
- *      Author: cmihail
- */
+// TODO
 
-#include "../common/Server.h" // TODO(cmihail): maybe to this using -I at compilation
-#include "../common/Client.h"
-#include "../common/proto/player.pb.h"
-#include "../common/proto/PlayerCommand.h"
-#include "ServerUnixCommon.h"
-#include "EventListener.h"
-#include "../common/Message.h"
+#include "../common/Server.h"
 
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-
-#include <cassert> // TODO(cmihail): not sure about this cassert, maybe a logger instead
+#include <cassert>
 #include <cstdlib>
-#include <iostream>  // TODO(cmihail): use logger instead
-#include <map>
+#include <cstring>
 
-#define MAX_NUM_OF_CLIENTS 5
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <sys/types.h>
 
-using namespace std;
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <netdb.h>
 
-int listenSocket;
+int currectNumOfClients = 0;
 
-EventListener * eventListener;
-map<socket_descriptor_t, Client> clientsMap;
+socket_descriptor_t Server::init() {
+  struct sockaddr_in serverAddr;
 
-Server::Server(int serverPort) {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
+  // Create socket.
+  int socketFileDescriptor = socket(AF_INET, SOCK_STREAM, 0);
+  assert(socketFileDescriptor >= 0);
 
-  // Init server and event listener.
-  listenSocket = serverUnixCommon_init(serverPort, MAX_NUM_OF_CLIENTS);
-  eventListener = new EventListener(MAX_NUM_OF_CLIENTS + 1);
+  // Create server.
+  memset((char *) &serverAddr, 0, sizeof(serverAddr));
+  serverAddr.sin_family = AF_INET;
+  serverAddr.sin_addr.s_addr = INADDR_ANY; // Use localhost public IP.
+  serverAddr.sin_port = htons(serverPort);
 
-  // Add event for the server socket used for listening incoming connections.
-  assert(eventListener->addEvent(listenSocket) == true);
+  // Bind the socket to the server.
+  assert(bind(socketFileDescriptor, (struct sockaddr *) &serverAddr,
+      sizeof(struct sockaddr)) >= 0);
+
+  // Socket used for listening.
+  listen(socketFileDescriptor, maxNumOfClients);
+  return socketFileDescriptor;
 }
 
-Server::~Server() {
-  delete eventListener;
+socket_descriptor_t Server::newConnection(socket_descriptor_t listenSocket) {
+  if (currectNumOfClients == maxNumOfClients) {
+     return -1;
+   }
+
+   struct sockaddr_in clientAddr;
+   int clientLength = sizeof(clientAddr);
+
+   // Accept new connection.
+   int newSocketFileDescriptor = accept(listenSocket,
+       (struct sockaddr *) &clientAddr, (socklen_t *) &clientLength);
+   assert(newSocketFileDescriptor != -1);
+
+   currectNumOfClients++;
+   return newSocketFileDescriptor;
 }
 
-static void registerNewClient(int listenSocket) {
-  // Create new socket for the new connection and add read event for it.
-  int clientSocket = serverUnixCommon_newConnection(listenSocket);
-  if (clientSocket == -1) {
-    cout << "Maxmum number of clients received" << endl;
-    // TODO(cmihail): alternative for workaround and must be tested more
-    eventListener->deleteEvent(listenSocket);
-    eventListener->addEvent(listenSocket);
-    return;
-  }
-
-  assert(eventListener->addEvent(clientSocket) == true);
-  clientsMap.insert(pair<socket_descriptor_t, Client>(clientSocket, Client(clientSocket)));
+void Server::endConnection(socket_descriptor_t socketDescriptor) {
+  close(socketDescriptor);
+  currectNumOfClients--;
 }
 
-// TODO(cmihail): only for dev, it should be send to all other clients
-static void printCommand(PlayerCommand * playerCommand) {
-  if (playerCommand->getType() == proto::Command::PAUSE) {
-    cout << "[SERVER] Pause\n";
-  } else if (playerCommand->getType() == proto::Command::PLAY) {
-    cout << "[SERVER] Play\n";
-  } else  if (playerCommand->getType() == proto::Command::REWIND) {
-    cout << "[SERVER] Rewind\n";
-  } else  if (playerCommand->getType() == proto::Command::FAST_FORWARD) {
-    cout << "[SERVER] Fast Forward\n";
-  } else {
-    cout << "[SERVER] Other command\n";
+Message Server::receiveMessage(socket_descriptor_t socketDescriptor) {
+  Message message(2000); // TODO(cmihail): change 2000
+  int n = recv(socketDescriptor, message.getContent(), message.getLength(), 0);
+  assert(n >= 0);
+
+  if (n == 0) {
+    message = Message(0); // TODO(cmihail): check if this produces memory leaks
   }
+  return message;
 }
 
-static void receiveCommand(socket_descriptor_t clientSocket) {
-  // Receive data from server.
-  Message inputMessage = serverUnixCommon_receive(clientSocket);
-
-  // Check if connection with client has ended.
-  if (!inputMessage.hasContent()) {
-    cout << "[Server] Connection ended\n";
-    eventListener->deleteEvent(clientSocket);
-    serverUnixCommon_endConnection(clientSocket);
-    clientsMap.erase(clientSocket);
-    return;
-  }
-
-  PlayerCommand * playerCommand = new PlayerCommand(inputMessage);
-  printCommand(playerCommand);
-
-  // Send command to all other clients.
-  map<socket_descriptor_t, Client>::iterator it = clientsMap.begin();
-  map<socket_descriptor_t, Client>::iterator itEnd = clientsMap.end();
-  Message outputMessage = playerCommand->toCodedMessage();
-  for (; it != itEnd; it++) {
-    if (it->first != clientSocket) {
-      serverUnixCommon_send(it->first, outputMessage);
-    }
-  }
-
-  delete playerCommand;
-}
-
-void Server::run() {
-  while(true) {
-    int numOfTriggeredEvents = eventListener->checkEvents();
-    assert(numOfTriggeredEvents >= 0);
-    if (numOfTriggeredEvents == 0) {
-      cout << "No events\n"; // TODO(cmihail): log and another behavior
-      _exit(EXIT_FAILURE);
-    }
-
-    // Get event type based on
-    for (int i = 0; i < numOfTriggeredEvents; i++) {
-      int descriptor = eventListener->getDescriptor(i);
-      assert(descriptor != -1);
-
-      // Receive new connection.
-      if (listenSocket == descriptor) {
-        cout << "[SERVER] New Client\n";
-        registerNewClient(listenSocket);
-        continue;
-      }
-
-      // Receive commands from clients.
-      map<socket_descriptor_t, Client>::iterator it = clientsMap.find(descriptor);
-      if (it != clientsMap.end()) {
-        cout << "[SERVER] Command received\n";
-        receiveCommand(descriptor);
-        continue;
-      } else {
-        // TODO
-      }
-    }
-  }
+void Server::sendMessage(socket_descriptor_t socketDescriptor, Message & message) {
+  // TODO(cmihail): check value returned by <send>
+  assert(send(socketDescriptor, message.getContent(), message.getLength(), 0) >= 0);
 }

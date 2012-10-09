@@ -1,17 +1,26 @@
 CC = g++
 CFLAGS = -Wall -g
 
+COMMON_DEPS = bin/Main.o bin/Client.o bin/Message.o bin/Server.o bin/player.pb.o bin/PlayerCommand.o
+PLATFORM_DEPS = bin/Process.o bin/ServerUnix.o bin/EventListener.o
+
 .PHONY: build clean
 
 .build: Main
 
-Main: bin/Main.o bin/Client.o bin/Message.o bin/player.pb.o bin/PlayerCommand.o bin/Process.o bin/EventListener.o bin/ServerUnix.o bin/ServerUnixCommon.o
+Main: $(COMMON_DEPS) $(PLATFORM_DEPS)
 	$(CC) $^ -o $@ -lprotobuf
 
 bin/Main.o: src/common/Main.cpp
 	$(CC) $^ $(CFLAGS) -c -o $@
 
 bin/Client.o: src/common/Client.cpp
+	$(CC) $^ $(CFLAGS) -c -o $@
+
+bin/Message.o: src/common/Message.cpp
+	$(CC) $^ $(CFLAGS) -c -o $@
+
+bin/Server.o: src/common/Server.cpp
 	$(CC) $^ $(CFLAGS) -c -o $@
 
 bin/player.pb.o: src/common/proto/player.pb.cc
@@ -23,16 +32,10 @@ bin/PlayerCommand.o: src/common/proto/PlayerCommand.cpp
 bin/Process.o: src/unix/Process.cpp
 	$(CC) $^ $(CFLAGS) -c -o $@
 
-bin/Message.o: src/common/Message.cpp
-	$(CC) $^ $(CFLAGS) -c -o $@
-
-bin/EventListener.o: src/unix/mac/EventListener.cpp
-	$(CC) $^ $(CFLAGS) -c -o $@
-
 bin/ServerUnix.o: src/unix/ServerUnix.cpp
 	$(CC) $^ $(CFLAGS) -c -o $@
 
-bin/ServerUnixCommon.o: src/unix/ServerUnixCommon.cpp
+bin/EventListener.o: src/unix/mac/EventListener.cpp
 	$(CC) $^ $(CFLAGS) -c -o $@
 
 clean:
