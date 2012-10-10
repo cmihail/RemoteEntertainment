@@ -6,10 +6,9 @@
  */
 
 #include "../Process.h"
+#include "../../Logger.h"
 
-#include <cassert>
 #include <cstdlib>
-#include <cstdio> // TODO(cmihail): only for dev
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -23,7 +22,9 @@ Process::Process(std::string program, int nrArgs, std::string programArgs[]) {
   // Create new process.
   pid = fork();
   char ** args = NULL;
-  assert(pid >= 0);
+  if (pid == -1) {
+    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Couldn't fork");
+  }
 
   if (pid == 0) {
     // Convert program arguments in order to be used by execvp.
@@ -35,7 +36,6 @@ Process::Process(std::string program, int nrArgs, std::string programArgs[]) {
     args[nrArgs + 1] = NULL;
 
     execvp(args[0], args);
-    printf("[Server] Couldn't exec media player\n");
-    _exit(EXIT_FAILURE); // TODO(cmihail): LOG
+    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Couldn't exec media player");
   }
 }

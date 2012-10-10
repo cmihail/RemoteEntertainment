@@ -22,11 +22,6 @@ PlayerCommand::PlayerCommand(proto::Command::Type type, string info) : type(type
 }
 
 PlayerCommand::PlayerCommand(Message & codedMessage) {
-  // Create a temporary buffer to contain the coded command.
-//  int bufferSize = commandBuffer.length(); TODO(cmihail): see if necessary
-//  char * buffer = new char[bufferSize];
-//  memcpy(buffer, commandBuffer.c_str(), bufferSize);
-
   // Read the command from the temporary buffer.
   google::protobuf::io::ZeroCopyInputStream * zeroCopyInputStream =
       new google::protobuf::io::ArrayInputStream(codedMessage.getContent(),
@@ -72,7 +67,6 @@ string PlayerCommand::getInformation() {
   return info;
 }
 
-// TODO(cmihail): see if string(dataBuffer) can produce problems
 Message PlayerCommand::toCodedMessage() {
   proto::Command command = this->toProto();
 

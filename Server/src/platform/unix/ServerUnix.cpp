@@ -1,10 +1,16 @@
-// TODO
+/*
+ * ServerUnix.cpp
+ *
+ *  Created on: Oct 8, 2012
+ *      Author: cmihail
+ */
 
+#include "../../Logger.h"
 #include "../../server/Server.h"
 
-#include <cassert>
 #include <cstdlib>
 #include <cstring>
+#include <sstream>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -17,14 +23,18 @@
 #include <dirent.h>
 #include <netdb.h>
 
+using namespace std;
+
 int currectNumOfClients = 0;
 
 socket_descriptor_t Server::init() {
   struct sockaddr_in serverAddr;
 
   // Create socket.
-  int socketFileDescriptor = socket(AF_INET, SOCK_STREAM, 0);
-  assert(socketFileDescriptor >= 0);
+  int listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+  if (listenSocket < 0) {
+    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Couldn't create server socket");
+  }
 
   // Create server.
   memset((char *) &serverAddr, 0, sizeof(serverAddr));
@@ -33,12 +43,13 @@ socket_descriptor_t Server::init() {
   serverAddr.sin_port = htons(serverPort);
 
   // Bind the socket to the server.
-  assert(bind(socketFileDescriptor, (struct sockaddr *) &serverAddr,
-      sizeof(struct sockaddr)) >= 0);
+  if (bind(listenSocket, (struct sockaddr *) &serverAddr, sizeof(struct sockaddr)) < 0) {
+    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Couldn't bind server socket");
+  }
 
   // Socket used for listening.
-  listen(socketFileDescriptor, maxNumOfClients);
-  return socketFileDescriptor;
+  listen(listenSocket, maxNumOfClients);
+  return listenSocket;
 }
 
 socket_descriptor_t Server::newConnection(socket_descriptor_t listenSocket) {
@@ -52,7 +63,11 @@ socket_descriptor_t Server::newConnection(socket_descriptor_t listenSocket) {
    // Accept new connection.
    int newSocketFileDescriptor = accept(listenSocket,
        (struct sockaddr *) &clientAddr, (socklen_t *) &clientLength);
-   assert(newSocketFileDescriptor != -1);
+   if (newSocketFileDescriptor < 0) {
+     Logger::print(__FILE__, __LINE__, Logger::WARNING,
+         "Couldn't create new socket for new connection");
+     return -1;
+   }
 
    currectNumOfClients++;
    return newSocketFileDescriptor;
@@ -66,7 +81,11 @@ void Server::endConnection(socket_descriptor_t socketDescriptor) {
 Message Server::receiveMessage(socket_descriptor_t socketDescriptor) {
   Message message(2000); // TODO(cmihail): change 2000
   int n = recv(socketDescriptor, message.getContent(), message.getLength(), 0);
-  assert(n >= 0);
+  if (n < 0) {
+    stringstream out;
+    out << "Problem at receiving data from " << socketDescriptor;
+    Logger::print(__FILE__, __LINE__, Logger::ERROR, out.str()); // TODO(cmihail): maybe not ERROR
+  }
 
   if (n == 0) {
     message = Message(0); // TODO(cmihail): check if this produces memory leaks
@@ -75,6 +94,10 @@ Message Server::receiveMessage(socket_descriptor_t socketDescriptor) {
 }
 
 void Server::sendMessage(socket_descriptor_t socketDescriptor, Message & message) {
-  // TODO(cmihail): check value returned by <send>
-  assert(send(socketDescriptor, message.getContent(), message.getLength(), 0) >= 0);
+  // TODO(cmihail): check value returned by <send> to be the same as length
+  if (send(socketDescriptor, message.getContent(), message.getLength(), 0) < 0) {
+    stringstream out;
+    out << "Problem at sending data to " << socketDescriptor;
+    Logger::print(__FILE__, __LINE__, Logger::ERROR, out.str()); // TODO(cmihail): maybe not ERROR
+  }
 }

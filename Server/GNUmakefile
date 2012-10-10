@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -Wall -g
 
-COMMON_DEPS = bin/Main.o bin/Message.o bin/Client.o bin/Server.o bin/player.pb.o bin/PlayerCommand.o
+COMMON_DEPS = bin/Main.o bin/Message.o bin/Logger.o bin/Client.o bin/Server.o bin/player.pb.o bin/PlayerCommand.o
 PLATFORM_DEPS = bin/Process.o bin/ServerUnix.o bin/EventListener.o
 
 .PHONY: build clean
@@ -15,6 +15,9 @@ bin/Main.o: src/Main.cpp
 	$(CC) $^ $(CFLAGS) -c -o $@
 
 bin/Message.o: src/Message.cpp
+	$(CC) $^ $(CFLAGS) -c -o $@
+
+bin/Logger.o: src/Logger.cpp
 	$(CC) $^ $(CFLAGS) -c -o $@
 
 bin/Client.o: src/server/Client.cpp

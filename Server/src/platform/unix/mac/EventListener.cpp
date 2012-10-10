@@ -5,9 +5,9 @@
  *      Author: cmihail
  */
 
+#include "../../../Logger.h"
 #include "../../EventListener.h"
 
-#include <cassert>
 #include <cstdlib>
 
 #include <sys/event.h>
@@ -22,7 +22,9 @@ int currectNumOfEvents = 0;
 EventListener::EventListener(int maxNumOfEvents) : maxNumOfEvents(maxNumOfEvents) {
   // Create event notifier.
   kqueueFileDescriptor = kqueue();
-  assert(kqueueFileDescriptor != -1);
+  if (kqueueFileDescriptor == -1) {
+    Logger::print(__FILE__, __LINE__, Logger::ERROR, "kqueue error");
+  }
   changeList = new struct kevent[maxNumOfEvents]; // TODO(cmihail): maybe realloc when needed
   eventList = new struct kevent[maxNumOfEvents];
 }
@@ -45,10 +47,14 @@ bool EventListener::addEvent(socket_descriptor_t descriptor) {
 }
 
 bool EventListener::deleteEvent(socket_descriptor_t descriptor) {
+  if (descriptor < 0) {
+    return false;
+  }
+
   // Search for the correspondent event for the given descriptor.
   int i = 0;
   for (; i < currectNumOfEvents; i++) {
-    if (changeList[i].ident == descriptor) {
+    if (changeList[i].ident == (unsigned int) descriptor) {
       // Delete event from kqueue.
       EV_SET(&changeList[i], descriptor, EVFILT_READ, EV_DELETE, 0, 0, 0);
       struct kevent tempEventList;

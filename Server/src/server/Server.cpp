@@ -1,5 +1,5 @@
 /*
- * ServerUnix.cpp
+ * Server.cpp
  *
  *  Created on: Oct 8, 2012
  *      Author: cmihail
@@ -9,14 +9,15 @@
 #include "Client.h" // TODO(cmihail): create a new package
 #include "../platform/EventListener.h"
 #include "../Message.h"
+#include "../Logger.h"
 #include "../proto/player.pb.h"
 #include "../proto/PlayerCommand.h"
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
-#include <cassert> // TODO(cmihail): not sure about this cassert, maybe a logger instead
+#include <iostream> // TODO(cmihail): delete this in future
 #include <cstdlib>
-#include <iostream>  // TODO(cmihail): use logger instead
+#include <sstream>
 #include <map>
 
 using namespace std;
@@ -35,7 +36,11 @@ Server::Server(int serverPort) : serverPort(serverPort) {
   eventListener = new EventListener(this->maxNumOfClients + 1);
 
   // Add event for the server socket used for listening incoming connections.
-  assert(eventListener->addEvent(listenSocket) == true);
+  if (eventListener->addEvent(listenSocket) != true) {
+    stringstream out;
+    out << "EventListener->addEvent() failed for " << listenSocket;
+    Logger::print(__FILE__, __LINE__, Logger::ERROR, out.str());
+  }
 }
 
 Server::~Server() {
@@ -43,17 +48,27 @@ Server::~Server() {
 }
 
 static void registerNewClient(Server * server, socket_descriptor_t listenSocket) {
-  // Create new socket for the new connection and add read event for it.
+  // Create new socket for the new connection.
   int clientSocket = server->newConnection(listenSocket);
   if (clientSocket == -1) {
-    cout << "Maxmum number of clients received" << endl;
+    Logger::print(__FILE__, __LINE__, Logger::INFORMATION, "Maximum number of clients received");
     // TODO(cmihail): alternative for workaround and must be tested more
     eventListener->deleteEvent(listenSocket);
     eventListener->addEvent(listenSocket);
     return;
   }
 
-  assert(eventListener->addEvent(clientSocket) == true);
+  stringstream out;
+  out << "New client " << clientSocket;
+  Logger::print(__FILE__, __LINE__, Logger::INFORMATION, out.str());
+
+  // Add read event for the newly created socket.
+  if (eventListener->addEvent(clientSocket) != true) {
+    out.clear();
+    out << "EventListener->addEvent() failed for " << clientSocket;
+    Logger::print(__FILE__, __LINE__, Logger::WARNING, out.str());
+  }
+
   clientsMap.insert(pair<socket_descriptor_t, Client>(clientSocket, Client(clientSocket)));
 }
 
@@ -78,7 +93,9 @@ static void receiveCommand(Server * server, socket_descriptor_t clientSocket) {
 
   // Check if connection with client has ended.
   if (!inputMessage.hasContent()) {
-    cout << "[Server] Connection ended\n";
+    stringstream out;
+    out << "Connection ended for " << clientSocket;
+    Logger::print(__FILE__, __LINE__, Logger::INFORMATION, out.str());
     eventListener->deleteEvent(clientSocket);
     server->endConnection(clientSocket);
     clientsMap.erase(clientSocket);
@@ -106,8 +123,7 @@ void Server::run() {
     int numOfTriggeredEvents = eventListener->checkEvents();
     assert(numOfTriggeredEvents >= 0);
     if (numOfTriggeredEvents == 0) {
-      cout << "No events\n"; // TODO(cmihail): log and another behavior
-      _exit(EXIT_FAILURE);
+      Logger::print(__FILE__, __LINE__, Logger::WARNING, "No events");
     }
 
     // Get event type based on
@@ -117,7 +133,6 @@ void Server::run() {
 
       // Receive new connection.
       if (listenSocket == descriptor) {
-        cout << "[SERVER] New Client\n";
         registerNewClient(this, listenSocket);
         continue;
       }
@@ -125,11 +140,13 @@ void Server::run() {
       // Receive commands from clients.
       map<socket_descriptor_t, Client>::iterator it = clientsMap.find(descriptor);
       if (it != clientsMap.end()) {
-        cout << "[SERVER] Command received\n";
+        Logger::print(__FILE__, __LINE__, Logger::INFORMATION, "Command received ");
         receiveCommand(this, descriptor);
         continue;
       } else {
-        // TODO(cmihail): this should not be executed, log it
+        stringstream out;
+        out << "Not a valid socket descriptor: " << descriptor;
+        Logger::print(__FILE__, __LINE__, Logger::WARNING, out.str());
       }
     }
   }
