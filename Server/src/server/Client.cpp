@@ -5,7 +5,7 @@
  *      Author: cmihail
  */
 
-#include "Client.h"
+#include "server/Client.h"
 
 Client::Client(socket_descriptor_t socketDescriptor) : socketDescriptor(socketDescriptor) {
   // Nothing to do

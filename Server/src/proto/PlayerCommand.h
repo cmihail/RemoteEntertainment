@@ -8,8 +8,8 @@
 #ifndef PLAYERCOMMAND_H
 #define PLAYERCOMMAND_H
 
-#include "../Message.h"
-#include "player.pb.h"
+#include "Message.h"
+#include "proto/player.pb.h"
 
 class PlayerCommand {
   proto::Command_Type type;

@@ -5,14 +5,14 @@
  *      Author: cmihail
  */
 
-#include "../Process.h"
-#include "../../Logger.h"
+#include "Logger.h"
+#include "platform/Process.h"
 
 #include <cstdlib>
 
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <unistd.h>
 
 using namespace std;
 

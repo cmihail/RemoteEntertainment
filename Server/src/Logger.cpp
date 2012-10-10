@@ -9,8 +9,8 @@
 
 #include "Logger.h"
 
-#include <iostream> // TODO(cmihail): maybe use a file instead
 #include <cstdlib>
+#include <iostream> // TODO(cmihail): maybe use a file instead
 
 #define MAIN_HEADER "[SERVER]"
 

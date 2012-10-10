@@ -5,23 +5,22 @@
  *      Author: cmihail
  */
 
-#include "../../Logger.h"
-#include "../../server/Server.h"
+#include "Logger.h"
+#include "server/Server.h"
 
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <sys/types.h>
-
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <dirent.h>
+#include <fcntl.h>
 #include <netdb.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 using namespace std;
 

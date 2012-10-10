@@ -5,18 +5,12 @@
  *      Author: cmihail
  */
 
+#include "Logger.h"
 #include "platform/Process.h"
 #include "server/Server.h"
 
-#include <cassert>
-
 #include <iostream>
 #include <string>
-
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/event.h>
-#include <sys/time.h>
 
 using namespace std;
 
@@ -34,9 +28,9 @@ Process * createMediaPlayer(string pathToMovie, string port) {
 }
 
 int main(int argc, char ** argv) {
+  // TODO(cmihail): only for dev, should be only port as param
   if (argc != 3) {
-    cerr << "Usage: ./MainServer <path_to_movie> <port>\n";
-    return 1;
+    Logger::print(__FILE__, __LINE__, Logger::ERROR, "./Main <path_to_movie> <port>");
   }
 
   Server * server = new Server(atoi(argv[2]));

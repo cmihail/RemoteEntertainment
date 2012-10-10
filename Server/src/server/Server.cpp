@@ -5,20 +5,20 @@
  *      Author: cmihail
  */
 
-#include "Server.h" // TODO(cmihail): maybe to this using -I at compilation
-#include "Client.h" // TODO(cmihail): create a new package
-#include "../platform/EventListener.h"
-#include "../Message.h"
-#include "../Logger.h"
-#include "../proto/player.pb.h"
-#include "../proto/PlayerCommand.h"
+#include "Message.h"
+#include "Logger.h"
+#include "platform/EventListener.h"
+#include "proto/player.pb.h"
+#include "proto/PlayerCommand.h"
+#include "server/Client.h"
+#include "server/Server.h" // TODO(cmihail): maybe to this using -I at compilation
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
-#include <iostream> // TODO(cmihail): delete this in future
 #include <cstdlib>
-#include <sstream>
+#include <iostream> // TODO(cmihail): delete this in future
 #include <map>
+#include <sstream>
 
 using namespace std;
 

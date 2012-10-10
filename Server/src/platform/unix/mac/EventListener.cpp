@@ -5,8 +5,8 @@
  *      Author: cmihail
  */
 
-#include "../../../Logger.h"
-#include "../../EventListener.h"
+#include "Logger.h"
+#include "platform/EventListener.h"
 
 #include <cstdlib>
 

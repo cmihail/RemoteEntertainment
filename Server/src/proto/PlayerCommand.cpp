@@ -5,7 +5,7 @@
  *      Author: cmihail
  */
 
-#include "PlayerCommand.h"
+#include "proto/PlayerCommand.h"
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
