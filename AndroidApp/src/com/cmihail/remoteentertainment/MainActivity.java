@@ -14,8 +14,7 @@ import android.widget.ImageButton;
  */
 public class MainActivity extends Activity {
 
-  private final ClientThread clientThread;
-
+  private ClientThread clientThread;
   private ImageButton rewindButton;
   private ImageButton forwardButton;
   private ImageButton playPauseButton;
@@ -24,16 +23,13 @@ public class MainActivity extends Activity {
 
   private boolean isPlaying = true; // TODO(cmihail): move this into it's own class
 
-  public MainActivity() {
-    clientThread = new ClientThread();
-  }
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.player);
 
     // Start client thread which communicates with the server.
+    clientThread = new ClientThread();
     clientThread.start();
 
     // Assign button.
@@ -51,6 +47,19 @@ public class MainActivity extends Activity {
   public boolean onCreateOptionsMenu(Menu menu) {
       getMenuInflater().inflate(R.menu.activity_main, menu);
       return true;
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    // TODO(cmihail): save clientThread state
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    // TODO(cmihail): maybe use alternative for this workaround
+    clientThread.exit();
   }
 
   public void bindListeners() {
@@ -84,8 +93,4 @@ public class MainActivity extends Activity {
       }
     });
   }
-
-//  public void onToggleFullScreenButtonClick(View view) { TODO
-//    clientThread.sendCommand(Type.TOGGLE_FULL_SCREEN);
-//  }
 }

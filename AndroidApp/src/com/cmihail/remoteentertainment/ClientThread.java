@@ -25,7 +25,11 @@ public class ClientThread extends Thread {
     // and doesn't close old socket either
 
     while (true) {
-      PlayerCommand playerCommmand = client.receiveCommand();
+      PlayerCommand playerCommmand = null;
+      playerCommmand = client.receiveCommand();
+      if (playerCommmand == null) {
+        break;
+      }
 
       // Execute command. TODO(cmihail): elaborate
       if (playerCommmand.getType() == Type.PLAY) {
@@ -33,9 +37,13 @@ public class ClientThread extends Thread {
       } else if (playerCommmand.getType() == Type.PAUSE) {
         System.out.println("[Android] Pause");
       } else {
-        System.out.println("[Player]: Wrong command!!!"); // TODO(cmihail): use logger
+        System.out.println("[Android] Wrong command!!!"); // TODO(cmihail): use logger
       }
     }
+  }
+
+  public void exit() {
+    client.disconnect();
   }
 
   public void sendCommand(final Type type) {

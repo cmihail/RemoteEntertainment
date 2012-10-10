@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.SocketChannel;
 
 import com.google.protobuf.CodedInputStream;
@@ -29,22 +30,31 @@ public class Client {
   }
 
   /**
-   * Connects to server. The client connects only if there isn't already a succesuful connection.
+   * Connects to server. The client connects only if there isn't already a successful connection.
    * @param ipAddress the ip address of the server
    * @param port the port that the server is using for listening
    */
   public void connect(String ipAddress, int port) {
+    // TODO(cmihail): see if this should be or not a part of constructor
     try {
       if (!socketChannel.socket().isConnected()) {
         socketChannel.socket().setReuseAddress(true);
         socketChannel.socket().connect(new InetSocketAddress(ipAddress, port));
         socketChannel.configureBlocking(true);
+        System.out.println("[Client] Connection was successful"); // TODO(cmihail): use logger
       }
     } catch (IOException e) {
       exit(e);
     }
+  }
 
-    System.out.println("[Client] Connection was successful"); // TODO(cmihail): use logger
+  // TODO(cmihail): comment
+  public void disconnect() {
+    try {
+      socketChannel.close();
+    } catch (IOException e) {
+      exit(e);
+    }
   }
 
   /**
@@ -70,7 +80,8 @@ public class Client {
 
   /**
    * Receives a command from the server as a proto command and converts it to a player command.
-   * @return the command that was received.
+   * @return the command that was received, or null in case of connection lost
+   * TODO(cmihail): a more elegant way to deal with the asynchronous close exception
    */
   public PlayerCommand receiveCommand() {
     Command command = null;
@@ -82,6 +93,9 @@ public class Client {
       command = Command.parseFrom(bytes);
       System.out.println("[Client] Command recv: " +
           command.getType().toString()); // TODO(cmihail): use logger
+    } catch (AsynchronousCloseException e) {
+      System.out.println("[Client] Connection lost "); // TODO(cmihail): use logger
+      return null;
     } catch (IOException e) {
       exit(e);
     }
