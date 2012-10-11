@@ -17,7 +17,7 @@
 using namespace std;
 
 void Logger::print(string file, int line, Type type, string message) {
-  cout << MAIN_HEADER << " (\"" << file << "\", line " << line << ", " <<
+  cout << MAIN_HEADER << " (" << file << ", line " << line << ", " <<
       typeAsString(type) << "): " << message << endl;
   if (type == ERROR) {
     _exit(1);

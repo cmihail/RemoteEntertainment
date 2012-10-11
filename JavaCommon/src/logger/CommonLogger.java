@@ -20,7 +20,7 @@ public class CommonLogger {
    * @param header the name of the logger used as a header at printing the message
    */
   private static void initiate(String header) {
-    if (header == logger.getName()) {
+    if (logger != null && header == logger.getName()) {
       return;
     }
     logger = Logger.getLogger(header);
