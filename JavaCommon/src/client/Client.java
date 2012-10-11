@@ -6,6 +6,10 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.SocketChannel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import logger.CommonLogger;
 
 import com.google.protobuf.CodedInputStream;
 
@@ -18,6 +22,8 @@ import proto.ProtoPlayer.Command;
  * @author cmihail (Mihail Costea)
  */
 public class Client {
+
+  private final Logger logger = CommonLogger.getLogger("Client");
 
   private SocketChannel socketChannel = null;
 
@@ -41,17 +47,19 @@ public class Client {
         socketChannel.socket().setReuseAddress(true);
         socketChannel.socket().connect(new InetSocketAddress(ipAddress, port));
         socketChannel.configureBlocking(true);
-        System.out.println("[Client] Connection was successful"); // TODO(cmihail): use logger
+        logger.log(Level.INFO, "Connection was successful");
       }
     } catch (IOException e) {
       exit(e);
     }
   }
 
-  // TODO(cmihail): comment
+  /**
+   * Disconnects from the server.
+   */
   public void disconnect() {
     try {
-      socketChannel.close();
+      socketChannel.close(); // TODO(cmihail): maybe use shutdown on socket
     } catch (IOException e) {
       exit(e);
     }
@@ -71,8 +79,7 @@ public class Client {
       while (commandBuffer.hasRemaining()) {
         socketChannel.write(commandBuffer);
       }
-      System.out.println("[Client] Command sent: " +
-          command.getType().toString()); // TODO(cmihail): use logger
+      logger.log(Level.INFO, "Command sent: " + command.getType().toString());
     } catch (IOException e) {
       exit(e);
     }
@@ -91,10 +98,9 @@ public class Client {
       int varint32 = codedInputStream.readInt32();
       byte[] bytes = codedInputStream.readRawBytes(varint32);
       command = Command.parseFrom(bytes);
-      System.out.println("[Client] Command recv: " +
-          command.getType().toString()); // TODO(cmihail): use logger
+      logger.log(Level.INFO, "Command received: " + command.getType().toString());
     } catch (AsynchronousCloseException e) {
-      System.out.println("[Client] Connection lost "); // TODO(cmihail): use logger
+      logger.log(Level.WARNING, "Connection lost");
       return null;
     } catch (IOException e) {
       exit(e);
@@ -110,8 +116,7 @@ public class Client {
    * Terminates the client when receives an exception.
    */
   private void exit(Exception e) {
-    e.printStackTrace(); // TODO(cmihail): use logger
-    System.out.println(e.getMessage());
-    System.exit(1);
+    logger.log(Level.SEVERE, e.getMessage());
+    e.printStackTrace(CommonLogger.getPrintStream()); // TODO(cmihail): doesn't prin anythinga
   }
 }

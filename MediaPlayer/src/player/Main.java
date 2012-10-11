@@ -1,18 +1,27 @@
 package player;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.swing.SwingUtilities;
 
 import client.Client;
+import logger.CommonLogger;
 
+/**
+ * TODO(cmihail): comments
+ *
+ * @author cmihail (Mihail Costea)
+ */
 public class Main {
+
+  public static final Logger logger = CommonLogger.getLogger("MediaPlayer");
 
 	public static void main(String[] args) {
 		if (args.length != 2) {
-			// TODO(cmihail): just for dev, delete when not needed any more
-			System.err.println("Usage: ./PlayerMain <path_to_movie> <port>");
-			System.exit(1);
+			logger.log(Level.SEVERE, "Execute as ./PlayerMain <path_to_movie> <port>");
 		}
-		final String pathToMovie = args[0];
+		final String pathToMovie = args[0]; // TODO(cmihail): just for dev, delete when not needed
 
 		// Create a client to connect to server.
 		final Client client = new Client();

@@ -1,5 +1,9 @@
 package client;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import logger.CommonLogger;
 import proto.ProtoPlayer.Command.Type;
 import client.PlayerCommandHandler;
 
@@ -10,6 +14,7 @@ import client.PlayerCommandHandler;
  */
 public class PlayerCommandExecutor {
 
+  private final Logger logger = CommonLogger.getLogger("Client");
 	private final PlayerCommandHandler playerCommandHandler;
 
 	public PlayerCommandExecutor(PlayerCommandHandler playerCommandHandler) {
@@ -21,12 +26,12 @@ public class PlayerCommandExecutor {
     switch (type) {
     case SET_POSITION:
       if (info == null) {
-        System.out.println("[Client] Invalid position: " + info); // TODO(cmihail) use logger
+        logger.log(Level.WARNING, "Invalid position: " + info);
       }
       try {
         playerCommandHandler.onSetPosition(Float.parseFloat(info), notifyExecution);
       } catch (NumberFormatException e) {
-        System.out.println("[Client] Invalid position: " + info); // TODO(cmihail) use logger
+        logger.log(Level.WARNING, "Invalid position: " + info);
       }
       break;
 
@@ -64,12 +69,12 @@ public class PlayerCommandExecutor {
 
     case SET_VOLUME:
       if (info == null) {
-        System.out.println("[Client] Invalid volume value: " + info); // TODO(cmihail) use logger
+        logger.log(Level.WARNING, "Invalid volume value: " + info);
       }
       try {
         playerCommandHandler.onSetVolume(Integer.parseInt(info), notifyExecution);
       } catch (NumberFormatException e) {
-        System.out.println("[Client] Invalid volume value: " + info); // TODO(cmihail) use logger
+        logger.log(Level.WARNING, "Invalid volume value: " + info);
       }
       break;
 
@@ -79,13 +84,13 @@ public class PlayerCommandExecutor {
 
     case START_MOVIE:
       if (info == null) {
-        System.out.println("[Client] Invalid movie: " + info); // TODO(cmihail) use logger
+        logger.log(Level.WARNING, "Invalid movie: " + info);
       }
       playerCommandHandler.onStartMovie(info);
       break;
 
     default:
-      System.out.println("[Client] Invalid command: " + type.toString());
+      logger.log(Level.WARNING, "Invalid volume command: " + type.toString());
       break;
     }
 	}

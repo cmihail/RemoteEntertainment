@@ -8,7 +8,7 @@ import client.PlayerCommandExecutor;
 import client.PlayerCommandHandler;
 
 /**
- * TODO(cmihail): comments
+ * Defines the player presenter.
  *
  * @author cmihail (Mihail Costea)
  */

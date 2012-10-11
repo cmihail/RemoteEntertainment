@@ -28,6 +28,11 @@ import uk.co.caprica.vlcj.binding.LibVlcConst;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 
+/**
+ * Defines the player controls used in {@link PlayerView}.
+ *
+ * @author cmihail (Mihail Costea)
+ */
 public class PlayerControlsPanel extends JPanel {
   private static final long serialVersionUID = 1L;
 

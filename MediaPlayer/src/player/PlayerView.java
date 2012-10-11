@@ -17,6 +17,12 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.FullScreenStrategy;
 import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
 
+/**
+ * Defines the view for {@link Player} which consists in the player itself
+ * and the {@link PlayerControlsPanel}.
+ *
+ * @author cmihail (Mihail Costea)
+ */
 public class PlayerView {
 
 	private final Canvas canvas;
