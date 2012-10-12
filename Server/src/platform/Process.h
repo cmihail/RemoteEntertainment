@@ -1,9 +1,10 @@
 /*
- *  * Process.h
- *   *
- *    *  Created on: Sep 23, 2012
- *     *      Author: cmihail
- *      */
+ * Process.h
+ *
+ * Created on: Sep 23, 2012
+ * Author: cmihail  (Mihail Costea)
+ *
+ */
 
 #ifndef PROCESS_H
 #define PROCESS_H

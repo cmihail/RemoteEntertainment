@@ -2,7 +2,7 @@
  * Logger.h
  *
  *  Created on: Oct 10, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 #ifndef LOGGER_H

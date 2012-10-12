@@ -2,7 +2,7 @@
  * EventListener.h
  *
  *  Created on: Sep 24, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 #ifndef EVENTLISTENER_H

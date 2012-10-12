@@ -2,7 +2,7 @@
  * PlayerCommand.h
  *
  *  Created on: Sep 27, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 #ifndef PLAYERCOMMAND_H

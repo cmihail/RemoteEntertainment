@@ -2,7 +2,7 @@
  * Client.cpp
  *
  *  Created on: Sep 28, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 #include "server/Client.h"

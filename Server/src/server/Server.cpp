@@ -2,16 +2,16 @@
  * Server.cpp
  *
  *  Created on: Oct 8, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
-#include "Message.h"
 #include "Logger.h"
+#include "Message.h"
 #include "platform/EventListener.h"
 #include "proto/player.pb.h"
 #include "proto/PlayerCommand.h"
 #include "server/Client.h"
-#include "server/Server.h" // TODO(cmihail): maybe to this using -I at compilation
+#include "server/Server.h"
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 

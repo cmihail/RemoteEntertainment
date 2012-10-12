@@ -2,7 +2,7 @@
  * Client.h
  *
  *  Created on: Sep 28, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 #ifndef CLIENT_H

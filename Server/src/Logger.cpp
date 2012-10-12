@@ -2,7 +2,7 @@
  * Logger.cpp
  *
  *  Created on: Oct 10, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 // TODO(cmihail): explain message format "[SERVER] ('Server.cpp', line 23, information): "

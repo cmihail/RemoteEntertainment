@@ -2,13 +2,14 @@
  * Main.cpp
  *
  *  Created on: Sep 23, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 #include "Logger.h"
 #include "platform/Process.h"
 #include "server/Server.h"
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 

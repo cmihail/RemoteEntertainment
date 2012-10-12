@@ -2,13 +2,14 @@
  * Process.cpp
  *
  *  Created on: Sep 23, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 #include "Logger.h"
 #include "platform/Process.h"
 
 #include <cstdlib>
+#include <cstring>
 
 #include <unistd.h>
 #include <sys/types.h>

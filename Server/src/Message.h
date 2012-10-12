@@ -2,7 +2,7 @@
  * Message.h
  *
  *  Created on: Oct 9, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 #ifndef MESSAGE_H

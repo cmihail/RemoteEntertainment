@@ -2,7 +2,7 @@
  * PlayerCommand.cpp
  *
  *  Created on: Sep 27, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 #include "proto/PlayerCommand.h"

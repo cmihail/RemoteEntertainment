@@ -2,7 +2,7 @@
  * Message.h=cpp
  *
  *  Created on: Oct 9, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 #include "Message.h"

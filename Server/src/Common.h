@@ -2,7 +2,7 @@
  * Common.h
  *
  *  Created on: Oct 8, 2012
- *      Author: cmihail
+ *      Author: cmihail (Mihail Costea)
  */
 
 #ifndef COMMON_H
