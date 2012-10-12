@@ -2,6 +2,8 @@ CC = g++
 CFLAGS = -Wall -g
 HEADERS = src/
 
+PLATFORM_PATH = unix/mac
+
 COMMON_DEPS = bin/Main.o bin/Message.o bin/Logger.o bin/Client.o bin/Server.o bin/player.pb.o bin/PlayerCommand.o
 PLATFORM_DEPS = bin/Process.o bin/ServerUnix.o bin/EventListener.o
 
@@ -43,7 +45,7 @@ bin/Process.o: src/platform/unix/Process.cpp
 bin/ServerUnix.o: src/platform/unix/ServerUnix.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 
-bin/EventListener.o: src/platform/unix/mac/EventListener.cpp
+bin/EventListener.o: src/platform/$(PLATFORM_PATH)/EventListener.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 
 clean:
