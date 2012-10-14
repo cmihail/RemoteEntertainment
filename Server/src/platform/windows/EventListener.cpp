@@ -8,6 +8,10 @@
 #include "Logger.h"
 #include "platform/EventListener.h"
 
+#include <string>
+
+using namespace std;
+
 HANDLE ioCompletionPort;
 SOCKET inputSocket; // TODO(cmihail): another name
 int currentNumOfEvents = 0;
@@ -24,9 +28,16 @@ EventListener::~EventListener() {
 
 }
 
+static bool checkSocket(socket_descriptor_t descriptor, string file, int line) {
+  if (descriptor == INVALID_SOCKET) {
+    Logger::print(file, line, Logger::SEVERE, "Invalid descriptor");
+    return false;
+  }
+  return true;
+}
+
 bool EventListener::addEvent(socket_descriptor_t descriptor) {
-  if (descriptor == INVALID_SOCKET) { // TODO function
-    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Invalid descriptor");
+  if (!checkSocket(descriptor, __FILE__, __LINE__)) {
     return false;
   }
 
@@ -47,8 +58,7 @@ bool EventListener::addEvent(socket_descriptor_t descriptor) {
 }
 
 bool EventListener::deleteEvent(socket_descriptor_t descriptor) {
-  if (descriptor == INVALID_SOCKET) { // TODO function
-    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Invalid descriptor");
+  if (!checkSocket(descriptor, __FILE__, __LINE__)) {
     return false;
   }
 
@@ -72,9 +82,3 @@ int EventListener::checkEvents() {
 socket_descriptor_t EventListener::getDescriptor(int eventId) {
   return inputSocket;
 }
-
-
-
-
-
-

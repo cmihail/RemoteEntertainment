@@ -49,6 +49,7 @@ Message Server::receiveMessage(socket_descriptor_t socketDescriptor) {
   if (n < 0) {
     stringstream out;
     out << "Problem at receiving data from " << socketDescriptor;
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str());
   }
 
   if (n == 0) {

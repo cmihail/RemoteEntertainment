@@ -51,7 +51,7 @@ static void registerNewClient(Server * server, socket_descriptor_t listenSocket)
   // Create new socket for the new connection.
   int clientSocket = server->newConnection(listenSocket);
   if (clientSocket == -1) {
-    Logger::print(__FILE__, __LINE__, Logger::INFORMATION, "Maximum number of clients received");
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Maximum number of clients received");
     // TODO(cmihail): alternative for workaround and must be tested more
     eventListener->deleteEvent(listenSocket);
     eventListener->addEvent(listenSocket);
@@ -60,7 +60,7 @@ static void registerNewClient(Server * server, socket_descriptor_t listenSocket)
 
   stringstream out;
   out << "New client " << clientSocket;
-  Logger::print(__FILE__, __LINE__, Logger::INFORMATION, out.str());
+  Logger::print(__FILE__, __LINE__, Logger::INFO, out.str());
 
   // Add read event for the newly created socket.
   if (eventListener->addEvent(clientSocket) != true) {
@@ -95,7 +95,7 @@ static void receiveCommand(Server * server, socket_descriptor_t clientSocket) {
   if (!inputMessage.hasContent()) {
     stringstream out;
     out << "Connection ended for " << clientSocket;
-    Logger::print(__FILE__, __LINE__, Logger::INFORMATION, out.str());
+    Logger::print(__FILE__, __LINE__, Logger::INFO, out.str());
     eventListener->deleteEvent(clientSocket);
     server->endConnection(clientSocket);
     clientsMap.erase(clientSocket);
@@ -121,15 +121,17 @@ static void receiveCommand(Server * server, socket_descriptor_t clientSocket) {
 void Server::run() {
   while(true) {
     int numOfTriggeredEvents = eventListener->checkEvents();
-//    assert(numOfTriggeredEvents >= 0); TODO
-    if (numOfTriggeredEvents == 0) {
-      Logger::print(__FILE__, __LINE__, Logger::WARNING, "No events");
+    if (numOfTriggeredEvents <= 0) {
+      Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Invalid events");
     }
 
     // Get event type based on
     for (int i = 0; i < numOfTriggeredEvents; i++) {
       int descriptor = eventListener->getDescriptor(i);
-//      assert(descriptor != -1); TODO
+      if (descriptor == -1) {
+        Logger::print(__FILE__, __LINE__, Logger::WARNING, "Incorrect descriptor");
+        continue;
+      }
 
       // Receive new connection.
       if (listenSocket == descriptor) {
@@ -140,7 +142,7 @@ void Server::run() {
       // Receive commands from clients.
       map<socket_descriptor_t, Client>::iterator it = clientsMap.find(descriptor);
       if (it != clientsMap.end()) {
-        Logger::print(__FILE__, __LINE__, Logger::INFORMATION, "Command received ");
+        Logger::print(__FILE__, __LINE__, Logger::INFO, "Command received ");
         receiveCommand(this, descriptor);
         continue;
       } else {

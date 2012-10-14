@@ -19,19 +19,19 @@ using namespace std;
 void Logger::print(string file, int line, Type type, string message) {
   cout << MAIN_HEADER << " (" << file << ", line " << line << ", " <<
       typeAsString(type) << "): " << message << endl;
-  if (type == ERROR) {
+  if (type == SEVERE) {
     _exit(1);
   }
 }
 
 string Logger::typeAsString(Logger::Type type) {
   switch (type) {
-    case INFORMATION:
-      return "information";
+    case INFO:
+      return "info";
     case WARNING:
       return "warning";
     case SEVERE:
-      return "error";
+      return "severe";
     default:
       return "undefined";
   }

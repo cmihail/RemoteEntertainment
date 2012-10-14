@@ -30,7 +30,7 @@ Process::Process(string program, string programArgs[], int nrArgs) {
   }
 
   char * cmdLine = strdup(streamBuffer.str().c_str());
-  Logger::print(__FILE__, __LINE__, Logger::INFORMATION, cmdLine);
+  Logger::print(__FILE__, __LINE__, Logger::INFO, cmdLine);
   if (CreateProcess(NULL, cmdLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi) == FALSE) {
     Logger::print(string(__FILE__), __LINE__, Logger::SEVERE, "Couldn't create process");
   }

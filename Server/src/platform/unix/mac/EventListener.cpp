@@ -9,8 +9,11 @@
 #include "platform/EventListener.h"
 
 #include <cstdlib>
+#include <string>
 
 #include <sys/event.h>
+
+using namespace std;
 
 int kqueueDescriptor;
 struct kevent * changeList;
@@ -25,7 +28,7 @@ EventListener::EventListener(int maxNumOfEvents) : maxNumOfEvents(maxNumOfEvents
   // Create event notifier.
   kqueueDescriptor = kqueue();
   if (kqueueDescriptor == -1) {
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "kqueue error");
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "kqueue error");
   }
   changeList = new struct kevent[maxNumOfEvents]; // TODO(cmihail): maybe realloc when needed
   eventList = new struct kevent[maxNumOfEvents];
@@ -36,9 +39,16 @@ EventListener::~EventListener() {
   delete eventList;
 }
 
+static bool checkSocket(socket_descriptor_t descriptor, string file, int line) {
+  if (descriptor == -1) {
+    Logger::print(file, line, Logger::SEVERE, "Invalid descriptor");
+    return false;
+  }
+  return true;
+}
+
 bool EventListener::addEvent(socket_descriptor_t descriptor) {
-  if (descriptor < 0) { // TODO function
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Invalid descriptor");
+  if (!checkSocket(descriptor, __FILE__, __LINE__)) {
     return false;
   }
 
@@ -54,8 +64,7 @@ bool EventListener::addEvent(socket_descriptor_t descriptor) {
 }
 
 bool EventListener::deleteEvent(socket_descriptor_t descriptor) {
-  if (descriptor < 0) {
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Invalid descriptor");
+  if (!checkSocket(descriptor, __FILE__, __LINE__)) {
     return false;
   }
 

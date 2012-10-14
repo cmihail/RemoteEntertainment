@@ -22,7 +22,7 @@ Process::Process(string program, string programArgs[], int nrArgs) {
   pid_t pid = fork();
   char ** args = NULL;
   if (pid == -1) {
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Couldn't fork");
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Couldn't fork");
   }
 
   if (pid == 0) {
@@ -35,6 +35,6 @@ Process::Process(string program, string programArgs[], int nrArgs) {
     args[nrArgs + 1] = NULL;
 
     execvp(args[0], args);
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Couldn't exec media player");
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Couldn't exec media player");
   }
 }

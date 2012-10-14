@@ -13,10 +13,9 @@
 class Logger {
 public:
   enum Type {
-    INFORMATION,
+    INFO,
     WARNING,
-    SEVERE,
-    ERROR
+    SEVERE
   };
 
   static void print(std::string file, int line, Type type, std::string message);
