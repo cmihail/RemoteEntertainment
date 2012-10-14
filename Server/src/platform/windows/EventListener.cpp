@@ -8,16 +8,15 @@
 #include "Logger.h"
 #include "platform/EventListener.h"
 
-#include <windows.h>
-
 HANDLE ioCompletionPort;
 SOCKET inputSocket; // TODO(cmihail): another name
+int currentNumOfEvents = 0;
 
 EventListener::EventListener(int maxNumOfEvents) : maxNumOfEvents(maxNumOfEvents) {
   // Create event notifier.
   ioCompletionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (ULONG_PTR) NULL, 0);
   if (ioCompletionPort == NULL) {
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "IOCompletionPort error");
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "IOCompletionPort error");
   }
 }
 
@@ -26,8 +25,8 @@ EventListener::~EventListener() {
 }
 
 bool EventListener::addEvent(socket_descriptor_t descriptor) {
-  if (descriptor != INVALID_SOCKET) { // TODO function
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Invalid descriptor");
+  if (descriptor == INVALID_SOCKET) { // TODO function
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Invalid descriptor");
     return false;
   }
 
@@ -42,19 +41,22 @@ bool EventListener::addEvent(socket_descriptor_t descriptor) {
     Logger::print(__FILE__, __LINE__, Logger::WARNING, "Couldn't create completion port");
     return false;
   }
+
+  currentNumOfEvents++;
   return true;
 }
 
 bool EventListener::deleteEvent(socket_descriptor_t descriptor) {
-  if (descriptor != INVALID_SOCKET) { // TODO function
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Invalid descriptor");
+  if (descriptor == INVALID_SOCKET) { // TODO function
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Invalid descriptor");
     return false;
   }
 
-  // TODO in the future
+  // TODO(cmihail) removal in the future
   return true;
 }
 
+// TODO(cmihail) unite this with getDescriptor
 int EventListener::checkEvents() {
   DWORD bytes;
   ULONG_PTR key;

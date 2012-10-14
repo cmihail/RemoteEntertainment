@@ -2,17 +2,15 @@ CC = g++
 CFLAGS = -Wall -g
 HEADERS = src/
 
-PLATFORM_PATH = unix/mac
-
 COMMON_DEPS = bin/Main.o bin/Message.o bin/Logger.o bin/Client.o bin/Server.o bin/player.pb.o bin/PlayerCommand.o
-PLATFORM_DEPS = bin/Process.o bin/ServerUnix.o bin/EventListener.o bin/sock_util.h
+PLATFORM_DEPS = bin/Process.o bin/ServerWindows.o bin/EventListener.o bin/sock_util.o
 
 .PHONY: build clean
 
 .build: Main
 
 Main: $(COMMON_DEPS) $(PLATFORM_DEPS)
-	$(CC) $^ -o $@ -lprotobuf
+	$(CC) $^ -o $@ -lprotobuf -lws2_32
 
 # root package
 bin/Main.o: src/Main.cpp
@@ -42,14 +40,14 @@ bin/PlayerCommand.o: src/proto/PlayerCommand.cpp
 bin/Process.o: src/platform/windows/Process.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 
-bin/ServerUnix.o: src/platform/windows/ServerWindows.cpp
+bin/ServerWindows.o: src/platform/windows/ServerWindows.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 
 bin/EventListener.o: src/platform/windows/EventListener.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 
-bin/sock_util.o: src/platform/windows/sock_util.h
+bin/sock_util.o: src/platform/windows/sock_util.c
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 
 clean:
-	rm -rf bin/*.o bin/Main
+	rm -rf bin/*.o Main.exe

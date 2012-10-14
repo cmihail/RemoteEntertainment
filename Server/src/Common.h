@@ -9,6 +9,7 @@
 #define COMMON_H
 
 #ifdef _WIN32
+#include <windows.h>
   typedef SOCKET socket_descriptor_t;
 #elif __linux__ || __APPLE__
   typedef int socket_descriptor_t;

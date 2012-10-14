@@ -37,7 +37,7 @@ EventListener::~EventListener() {
 }
 
 bool EventListener::addEvent(socket_descriptor_t descriptor) {
-  if (descriptor < 0) {
+  if (descriptor < 0) { // TODO function
     Logger::print(__FILE__, __LINE__, Logger::ERROR, "Invalid descriptor");
     return false;
   }

@@ -9,6 +9,8 @@
 #include "server/Server.h"
 #include "platform/windows/sock_util.h"
 
+#include <sstream>
+
 using namespace std;
 
 int currentNumOfClients = 0;
@@ -23,7 +25,7 @@ socket_descriptor_t Server::init() {
 }
 
 socket_descriptor_t Server::newConnection(socket_descriptor_t listenSocket) {
-  struct sockadd_in address;
+  struct sockaddr_in address;
   int addressLength = sizeof(address);
   socket_descriptor_t clientSocket = accept(listenSocket, (SSA *) &address, &addressLength);
   if (clientSocket == INVALID_SOCKET) {
@@ -60,7 +62,7 @@ void Server::sendMessage(socket_descriptor_t socketDescriptor, Message & message
   if (send(socketDescriptor, message.getContent(), message.getLength(), 0) < 0) {
     stringstream out;
     out << "Problem at sending data to " << socketDescriptor;
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, out.str());
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str());
   }
 }
 

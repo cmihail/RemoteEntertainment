@@ -3,5 +3,5 @@
 eclimd.log
 */bin
 */.*
-Server/Main
+Server/Main*
 Server/Debug
