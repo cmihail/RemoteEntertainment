@@ -30,7 +30,7 @@ string Logger::typeAsString(Logger::Type type) {
       return "information";
     case WARNING:
       return "warning";
-    case ERROR:
+    case SEVERE:
       return "error";
     default:
       return "undefined";

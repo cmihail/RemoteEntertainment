@@ -59,13 +59,13 @@ SOCKET tcp_connect_to_server(const char *name, unsigned short port) {
 
   hent = gethostbyname(name);
   if (hent == NULL) {
-    LOG_ERROR("gethostbyname");
+//    LOG_ERROR("gethostbyname");
     return -1;
   }
 
   s = socket(PF_INET, SOCK_STREAM, 0);
   if (s == INVALID_SOCKET) {
-    LOG_ERROR("socket");
+//    LOG_ERROR("socket");
     return -1;
   }
 
@@ -76,7 +76,7 @@ SOCKET tcp_connect_to_server(const char *name, unsigned short port) {
       sizeof(server_addr.sin_addr.s_addr));
 
   if (connect(s, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0) {
-    LOG_ERROR("connect");
+//    LOG_ERROR("connect");
     return -1;
   }
 
@@ -85,7 +85,7 @@ SOCKET tcp_connect_to_server(const char *name, unsigned short port) {
 
 int tcp_close_connection(SOCKET sockfd) {
   if (shutdown(sockfd, SD_BOTH) < 0) {
-    LOG_ERROR("shutdown");
+//    LOG_ERROR("shutdown");
     return -1;
   }
   return closesocket(sockfd);
@@ -102,14 +102,14 @@ SOCKET tcp_listen_connections(unsigned short port, int backlog) {
 
   listenfd = socket(PF_INET, SOCK_STREAM, 0);
   if (listenfd == INVALID_SOCKET) {
-    LOG_ERROR("socket");
+//    LOG_ERROR("socket");
     return -1;
   }
 
   sock_opt = 1;
   if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (const char *) &sock_opt,
       sizeof(int)) < 0) {
-    LOG_ERROR("setsockopt");
+//    LOG_ERROR("setsockopt");
     exit(EXIT_FAILURE);
   }
 
@@ -119,13 +119,13 @@ SOCKET tcp_listen_connections(unsigned short port, int backlog) {
   address.sin_addr.s_addr = INADDR_ANY;
 
   if (bind(listenfd, (SSA *) &address, sizeof(address)) < 0) {
-    LOG_ERROR("bind");
+//    LOG_ERROR("bind");
     closesocket(listenfd);
     return -1;
   }
 
   if (listen(listenfd, backlog) < 0) {
-    LOG_ERROR("listen");
+//    LOG_ERROR("listen");
     closesocket(listenfd);
     return -1;
   }

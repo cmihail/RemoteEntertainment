@@ -15,11 +15,13 @@
 
 using namespace std;
 
-Process * createMediaPlayer(string pathToMovie, string port) {
+Process * createMediaPlayer(string pathToMovie, string pathToLibVLC, string port) {
   // TODO(cmihail): only for dev
   string program = "java";
   string * programArgs = new string[5];
-  programArgs[0] = "-Djna.library.path=/Applications/VLC.app/Contents/MacOS/lib";
+  // TODO(cmihail): move libvlc and related files in project path
+  // TODO /Applications/VLC.app/Contents/MacOS/lib
+  programArgs[0] = "-Djna.library.path=" + pathToLibVLC;
   programArgs[1] = "-jar";
   programArgs[2] = "media-player.jar";
   programArgs[3] = pathToMovie;
@@ -30,12 +32,13 @@ Process * createMediaPlayer(string pathToMovie, string port) {
 
 int main(int argc, char ** argv) {
   // TODO(cmihail): only for dev, should be only port as param
-  if (argc != 3) {
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "./Main <path_to_movie> <port>");
+  if (argc != 4) {
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE,
+        "./Main <path_to_movie> <path_to_libvlc> <port>");
   }
 
-  Server * server = new Server(atoi(argv[2]));
-  createMediaPlayer(argv[1], argv[2]);
+  Server * server = new Server(atoi(argv[3]));
+  createMediaPlayer(argv[1], argv[2], argv[3]);
   server->run();
   delete server;
 }

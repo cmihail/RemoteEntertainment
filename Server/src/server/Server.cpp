@@ -39,7 +39,7 @@ Server::Server(int serverPort) : serverPort(serverPort) {
   if (eventListener->addEvent(listenSocket) != true) {
     stringstream out;
     out << "EventListener->addEvent() failed for " << listenSocket;
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, out.str());
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str());
   }
 }
 
@@ -121,7 +121,7 @@ static void receiveCommand(Server * server, socket_descriptor_t clientSocket) {
 void Server::run() {
   while(true) {
     int numOfTriggeredEvents = eventListener->checkEvents();
-    assert(numOfTriggeredEvents >= 0);
+//    assert(numOfTriggeredEvents >= 0); TODO
     if (numOfTriggeredEvents == 0) {
       Logger::print(__FILE__, __LINE__, Logger::WARNING, "No events");
     }
@@ -129,7 +129,7 @@ void Server::run() {
     // Get event type based on
     for (int i = 0; i < numOfTriggeredEvents; i++) {
       int descriptor = eventListener->getDescriptor(i);
-      assert(descriptor != -1);
+//      assert(descriptor != -1); TODO
 
       // Receive new connection.
       if (listenSocket == descriptor) {

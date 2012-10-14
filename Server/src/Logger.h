@@ -15,6 +15,7 @@ public:
   enum Type {
     INFORMATION,
     WARNING,
+    SEVERE,
     ERROR
   };
 
