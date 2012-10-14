@@ -1,5 +1,4 @@
-.metadata
-.git
+.*
 eclimd.log
 */bin
 */.*
