@@ -1,0 +1,7 @@
+.metadata
+.git
+eclimd.log
+*/bin
+*/.*
+Server/Main
+Server/Debug
