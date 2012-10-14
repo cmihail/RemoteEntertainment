@@ -25,7 +25,7 @@ Process * createMediaPlayer(string pathToMovie, string port) {
   programArgs[3] = pathToMovie;
   programArgs[4] = port;
 
-  return new Process(program, 5, programArgs);
+  return new Process(program, programArgs, 5);
 }
 
 int main(int argc, char ** argv) {
