@@ -17,11 +17,9 @@
 
 using namespace std;
 
-pid_t pid;
-
-Process::Process(std::string program, int nrArgs, std::string programArgs[]) {
+Process::Process(string program, string programArgs[], int nrArgs) {
   // Create new process.
-  pid = fork();
+  pid_t pid = fork();
   char ** args = NULL;
   if (pid == -1) {
     Logger::print(__FILE__, __LINE__, Logger::ERROR, "Couldn't fork");
