@@ -24,15 +24,15 @@
 
 using namespace std;
 
-int currectNumOfClients = 0;
+int currentNumOfClients = 0;
 
 socket_descriptor_t Server::init() {
   struct sockaddr_in serverAddr;
 
   // Create socket.
-  int listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+  socket_descriptor_t listenSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (listenSocket < 0) {
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Couldn't create server socket");
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Couldn't create server socket");
   }
 
   // Create server.
@@ -43,7 +43,7 @@ socket_descriptor_t Server::init() {
 
   // Bind the socket to the server.
   if (bind(listenSocket, (struct sockaddr *) &serverAddr, sizeof(struct sockaddr)) < 0) {
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Couldn't bind server socket");
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Couldn't bind server socket");
   }
 
   // Socket used for listening.
@@ -52,7 +52,7 @@ socket_descriptor_t Server::init() {
 }
 
 socket_descriptor_t Server::newConnection(socket_descriptor_t listenSocket) {
-  if (currectNumOfClients == maxNumOfClients) {
+  if (currentNumOfClients == maxNumOfClients) {
      return -1;
    }
 
@@ -60,21 +60,21 @@ socket_descriptor_t Server::newConnection(socket_descriptor_t listenSocket) {
    int clientLength = sizeof(clientAddr);
 
    // Accept new connection.
-   int newSocketFileDescriptor = accept(listenSocket,
+   socket_descriptor_t clientSocket = accept(listenSocket,
        (struct sockaddr *) &clientAddr, (socklen_t *) &clientLength);
-   if (newSocketFileDescriptor < 0) {
+   if (clientSocket < 0) {
      Logger::print(__FILE__, __LINE__, Logger::WARNING,
          "Couldn't create new socket for new connection");
      return -1;
    }
 
-   currectNumOfClients++;
-   return newSocketFileDescriptor;
+   currentNumOfClients++;
+   return clientSocket;
 }
 
 void Server::endConnection(socket_descriptor_t socketDescriptor) {
   close(socketDescriptor);
-  currectNumOfClients--;
+  currentNumOfClients--;
 }
 
 Message Server::receiveMessage(socket_descriptor_t socketDescriptor) {
@@ -83,7 +83,7 @@ Message Server::receiveMessage(socket_descriptor_t socketDescriptor) {
   if (n < 0) {
     stringstream out;
     out << "Problem at receiving data from " << socketDescriptor;
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, out.str()); // TODO(cmihail): maybe not ERROR
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str()); // TODO(cmihail): maybe not ERROR
   }
 
   if (n == 0) {
@@ -97,6 +97,6 @@ void Server::sendMessage(socket_descriptor_t socketDescriptor, Message & message
   if (send(socketDescriptor, message.getContent(), message.getLength(), 0) < 0) {
     stringstream out;
     out << "Problem at sending data to " << socketDescriptor;
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, out.str()); // TODO(cmihail): maybe not ERROR
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str()); // TODO(cmihail): maybe not ERROR
   }
 }

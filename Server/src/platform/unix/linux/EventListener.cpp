@@ -9,8 +9,11 @@
 #include "platform/EventListener.h"
 
 #include <cstdlib>
+#include <string>
 
 #include <sys/epoll.h>
+
+using namespace std;
 
 int epollDescriptor;
 
@@ -26,7 +29,7 @@ EventListener::EventListener(int maxNumOfEvents) : maxNumOfEvents(maxNumOfEvents
   // Create event notifier.
   epollDescriptor = epoll_create(maxNumOfEvents);
   if (epollDescriptor == -1) {
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "epoll error");
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "epoll error");
   }
   changeList = new struct epoll_event[maxNumOfEvents];
   eventList = new struct epoll_event[maxNumOfEvents];
@@ -36,9 +39,16 @@ EventListener::~EventListener() {
   delete changeList;
 }
 
+static bool checkSocket(socket_descriptor_t descriptor, string file, int line) {
+  if (descriptor == -1) {
+    Logger::print(file, line, Logger::SEVERE, "Invalid descriptor");
+    return false;
+  }
+  return true;
+}
+
 bool EventListener::addEvent(socket_descriptor_t descriptor) {
-  if (descriptor < 0) {
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Invalid descriptor");
+  if (!checkSocket(descriptor, __FILE__, __LINE__)) {
     return false;
   }
 
@@ -59,8 +69,7 @@ bool EventListener::addEvent(socket_descriptor_t descriptor) {
 }
 
 bool EventListener::deleteEvent(socket_descriptor_t descriptor) {
-  if (descriptor < 0) {
-    Logger::print(__FILE__, __LINE__, Logger::ERROR, "Invalid descriptor");
+  if (!checkSocket(descriptor, __FILE__, __LINE__)) {
     return false;
   }
 

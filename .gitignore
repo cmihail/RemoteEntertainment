@@ -1,10 +1,6 @@
-.metadata
-.git
+.*
 eclimd.log
 */bin
 */.*
-Server/icon
-Server/proto
-Server/player
-Server/Main
+Server/Main*
 Server/Debug

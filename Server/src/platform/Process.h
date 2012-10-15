@@ -13,7 +13,7 @@
 
 class Process {
 public:
-  Process(std::string program, int nrArgs, std::string programArgs[]);
+  Process(std::string program, std::string programArgs[], int nrArgs);
 };
 
 #endif /* PROCESS_H */
