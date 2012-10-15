@@ -10,12 +10,22 @@
 
 #include "Common.h"
 
+/**
+ * Defines the client information.
+ */
 class Client {
   socket_descriptor_t socketDescriptor;
 
 public:
-  Client(socket_descriptor_t fileDescriptor);
-  socket_descriptor_t getFileDescriptor();
+  /**
+   * @param socketDescriptor the socket used to connect the server with the client
+   */
+  Client(socket_descriptor_t socketDescriptor);
+
+  /**
+   * @return the socket used to connect the server with the client
+   */
+  socket_descriptor_t getSocketDescriptor();
 };
 
 #endif /* CLIENT_H */

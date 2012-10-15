@@ -3,15 +3,17 @@
  *
  *  Created on: Oct 8, 2012
  *      Author: cmihail (Mihail Costea)
+ *
+ * Defines common definitions for all platforms.
  */
 
 #ifndef COMMON_H
 #define COMMON_H
 
 #ifdef _WIN32
-#include <windows.h>
+  #include <windows.h>
   typedef SOCKET socket_descriptor_t;
-#elif __linux__ || __APPLE__
+#elif __APPLE__ || __linux__
   typedef int socket_descriptor_t;
 #else
   // TODO(cmihail): error
