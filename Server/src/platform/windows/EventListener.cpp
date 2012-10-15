@@ -64,23 +64,19 @@ bool EventListener::deleteEvent(socket_descriptor_t descriptor) {
     return false;
   }
 
-  // TODO(cmihail) removal in the future
+  // TODO(cmihail): event removal in the future
   return true;
 }
 
 // TODO(cmihail) unite this with getDescriptor
-int EventListener::checkEvents() {
+list<socket_descriptor_t> EventListener::getTriggeredEvents() {
   DWORD bytes;
   ULONG_PTR key;
   LPOVERLAPPED overlapped;
 
-  if (!GetQueuedCompletionStatus(ioCompletionPort, &bytes, &key, &overlapped, INFINITE)) {
-    return -1;
+  list<socket_descriptor_t> triggeredEvents;
+  if (GetQueuedCompletionStatus(ioCompletionPort, &bytes, &key, &overlapped, INFINITE)) {
+    triggeredEvents.push_back((socket_descriptor_t) key);
   }
-  inputSocket = (SOCKET) key;
-  return 1;
-}
-
-socket_descriptor_t EventListener::getDescriptor(int eventId) {
-  return inputSocket;
+  return triggeredEvents;
 }
