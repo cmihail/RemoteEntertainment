@@ -3,6 +3,8 @@
  *
  *  Created on: Sep 23, 2012
  *      Author: cmihail (Mihail Costea)
+ *
+ * Defines the main function which starts the server and the media player.
  */
 
 #include "Logger.h"
@@ -15,12 +17,15 @@
 
 using namespace std;
 
+/**
+ * @param pathToMovie path to the movie that will be played
+ * @param pathToLibVLC path to the libvlc as given in every Operating System
+ * @param port the port on which the server is listening
+ */
 Process * createMediaPlayer(string pathToMovie, string pathToLibVLC, string port) {
   // TODO(cmihail): only for dev
   string program = "java";
   string * programArgs = new string[5];
-  // TODO(cmihail): move libvlc and related files in project path
-  // TODO /Applications/VLC.app/Contents/MacOS/lib
   programArgs[0] = "-Djna.library.path=" + pathToLibVLC;
   programArgs[1] = "-jar";
   programArgs[2] = "media-player.jar";
@@ -31,7 +36,7 @@ Process * createMediaPlayer(string pathToMovie, string pathToLibVLC, string port
 }
 
 int main(int argc, char ** argv) {
-  // TODO(cmihail): only for dev, should be only port as param
+  // TODO(cmihail): only for dev, only port should be as param
   if (argc != 4) {
     Logger::print(__FILE__, __LINE__, Logger::SEVERE,
         "./Main <path_to_movie> <path_to_libvlc> <port>");

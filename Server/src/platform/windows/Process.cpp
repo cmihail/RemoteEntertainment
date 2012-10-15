@@ -3,6 +3,8 @@
  *
  *  Created on: Oct 13, 2012
  *      Author: Mihail Costea
+ *
+ * Defines the implementation of Process.h.
  */
 
 #include "Logger.h"

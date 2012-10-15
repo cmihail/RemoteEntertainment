@@ -41,29 +41,3 @@ void Server::endConnection(socket_descriptor_t socketDescriptor) {
   closesocket(socketDescriptor);
   currentNumOfClients--;
 }
-
-// TODO(cmihail): common method with unix method (unite them)
-Message Server::receiveMessage(socket_descriptor_t socketDescriptor) {
-  Message message(2000); // TODO(cmihail): change 2000
-  int n = recv(socketDescriptor, message.getContent(), message.getLength(), 0);
-  if (n < 0) {
-    stringstream out;
-    out << "Problem at receiving data from " << socketDescriptor;
-    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str());
-  }
-
-  if (n == 0) {
-    message = Message(0); // TODO(cmihail): check if this produces memory leaks
-  }
-  return message;
-}
-
-// TODO(cmihail): common method with unix method (unite them)
-void Server::sendMessage(socket_descriptor_t socketDescriptor, Message & message) {
-  if (send(socketDescriptor, message.getContent(), message.getLength(), 0) < 0) {
-    stringstream out;
-    out << "Problem at sending data to " << socketDescriptor;
-    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str());
-  }
-}
-

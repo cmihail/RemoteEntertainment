@@ -3,14 +3,15 @@
  *
  *  Created on: Oct 10, 2012
  *      Author: cmihail (Mihail Costea)
+ *
+ * Defines the implementation of Logger.h.
+ * Message format: [SERVER] (<file>, line <line_num>, <warning level>): <message>
  */
-
-// TODO(cmihail): explain message format "[SERVER] ('Server.cpp', line 23, information): "
 
 #include "Logger.h"
 
 #include <cstdlib>
-#include <iostream> // TODO(cmihail): maybe use a file instead
+#include <iostream>
 
 #define MAIN_HEADER "[SERVER]"
 

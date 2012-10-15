@@ -3,6 +3,8 @@
  *
  *  Created on: Oct 9, 2012
  *      Author: cmihail (Mihail Costea)
+ *
+ * Defines the implementation of Message.h.
  */
 
 #include "Message.h"
@@ -10,8 +12,14 @@
 #include <cstdlib>
 #include <cstring>
 
+Message::Message() {
+  length = 0;
+  content = NULL;
+}
+
 Message::Message(int length) : length(length) {
   if (length <= 0) {
+    length = 0;
     content = NULL;
   } else {
     content = new char[length];

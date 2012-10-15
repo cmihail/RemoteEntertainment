@@ -3,6 +3,7 @@
  *
  *  Created on: Sep 24, 2012
  *      Author: cmihail (Mihail Costea)
+ * Defines the implementation of EventListener.h.
  */
 
 #include "Logger.h"
@@ -20,7 +21,6 @@ struct kevent * changeList;
 struct kevent * eventList;
 
 int currentNumOfEvents = 0;
-int numOfTriggeredEvents = -1;
 
 // TODO(cmihail): maybe a method for closing
 
@@ -94,16 +94,14 @@ bool EventListener::deleteEvent(socket_descriptor_t descriptor) {
   return true;
 }
 
-int EventListener::checkEvents() {
-  numOfTriggeredEvents = kevent(kqueueDescriptor, changeList, currentNumOfEvents,
+list<socket_descriptor_t> EventListener::getTriggeredEvents() {
+  int numOfTriggeredEvents = kevent(kqueueDescriptor, changeList, currentNumOfEvents,
       eventList, currentNumOfEvents, NULL);
-  return numOfTriggeredEvents;
-}
-
-socket_descriptor_t EventListener::getDescriptor(int eventId) {
-  if (numOfTriggeredEvents <= 0  || eventId >= numOfTriggeredEvents ||
-      eventList[eventId].filter != EVFILT_READ) {
-    return -1;
+  list<socket_descriptor_t> triggeredEvents;
+  for (int i = 0; i < numOfTriggeredEvents; i++) {
+    if (eventList[i].filter == EVFILT_READ) {
+      triggeredEvents.push_back(eventList[i].ident);
+    }
   }
-  return eventList[eventId].ident;
+  return triggeredEvents;
 }

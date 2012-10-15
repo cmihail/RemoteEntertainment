@@ -3,6 +3,8 @@
  *
  *  Created on: Oct 8, 2012
  *      Author: cmihail (Mihail Costea)
+ *
+ * Defines a generic implementation of the Server.h.
  */
 
 #include "Logger.h"
@@ -16,9 +18,13 @@
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #include <cstdlib>
-#include <iostream> // TODO(cmihail): delete this in future
 #include <map>
 #include <sstream>
+
+#ifdef __APPLE__ || __linux__
+  #include <sys/socket.h>
+  #include <sys/types.h>
+#endif
 
 using namespace std;
 
@@ -75,15 +81,15 @@ static void registerNewClient(Server * server, socket_descriptor_t listenSocket)
 // TODO(cmihail): only for dev, it should be send to all other clients
 static void printCommand(PlayerCommand * playerCommand) {
   if (playerCommand->getType() == proto::Command::PAUSE) {
-    cout << "[SERVER] Pause\n";
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Pause");
   } else if (playerCommand->getType() == proto::Command::PLAY) {
-    cout << "[SERVER] Play\n";
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Play");
   } else  if (playerCommand->getType() == proto::Command::REWIND) {
-    cout << "[SERVER] Rewind\n";
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Rewind");
   } else  if (playerCommand->getType() == proto::Command::FAST_FORWARD) {
-    cout << "[SERVER] Fast Forward\n";
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Forward");
   } else {
-    cout << "[SERVER] Other command\n";
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Another command");
   }
 }
 
@@ -120,36 +126,70 @@ static void receiveCommand(Server * server, socket_descriptor_t clientSocket) {
 
 void Server::run() {
   while(true) {
-    int numOfTriggeredEvents = eventListener->checkEvents();
-    if (numOfTriggeredEvents <= 0) {
-      Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Invalid events");
+    list<socket_descriptor_t> triggeredEvents = eventListener->getTriggeredEvents();
+    if (triggeredEvents.size() == 0) {
+      Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Invalid/No events");
     }
 
-    // Get event type based on
-    for (int i = 0; i < numOfTriggeredEvents; i++) {
-      int descriptor = eventListener->getDescriptor(i);
-      if (descriptor == -1) {
-        Logger::print(__FILE__, __LINE__, Logger::WARNING, "Incorrect descriptor");
-        continue;
-      }
+    list<socket_descriptor_t>::iterator it = triggeredEvents.begin();
+    list<socket_descriptor_t>::iterator itEnd = triggeredEvents.end();
 
-      // Receive new connection.
-      if (listenSocket == descriptor) {
-        registerNewClient(this, listenSocket);
-        continue;
-      }
+    for (; it != itEnd; it++) {
+      socket_descriptor_t socketDescriptor = *it;
 
-      // Receive commands from clients.
-      map<socket_descriptor_t, Client>::iterator it = clientsMap.find(descriptor);
-      if (it != clientsMap.end()) {
-        Logger::print(__FILE__, __LINE__, Logger::INFO, "Command received ");
-        receiveCommand(this, descriptor);
-        continue;
-      } else {
-        stringstream out;
-        out << "Not a valid socket descriptor: " << descriptor;
-        Logger::print(__FILE__, __LINE__, Logger::WARNING, out.str());
-      }
+       // Receive new connection.
+       if (listenSocket == socketDescriptor) {
+         registerNewClient(this, listenSocket);
+         continue;
+       }
+
+       // Receive commands from clients.
+       map<socket_descriptor_t, Client>::iterator it = clientsMap.find(socketDescriptor);
+       if (it != clientsMap.end()) {
+         Logger::print(__FILE__, __LINE__, Logger::INFO, "Command received ");
+         receiveCommand(this, socketDescriptor);
+         continue;
+       } else {
+         stringstream out;
+         out << "Not a valid socket descriptor: " << socketDescriptor;
+         Logger::print(__FILE__, __LINE__, Logger::WARNING, out.str());
+       }
     }
+  }
+}
+
+Message Server::receiveMessage(socket_descriptor_t socketDescriptor) {
+  Message message(2000); // TODO(cmihail): change 2000 to something more relevant
+  int n = recv(socketDescriptor, message.getContent(), message.getLength(), 0);
+  if (n < 0) {
+    stringstream out;
+    out << "Problem at receiving data from " << socketDescriptor;
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str());
+    message = Message();
+  }
+
+  if (n == 0) {
+    message = Message();
+  }
+  return message;
+}
+
+void Server::sendMessage(socket_descriptor_t socketDescriptor, Message & message) {
+  int n = send(socketDescriptor, message.getContent(), message.getLength(), 0);
+
+  Logger::Type type;
+  bool hasWarning = false;
+  if (n < 0) {
+    type = Logger::SEVERE;
+    hasWarning = true;
+  } else if (n != message.getLength()) {
+    type = Logger::WARNING;
+    hasWarning = true;
+  }
+
+  if (hasWarning) {
+    stringstream out;
+    out << "Problem at sending data to " << socketDescriptor;
+    Logger::print(__FILE__, __LINE__, type, out.str());
   }
 }

@@ -1,5 +1,5 @@
 /*
- * ServerUnix.cpp
+mak * ServerUnix.cpp
  *
  *  Created on: Oct 8, 2012
  *      Author: cmihail (Mihail Costea)
@@ -18,9 +18,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 using namespace std;
 
@@ -75,28 +73,4 @@ socket_descriptor_t Server::newConnection(socket_descriptor_t listenSocket) {
 void Server::endConnection(socket_descriptor_t socketDescriptor) {
   close(socketDescriptor);
   currentNumOfClients--;
-}
-
-Message Server::receiveMessage(socket_descriptor_t socketDescriptor) {
-  Message message(2000); // TODO(cmihail): change 2000
-  int n = recv(socketDescriptor, message.getContent(), message.getLength(), 0);
-  if (n < 0) {
-    stringstream out;
-    out << "Problem at receiving data from " << socketDescriptor;
-    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str()); // TODO(cmihail): maybe not ERROR
-  }
-
-  if (n == 0) {
-    message = Message(0); // TODO(cmihail): check if this produces memory leaks
-  }
-  return message;
-}
-
-void Server::sendMessage(socket_descriptor_t socketDescriptor, Message & message) {
-  // TODO(cmihail): check value returned by <send> to be the same as length
-  if (send(socketDescriptor, message.getContent(), message.getLength(), 0) < 0) {
-    stringstream out;
-    out << "Problem at sending data to " << socketDescriptor;
-    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str()); // TODO(cmihail): maybe not ERROR
-  }
 }

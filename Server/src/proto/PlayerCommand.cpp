@@ -3,6 +3,8 @@
  *
  *  Created on: Sep 27, 2012
  *      Author: cmihail (Mihail Costea)
+ *
+ * Defines the implementation of PlayerCommand.h.
  */
 
 #include "proto/PlayerCommand.h"
@@ -63,7 +65,14 @@ proto::Command::Type PlayerCommand::getType() {
   return type;
 }
 
-string PlayerCommand::getInformation() {
+bool PlayerCommand::hasInfo() {
+  if (info.compare(EMPTY_STRING) == 0) {
+    return true;
+  }
+  return false;
+}
+
+string PlayerCommand::getInfo() {
   return info;
 }
 
