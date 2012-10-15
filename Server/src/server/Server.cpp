@@ -7,6 +7,11 @@
  * Defines a generic implementation of the Server.h.
  */
 
+#if defined(__APPLE__) || defined(__linux__)
+  #include <sys/socket.h>
+  #include <sys/types.h>
+#endif
+
 #include "Logger.h"
 #include "Message.h"
 #include "platform/EventListener.h"
@@ -20,11 +25,6 @@
 #include <cstdlib>
 #include <map>
 #include <sstream>
-
-#ifdef __APPLE__ || __linux__
-  #include <sys/socket.h>
-  #include <sys/types.h>
-#endif
 
 using namespace std;
 

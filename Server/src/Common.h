@@ -13,7 +13,7 @@
 #ifdef _WIN32
   #include <windows.h>
   typedef SOCKET socket_descriptor_t;
-#elif __APPLE__ || __linux__
+#elif defined(__APPLE__) || defined(__linux__)
   typedef int socket_descriptor_t;
 #else
   // TODO(cmihail): error

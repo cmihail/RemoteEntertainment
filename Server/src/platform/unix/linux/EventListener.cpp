@@ -3,6 +3,7 @@
  *
  *  Created on: Oct 12, 2012
  *      Author: cmihail (Mihail Costea)
+ *
  * Defines the implementation of EventListener.h.
  */
 
@@ -102,15 +103,13 @@ bool EventListener::deleteEvent(socket_descriptor_t descriptor) {
   return true;
 }
 
-int EventListener::checkEvents() {
-  numOfTriggeredEvents = epoll_wait(epollDescriptor, eventList, currentNumOfEvents, -1);
-  return numOfTriggeredEvents;
-}
-
-socket_descriptor_t EventListener::getDescriptor(int eventId) {
-  if (numOfTriggeredEvents <= 0  || eventId >= numOfTriggeredEvents ||
-      eventList[eventId].events != EPOLLIN) {
-    return -1;
+list<socket_descriptor_t> EventListener::getTriggeredEvents() {
+  int numOfTriggeredEvents = epoll_wait(epollDescriptor, eventList, currentNumOfEvents, -1);
+  list<socket_descriptor_t> triggeredEvents;
+  for (int i = 0; i < numOfTriggeredEvents; i++) {
+    if (eventList[i].events == EPOLLIN) {
+      triggeredEvents.push_back(eventList[i].data.fd);
+    }
   }
-  return eventList[eventId].data.fd;
+  return triggeredEvents;
 }

@@ -74,6 +74,5 @@ bin/EventListener.o: src/platform/unix/mac/EventListener.cpp
 endif
 endif
 
-
 clean:
 	rm -rf bin/*.o Main*
