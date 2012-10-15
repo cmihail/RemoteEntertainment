@@ -15,7 +15,6 @@
 using namespace std;
 
 HANDLE ioCompletionPort;
-SOCKET inputSocket; // TODO(cmihail): another name
 int currentNumOfEvents = 0;
 
 EventListener::EventListener(int maxNumOfEvents) : maxNumOfEvents(maxNumOfEvents) {
