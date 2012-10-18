@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 
 import proto.ProtoPlayer.Command.Type;
 
+import client.PlayerCommand;
 import client.PlayerCommandExecutor;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.DefaultFullScreenStrategy;
@@ -101,7 +102,7 @@ public class PlayerView {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 				  prepareForFullScreen(!mediaPlayer.isFullScreen());
-					commandExecutor.executeCommand(Type.TOGGLE_FULL_SCREEN, null, true);
+					commandExecutor.executeCommand(new PlayerCommand(Type.TOGGLE_FULL_SCREEN), true);
 				}
 			}
 		};

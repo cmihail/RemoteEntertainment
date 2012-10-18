@@ -38,10 +38,10 @@ class Command_Information;
 enum Command_Type {
   Command_Type_NONE = 1,
   Command_Type_SET_POSITION = 2,
-  Command_Type_PREVIOUS_CHAPTER = 3,
-  Command_Type_NEXT_CHAPTER = 4,
-  Command_Type_REWIND = 5,
-  Command_Type_FAST_FORWARD = 6,
+  Command_Type_PREVIOUS = 3,
+  Command_Type_NEXT = 4,
+  Command_Type_BACKWARD = 5,
+  Command_Type_FORWARD = 6,
   Command_Type_STOP = 7,
   Command_Type_PLAY = 8,
   Command_Type_PAUSE = 9,
@@ -210,10 +210,10 @@ class Command : public ::google::protobuf::Message {
   typedef Command_Type Type;
   static const Type NONE = Command_Type_NONE;
   static const Type SET_POSITION = Command_Type_SET_POSITION;
-  static const Type PREVIOUS_CHAPTER = Command_Type_PREVIOUS_CHAPTER;
-  static const Type NEXT_CHAPTER = Command_Type_NEXT_CHAPTER;
-  static const Type REWIND = Command_Type_REWIND;
-  static const Type FAST_FORWARD = Command_Type_FAST_FORWARD;
+  static const Type PREVIOUS = Command_Type_PREVIOUS;
+  static const Type NEXT = Command_Type_NEXT;
+  static const Type BACKWARD = Command_Type_BACKWARD;
+  static const Type FORWARD = Command_Type_FORWARD;
   static const Type STOP = Command_Type_STOP;
   static const Type PLAY = Command_Type_PLAY;
   static const Type PAUSE = Command_Type_PAUSE;

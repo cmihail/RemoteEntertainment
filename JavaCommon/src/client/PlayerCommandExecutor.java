@@ -4,11 +4,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import logger.CommonLogger;
-import proto.ProtoPlayer.Command.Type;
 import client.PlayerCommandHandler;
 
 /**
- * Defines the model for player
+ * Defines the player command executor which selects the right method from the handler
+ * for a given command type.
  *
  * @author cmihail (Mihail Costea)
  */
@@ -21,9 +21,14 @@ public class PlayerCommandExecutor {
 		this.playerCommandHandler = playerCommandHandler;
 	}
 
-	// TODO(cmihail): maybe modify type and info with PlayerCommand
-	public void executeCommand(Type type, String info, boolean notifyExecution) {
-    switch (type) {
+	/**
+	 * @param command the {@link PlayerCommand} to execute
+	 * @param notifyExecution true if the current program should notify others about the execution
+   * of the command or not
+	 */
+	public void executeCommand(PlayerCommand command, boolean notifyExecution) {
+	  String info = command.getInfo();
+    switch (command.getType()) {
     case SET_POSITION:
       if (info == null) {
         logger.log(Level.WARNING, "Invalid position: " + info);
@@ -35,20 +40,20 @@ public class PlayerCommandExecutor {
       }
       break;
 
-    case PREVIOUS_CHAPTER:
-      playerCommandHandler.onPreviousChapter(notifyExecution);
+    case PREVIOUS:
+      playerCommandHandler.onPrevious(notifyExecution);
       break;
 
-    case NEXT_CHAPTER:
-      playerCommandHandler.onNextChapter(notifyExecution);
+    case NEXT:
+      playerCommandHandler.onNext(notifyExecution);
       break;
 
-    case REWIND:
-      playerCommandHandler.onRewind(notifyExecution);
+    case BACKWARD:
+      playerCommandHandler.onBackward(notifyExecution);
       break;
 
-    case FAST_FORWARD:
-      playerCommandHandler.onFastForward(notifyExecution);
+    case FORWARD:
+      playerCommandHandler.onForward(notifyExecution);
       break;
 
     case STOP:
@@ -90,7 +95,7 @@ public class PlayerCommandExecutor {
       break;
 
     default:
-      logger.log(Level.WARNING, "Invalid volume command: " + type.toString());
+      logger.log(Level.WARNING, "Invalid volume command: " + command.getType().toString());
       break;
     }
 	}

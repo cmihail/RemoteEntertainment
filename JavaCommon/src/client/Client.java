@@ -117,6 +117,6 @@ public class Client {
    */
   private void exit(Exception e) {
     logger.log(Level.SEVERE, e.getMessage());
-    e.printStackTrace(CommonLogger.getPrintStream()); // TODO(cmihail): doesn't prin anythinga
+    e.printStackTrace(CommonLogger.getPrintStream()); // TODO(cmihail): doesn't print anything
   }
 }

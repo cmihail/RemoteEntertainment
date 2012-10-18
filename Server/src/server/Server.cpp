@@ -84,9 +84,9 @@ static void printCommand(PlayerCommand * playerCommand) {
     Logger::print(__FILE__, __LINE__, Logger::INFO, "Pause");
   } else if (playerCommand->getType() == proto::Command::PLAY) {
     Logger::print(__FILE__, __LINE__, Logger::INFO, "Play");
-  } else  if (playerCommand->getType() == proto::Command::REWIND) {
+  } else  if (playerCommand->getType() == proto::Command::BACKWARD) {
     Logger::print(__FILE__, __LINE__, Logger::INFO, "Rewind");
-  } else  if (playerCommand->getType() == proto::Command::FAST_FORWARD) {
+  } else  if (playerCommand->getType() == proto::Command::FORWARD) {
     Logger::print(__FILE__, __LINE__, Logger::INFO, "Forward");
   } else {
     Logger::print(__FILE__, __LINE__, Logger::INFO, "Another command");

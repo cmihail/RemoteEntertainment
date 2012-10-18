@@ -22,6 +22,7 @@ import javax.swing.event.ChangeListener;
 
 import proto.ProtoPlayer.Command.Type;
 
+import client.PlayerCommand;
 import client.PlayerCommandExecutor;
 
 import uk.co.caprica.vlcj.binding.LibVlcConst;
@@ -198,7 +199,8 @@ public class PlayerControlsPanel extends JPanel {
       public void stateChanged(ChangeEvent e) {
         if(!positionSlider.getValueIsAdjusting() && !setPositionValue) {
           float positionValue = positionSlider.getValue() / 100.0f;
-          commandExecutor.executeCommand(Type.SET_POSITION, positionValue + "", true);
+          commandExecutor.executeCommand(
+              new PlayerCommand(Type.SET_POSITION, positionValue + ""), true);
         }
       }
     });
@@ -206,21 +208,21 @@ public class PlayerControlsPanel extends JPanel {
     previousChapterButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        commandExecutor.executeCommand(Type.PREVIOUS_CHAPTER, null, true);
+        commandExecutor.executeCommand(new PlayerCommand(Type.PREVIOUS), true);
       }
     });
 
     rewindButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        commandExecutor.executeCommand(Type.REWIND, null, true);
+        commandExecutor.executeCommand(new PlayerCommand(Type.BACKWARD), true);
       }
     });
 
     stopButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        commandExecutor.executeCommand(Type.STOP, null, true);
+        commandExecutor.executeCommand(new PlayerCommand(Type.STOP), true);
       }
     });
 
@@ -230,10 +232,10 @@ public class PlayerControlsPanel extends JPanel {
         boolean isPlaying = mediaPlayer.isPlaying();
         PlayerControlsPanel.this.isPlaying = isPlaying;
         if (isPlaying) {
-          commandExecutor.executeCommand(Type.PAUSE, null, true);
+          commandExecutor.executeCommand(new PlayerCommand(Type.PAUSE), true);
           playPauseButton.setIcon(pauseIcon);
         } else {
-          commandExecutor.executeCommand(Type.PLAY, null, true);
+          commandExecutor.executeCommand(new PlayerCommand(Type.PLAY), true);
           playPauseButton.setIcon(playIcon);
         }
       }
@@ -242,21 +244,21 @@ public class PlayerControlsPanel extends JPanel {
     fastForwardButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        commandExecutor.executeCommand(Type.FAST_FORWARD, null, true);
+        commandExecutor.executeCommand(new PlayerCommand(Type.FORWARD), true);
       }
     });
 
     nextChapterButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        commandExecutor.executeCommand(Type.NEXT_CHAPTER, null, true);
+        commandExecutor.executeCommand(new PlayerCommand(Type.NEXT), true);
       }
     });
 
     toggleMuteButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        commandExecutor.executeCommand(Type.MUTE, null, true);
+        commandExecutor.executeCommand(new PlayerCommand(Type.MUTE), true);
       }
     });
 
@@ -265,7 +267,8 @@ public class PlayerControlsPanel extends JPanel {
       public void stateChanged(ChangeEvent e) {
         JSlider source = (JSlider)e.getSource();
         if(!source.getValueIsAdjusting()) {
-          commandExecutor.executeCommand(Type.SET_VOLUME, source.getValue() + "", true);
+          commandExecutor.executeCommand(
+              new PlayerCommand(Type.SET_VOLUME, source.getValue() + ""), true);
         }
       }
     });
@@ -273,7 +276,7 @@ public class PlayerControlsPanel extends JPanel {
     fullScreenButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        commandExecutor.executeCommand(Type.TOGGLE_FULL_SCREEN, null, true);
+        commandExecutor.executeCommand(new PlayerCommand(Type.TOGGLE_FULL_SCREEN), true);
       }
     });
   }
@@ -315,8 +318,10 @@ public class PlayerControlsPanel extends JPanel {
   private void updateTime(long millis) {
     String s = String.format("%02d:%02d:%02d",
       TimeUnit.MILLISECONDS.toHours(millis),
-      TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-      TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+      TimeUnit.MILLISECONDS.toMinutes(millis) -
+        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+      TimeUnit.MILLISECONDS.toSeconds(millis) -
+        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
     );
     timeLabel.setText(s);
   }

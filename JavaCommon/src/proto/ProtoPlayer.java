@@ -52,10 +52,10 @@ public final class ProtoPlayer {
         implements com.google.protobuf.ProtocolMessageEnum {
       NONE(0, 1),
       SET_POSITION(1, 2),
-      PREVIOUS_CHAPTER(2, 3),
-      NEXT_CHAPTER(3, 4),
-      REWIND(4, 5),
-      FAST_FORWARD(5, 6),
+      PREVIOUS(2, 3),
+      NEXT(3, 4),
+      BACKWARD(4, 5),
+      FORWARD(5, 6),
       STOP(6, 7),
       PLAY(7, 8),
       PAUSE(8, 9),
@@ -67,10 +67,10 @@ public final class ProtoPlayer {
       
       public static final int NONE_VALUE = 1;
       public static final int SET_POSITION_VALUE = 2;
-      public static final int PREVIOUS_CHAPTER_VALUE = 3;
-      public static final int NEXT_CHAPTER_VALUE = 4;
-      public static final int REWIND_VALUE = 5;
-      public static final int FAST_FORWARD_VALUE = 6;
+      public static final int PREVIOUS_VALUE = 3;
+      public static final int NEXT_VALUE = 4;
+      public static final int BACKWARD_VALUE = 5;
+      public static final int FORWARD_VALUE = 6;
       public static final int STOP_VALUE = 7;
       public static final int PLAY_VALUE = 8;
       public static final int PAUSE_VALUE = 9;
@@ -86,10 +86,10 @@ public final class ProtoPlayer {
         switch (value) {
           case 1: return NONE;
           case 2: return SET_POSITION;
-          case 3: return PREVIOUS_CHAPTER;
-          case 4: return NEXT_CHAPTER;
-          case 5: return REWIND;
-          case 6: return FAST_FORWARD;
+          case 3: return PREVIOUS;
+          case 4: return NEXT;
+          case 5: return BACKWARD;
+          case 6: return FORWARD;
           case 7: return STOP;
           case 8: return PLAY;
           case 9: return PAUSE;
@@ -127,7 +127,7 @@ public final class ProtoPlayer {
       }
       
       private static final Type[] VALUES = {
-        NONE, SET_POSITION, PREVIOUS_CHAPTER, NEXT_CHAPTER, REWIND, FAST_FORWARD, STOP, PLAY, PAUSE, MUTE, SET_VOLUME, TOGGLE_FULL_SCREEN, START_MOVIE, 
+        NONE, SET_POSITION, PREVIOUS, NEXT, BACKWARD, FORWARD, STOP, PLAY, PAUSE, MUTE, SET_VOLUME, TOGGLE_FULL_SCREEN, START_MOVIE, 
       };
       
       public static Type valueOf(
@@ -1022,15 +1022,15 @@ public final class ProtoPlayer {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014player.proto\022\005proto\"\301\002\n\007Command\022!\n\004typ" +
+      "\n\014player.proto\022\005proto\"\256\002\n\007Command\022!\n\004typ" +
       "e\030\001 \002(\0162\023.proto.Command.Type\022(\n\004info\030\002 \001" +
       "(\0132\032.proto.Command.Information\032\034\n\013Inform" +
-      "ation\022\r\n\005value\030\001 \002(\t\"\312\001\n\004Type\022\010\n\004NONE\020\001\022" +
-      "\020\n\014SET_POSITION\020\002\022\024\n\020PREVIOUS_CHAPTER\020\003\022" +
-      "\020\n\014NEXT_CHAPTER\020\004\022\n\n\006REWIND\020\005\022\020\n\014FAST_FO" +
-      "RWARD\020\006\022\010\n\004STOP\020\007\022\010\n\004PLAY\020\010\022\t\n\005PAUSE\020\t\022\010" +
-      "\n\004MUTE\020\n\022\016\n\nSET_VOLUME\020\013\022\026\n\022TOGGLE_FULL_" +
-      "SCREEN\020\014\022\017\n\013START_MOVIE\020\rB\rB\013ProtoPlayer"
+      "ation\022\r\n\005value\030\001 \002(\t\"\267\001\n\004Type\022\010\n\004NONE\020\001\022" +
+      "\020\n\014SET_POSITION\020\002\022\014\n\010PREVIOUS\020\003\022\010\n\004NEXT\020" +
+      "\004\022\014\n\010BACKWARD\020\005\022\013\n\007FORWARD\020\006\022\010\n\004STOP\020\007\022\010" +
+      "\n\004PLAY\020\010\022\t\n\005PAUSE\020\t\022\010\n\004MUTE\020\n\022\016\n\nSET_VOL" +
+      "UME\020\013\022\026\n\022TOGGLE_FULL_SCREEN\020\014\022\017\n\013START_M" +
+      "OVIE\020\rB\rB\013ProtoPlayer"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

@@ -100,15 +100,15 @@ void protobuf_AddDesc_player_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\014player.proto\022\005proto\"\301\002\n\007Command\022!\n\004typ"
+    "\n\014player.proto\022\005proto\"\256\002\n\007Command\022!\n\004typ"
     "e\030\001 \002(\0162\023.proto.Command.Type\022(\n\004info\030\002 \001"
     "(\0132\032.proto.Command.Information\032\034\n\013Inform"
-    "ation\022\r\n\005value\030\001 \002(\t\"\312\001\n\004Type\022\010\n\004NONE\020\001\022"
-    "\020\n\014SET_POSITION\020\002\022\024\n\020PREVIOUS_CHAPTER\020\003\022"
-    "\020\n\014NEXT_CHAPTER\020\004\022\n\n\006REWIND\020\005\022\020\n\014FAST_FO"
-    "RWARD\020\006\022\010\n\004STOP\020\007\022\010\n\004PLAY\020\010\022\t\n\005PAUSE\020\t\022\010"
-    "\n\004MUTE\020\n\022\016\n\nSET_VOLUME\020\013\022\026\n\022TOGGLE_FULL_"
-    "SCREEN\020\014\022\017\n\013START_MOVIE\020\rB\rB\013ProtoPlayer", 360);
+    "ation\022\r\n\005value\030\001 \002(\t\"\267\001\n\004Type\022\010\n\004NONE\020\001\022"
+    "\020\n\014SET_POSITION\020\002\022\014\n\010PREVIOUS\020\003\022\010\n\004NEXT\020"
+    "\004\022\014\n\010BACKWARD\020\005\022\013\n\007FORWARD\020\006\022\010\n\004STOP\020\007\022\010"
+    "\n\004PLAY\020\010\022\t\n\005PAUSE\020\t\022\010\n\004MUTE\020\n\022\016\n\nSET_VOL"
+    "UME\020\013\022\026\n\022TOGGLE_FULL_SCREEN\020\014\022\017\n\013START_M"
+    "OVIE\020\rB\rB\013ProtoPlayer", 341);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "player.proto", &protobuf_RegisterTypes);
   Command::default_instance_ = new Command();
@@ -156,10 +156,10 @@ bool Command_Type_IsValid(int value) {
 #ifndef _MSC_VER
 const Command_Type Command::NONE;
 const Command_Type Command::SET_POSITION;
-const Command_Type Command::PREVIOUS_CHAPTER;
-const Command_Type Command::NEXT_CHAPTER;
-const Command_Type Command::REWIND;
-const Command_Type Command::FAST_FORWARD;
+const Command_Type Command::PREVIOUS;
+const Command_Type Command::NEXT;
+const Command_Type Command::BACKWARD;
+const Command_Type Command::FORWARD;
 const Command_Type Command::STOP;
 const Command_Type Command::PLAY;
 const Command_Type Command::PAUSE;

@@ -5,7 +5,7 @@ import client.PlayerCommand;
 import proto.ProtoPlayer.Command.Type;
 
 /**
- * TODO(cmihail): comments
+ * TODO(cmihail): only for dev
  *
  * @author cmihail (Mihail Costea)
  */
@@ -21,8 +21,6 @@ public class ClientThread extends Thread {
   public void run() {
     // Create a client to connect to server. // TODO(cmihail): set params into settings activity
     client.connect("192.168.2.2", 10000);
-    // TODO(cmihail): problem, client reconnects when changing layout vertically / horizontally
-    // and doesn't close old socket either
 
     while (true) {
       PlayerCommand playerCommmand = null;

@@ -6,10 +6,10 @@ message Command {
   enum Type {
     NONE = 1;
     SET_POSITION = 2;
-    PREVIOUS_CHAPTER = 3;
-    NEXT_CHAPTER = 4;
-    REWIND = 5;
-    FAST_FORWARD = 6;
+    PREVIOUS = 3;
+    NEXT = 4;
+    BACKWARD = 5;
+    FORWARD = 6;
     STOP = 7;
     PLAY = 8;
     PAUSE = 9;

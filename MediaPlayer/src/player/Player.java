@@ -41,8 +41,7 @@ public class Player {
           PlayerCommand playerCommmand = client.receiveCommand();
 
           // Execute command.
-          commandExecutor.executeCommand(playerCommmand.getType(),
-              playerCommmand.getInfo(), false);
+          commandExecutor.executeCommand(playerCommmand, false);
         }
       }
     };
@@ -84,15 +83,15 @@ public class Player {
       }
 
       @Override
-      public void onRewind(boolean notifyExecution) {
+      public void onBackward(boolean notifyExecution) {
         playerView.getMediaPlayer().skip(-SKIP_TIME_MS);
-        sendCommand(Type.REWIND, notifyExecution);
+        sendCommand(Type.BACKWARD, notifyExecution);
       }
 
       @Override
-      public void onPreviousChapter(boolean notifyExecution) {
+      public void onPrevious(boolean notifyExecution) {
         playerView.getMediaPlayer().previousChapter();
-        sendCommand(Type.PREVIOUS_CHAPTER, notifyExecution);
+        sendCommand(Type.PREVIOUS, notifyExecution);
       }
 
       @Override
@@ -108,9 +107,9 @@ public class Player {
       }
 
       @Override
-      public void onNextChapter(boolean notifyExecution) {
+      public void onNext(boolean notifyExecution) {
         playerView.getMediaPlayer().nextChapter();
-        sendCommand(Type.NEXT_CHAPTER, notifyExecution);
+        sendCommand(Type.NEXT, notifyExecution);
       }
 
       @Override
@@ -120,9 +119,9 @@ public class Player {
       }
 
       @Override
-      public void onFastForward(boolean notifyExecution) {
+      public void onForward(boolean notifyExecution) {
         playerView.getMediaPlayer().skip(SKIP_TIME_MS);
-        sendCommand(Type.FAST_FORWARD, notifyExecution);
+        sendCommand(Type.FORWARD, notifyExecution);
       }
     };
   }

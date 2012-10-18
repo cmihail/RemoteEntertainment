@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 /**
- * TODO(cmihail): comments
+ * Defines the main activity of the remote player.
  *
  * @author cmihail (Mihail Costea)
  */
@@ -63,8 +63,8 @@ public class MainActivity extends Activity {
   }
 
   public void bindListeners() {
-    imageButtonAction(rewindButton, Type.REWIND); // TODO(cmihail): Maybe backward instead of rewind
-    imageButtonAction(forwardButton, Type.FAST_FORWARD); // TODO(cmihail): forward instead of fast forward
+    imageButtonAction(rewindButton, Type.BACKWARD);
+    imageButtonAction(forwardButton, Type.FORWARD);
 
     playPauseButton.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -80,8 +80,8 @@ public class MainActivity extends Activity {
       }
     });
 
-    imageButtonAction(previousButton, Type.PREVIOUS_CHAPTER); // TODO(cmihail): no chapter
-    imageButtonAction(nextButton, Type.NEXT_CHAPTER); // TODO(cmihail): no chapter
+    imageButtonAction(previousButton, Type.PREVIOUS);
+    imageButtonAction(nextButton, Type.NEXT);
   }
 
   // TODO(cmihail): temporary solution
