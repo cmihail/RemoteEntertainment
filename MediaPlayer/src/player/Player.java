@@ -1,6 +1,5 @@
 package player;
 
-import proto.ProtoPlayer.Command.Type;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import client.Client;
 import client.PlayerCommand;
@@ -22,7 +21,7 @@ public class Player {
 
   public Player(Client client) {
     this.client = client;
-    commandExecutor = new PlayerCommandExecutor(createCommandHandler());
+    commandExecutor = new PlayerCommandExecutor(client, createCommandHandler());
     playerView = new PlayerView(commandExecutor);
 
     bindExternalCommandsThread();
@@ -48,93 +47,73 @@ public class Player {
     thread.start();
   }
 
+  /**
+   * @return the handler for player commands
+   */
   private PlayerCommandHandler createCommandHandler() {
     return new PlayerCommandHandler() {
 
       @Override
-      public void onToggleFullScreen(boolean notifyExecution) {
+      public void onToggleFullScreen() {
         EmbeddedMediaPlayer mediaPlayer = playerView.getMediaPlayer();
         playerView.prepareForFullScreen(!mediaPlayer.isFullScreen());
         mediaPlayer.toggleFullScreen();
-        sendCommand(Type.TOGGLE_FULL_SCREEN, notifyExecution);
       }
 
       @Override
-      public void onStop(boolean notifyExecution) {
+      public void onStop() {
         playerView.getMediaPlayer().stop();
-        sendCommand(Type.STOP, notifyExecution);
       }
 
       @Override
-      public void onStartMovie(String notifyExecution) {
-        // TODO(cmihail): delete this method from interface
+      public void onStartMovie(String pathToMovie) {
+        // TODO(cmihail): think about this
       }
 
       @Override
-      public void onSetVolume(int value, boolean notifyExecution) {
+      public void onSetVolume(int value) {
         playerView.getMediaPlayer().setVolume(value);
-        // TODO(cmihail)
       }
 
       @Override
-      public void onSetPosition(float position, boolean notifyExecution) {
+      public void onSetPosition(float position) {
         playerView.getMediaPlayer().setPosition(position);
-        sendCommand(Type.SET_POSITION, position + "", notifyExecution);
       }
 
       @Override
-      public void onBackward(boolean notifyExecution) {
+      public void onBackward() {
         playerView.getMediaPlayer().skip(-SKIP_TIME_MS);
-        sendCommand(Type.BACKWARD, notifyExecution);
       }
 
       @Override
-      public void onPrevious(boolean notifyExecution) {
+      public void onPrevious() {
         playerView.getMediaPlayer().previousChapter();
-        sendCommand(Type.PREVIOUS, notifyExecution);
       }
 
       @Override
-      public void onPlay(boolean notifyExecution) {
+      public void onPlay() {
         playerView.getMediaPlayer().play();
-        sendCommand(Type.PLAY, notifyExecution);
       }
 
       @Override
-      public void onPause(boolean notifyExecution) {
+      public void onPause() {
         playerView.getMediaPlayer().pause();
-        sendCommand(Type.PAUSE, notifyExecution);
       }
 
       @Override
-      public void onNext(boolean notifyExecution) {
+      public void onNext() {
         playerView.getMediaPlayer().nextChapter();
-        sendCommand(Type.NEXT, notifyExecution);
       }
 
       @Override
-      public void onMute(boolean notifyExecution) {
+      public void onMute() {
         playerView.getMediaPlayer().mute();
-        sendCommand(Type.MUTE, notifyExecution);
       }
 
       @Override
-      public void onForward(boolean notifyExecution) {
+      public void onForward() {
         playerView.getMediaPlayer().skip(SKIP_TIME_MS);
-        sendCommand(Type.FORWARD, notifyExecution);
       }
     };
-  }
-
-  private void sendCommand(Type type, boolean shouldSend) {
-    if (shouldSend) {
-      client.sendCommand(new PlayerCommand(type));
-    }
-  }
-
-  private void sendCommand(Type type, String info, boolean shouldSend) {
-    if (shouldSend) {
-      client.sendCommand(new PlayerCommand(type, info));
-    }
   }
 }

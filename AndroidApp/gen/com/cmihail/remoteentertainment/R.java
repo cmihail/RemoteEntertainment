@@ -59,18 +59,19 @@ public final class R {
         public static final int btnRepeat=0x7f07000e;
         public static final int btnShuffle=0x7f07000f;
         public static final int forwardButton=0x7f070008;
-        public static final int menu_settings=0x7f070010;
+        public static final int mediaCurrentDurationLabel=0x7f07000c;
+        public static final int mediaProgressBar=0x7f07000a;
+        public static final int mediaThumbnail=0x7f070003;
+        public static final int mediaTitle=0x7f070001;
+        public static final int mediaTotalDurationLabel=0x7f07000d;
+        public static final int menu_settings=0x7f070011;
         public static final int nextButton=0x7f070009;
         public static final int playPauseButton=0x7f070007;
         public static final int player_footer_bg=0x7f070004;
         public static final int player_header_bg=0x7f070000;
         public static final int previousButton=0x7f070005;
         public static final int rewindButton=0x7f070006;
-        public static final int songCurrentDurationLabel=0x7f07000c;
-        public static final int songProgressBar=0x7f07000a;
-        public static final int songThumbnail=0x7f070003;
-        public static final int songTitle=0x7f070001;
-        public static final int songTotalDurationLabel=0x7f07000d;
+        public static final int songTitle=0x7f070010;
         public static final int timerDisplay=0x7f07000b;
     }
     public static final class layout {

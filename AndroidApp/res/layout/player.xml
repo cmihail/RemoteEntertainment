@@ -14,9 +14,9 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp">
         
-        <!-- Song Title -->
+        <!-- Media Title -->
         <TextView 
-            android:id="@+id/songTitle"
+            android:id="@+id/mediaTitle"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -36,9 +36,9 @@
             android:background="@null"/>
     </LinearLayout>
     
-    <!-- Song Thumbnail Image -->
+    <!-- Media Thumbnail Image -->
     <LinearLayout 
-        android:id="@+id/songThumbnail"
+        android:id="@+id/mediaThumbnail"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
@@ -108,7 +108,7 @@
     
     <!-- Progress Bar/Seek bar -->
     <SeekBar
-        android:id="@+id/songProgressBar"
+        android:id="@+id/mediaProgressBar"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_marginRight="20dp" 
@@ -123,7 +123,7 @@
     <!-- Timer Display -->
     <LinearLayout 
         android:id="@+id/timerDisplay"
-        android:layout_above="@id/songProgressBar"
+        android:layout_above="@id/mediaProgressBar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="20dp"
@@ -131,7 +131,7 @@
         android:layout_marginBottom="10dp">
         <!-- Current Duration Label -->
         <TextView 
-            android:id="@+id/songCurrentDurationLabel"
+            android:id="@+id/mediaCurrentDurationLabel"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -140,7 +140,7 @@
             android:textStyle="bold"/>
         <!-- Total Duration Label -->
         <TextView 
-            android:id="@+id/songTotalDurationLabel"
+            android:id="@+id/mediaTotalDurationLabel"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

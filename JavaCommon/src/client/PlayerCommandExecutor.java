@@ -14,10 +14,17 @@ import client.PlayerCommandHandler;
  */
 public class PlayerCommandExecutor {
 
-  private final Logger logger = CommonLogger.getLogger("Client");
+  private static final Logger logger = CommonLogger.getLogger("Client");
+
+  private final Client client;
 	private final PlayerCommandHandler playerCommandHandler;
 
-	public PlayerCommandExecutor(PlayerCommandHandler playerCommandHandler) {
+	/**
+	 * @param client the client which sends commands to server
+	 * @param playerCommandHandler handler for every player command
+	 */
+	public PlayerCommandExecutor(Client client, PlayerCommandHandler playerCommandHandler) {
+	  this.client = client;
 		this.playerCommandHandler = playerCommandHandler;
 	}
 
@@ -34,42 +41,42 @@ public class PlayerCommandExecutor {
         logger.log(Level.WARNING, "Invalid position: " + info);
       }
       try {
-        playerCommandHandler.onSetPosition(Float.parseFloat(info), notifyExecution);
+        playerCommandHandler.onSetPosition(Float.parseFloat(info));
       } catch (NumberFormatException e) {
         logger.log(Level.WARNING, "Invalid position: " + info);
       }
       break;
 
     case PREVIOUS:
-      playerCommandHandler.onPrevious(notifyExecution);
+      playerCommandHandler.onPrevious();
       break;
 
     case NEXT:
-      playerCommandHandler.onNext(notifyExecution);
+      playerCommandHandler.onNext();
       break;
 
     case BACKWARD:
-      playerCommandHandler.onBackward(notifyExecution);
+      playerCommandHandler.onBackward();
       break;
 
     case FORWARD:
-      playerCommandHandler.onForward(notifyExecution);
+      playerCommandHandler.onForward();
       break;
 
     case STOP:
-      playerCommandHandler.onStop(notifyExecution);
+      playerCommandHandler.onStop();
       break;
 
     case PLAY:
-      playerCommandHandler.onPlay(notifyExecution);
+      playerCommandHandler.onPlay();
       break;
 
     case PAUSE:
-      playerCommandHandler.onPause(notifyExecution);
+      playerCommandHandler.onPause();
       break;
 
     case MUTE:
-      playerCommandHandler.onMute(notifyExecution);
+      playerCommandHandler.onMute();
       break;
 
     case SET_VOLUME:
@@ -77,14 +84,14 @@ public class PlayerCommandExecutor {
         logger.log(Level.WARNING, "Invalid volume value: " + info);
       }
       try {
-        playerCommandHandler.onSetVolume(Integer.parseInt(info), notifyExecution);
+        playerCommandHandler.onSetVolume(Integer.parseInt(info));
       } catch (NumberFormatException e) {
         logger.log(Level.WARNING, "Invalid volume value: " + info);
       }
       break;
 
     case TOGGLE_FULL_SCREEN:
-      playerCommandHandler.onToggleFullScreen(notifyExecution);
+      playerCommandHandler.onToggleFullScreen();
       break;
 
     case START_MOVIE:
@@ -96,7 +103,12 @@ public class PlayerCommandExecutor {
 
     default:
       logger.log(Level.WARNING, "Invalid volume command: " + command.getType().toString());
-      break;
+      return;
+    }
+
+    // Send the command to the server.
+    if (notifyExecution) {
+      client.sendCommand(command);
     }
 	}
 }

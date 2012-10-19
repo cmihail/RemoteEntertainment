@@ -23,7 +23,7 @@ import proto.ProtoPlayer.Command;
  */
 public class Client {
 
-  private final Logger logger = CommonLogger.getLogger("Client");
+  private static final Logger logger = CommonLogger.getLogger("Client");
 
   private SocketChannel socketChannel = null;
 

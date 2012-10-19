@@ -1,11 +1,12 @@
 package com.cmihail.remoteentertainment;
 
-import proto.ProtoPlayer.Command.Type;
+import client.PlayerCommandExecutor;
+import client.PlayerCommandHandler;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
-import android.view.View;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 
 /**
  * Defines the main activity of the remote player.
@@ -15,32 +16,21 @@ import android.widget.ImageButton;
 public class MainActivity extends Activity {
 
   private ClientThread clientThread;
-  private ImageButton rewindButton;
-  private ImageButton forwardButton;
-  private ImageButton playPauseButton;
-  private ImageButton previousButton;
-  private ImageButton nextButton;
+  private PlayerCommandExecutor commandExecuter;
 
-  private boolean isPlaying = true; // TODO(cmihail): move this into it's own class
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.player);
 
+
     // Start client thread which communicates with the server.
-    clientThread = new ClientThread();
+    clientThread = new ClientThread(commandExecuter);
     clientThread.start();
 
-    // Assign button.
-    rewindButton = (ImageButton) findViewById(R.id.rewindButton);
-    forwardButton = (ImageButton) findViewById(R.id.forwardButton);
-    playPauseButton = (ImageButton) findViewById(R.id.playPauseButton);
-    previousButton = (ImageButton) findViewById(R.id.previousButton);
-    nextButton = (ImageButton) findViewById(R.id.nextButton);
-
-    // Bind listeners to buttons.
-    bindListeners();
+    // Create the player command executor.
+    commandExecuter = new PlayerCommandExecutor(clientThread.getClient(), createCommandHandler());
   }
 
   @Override
@@ -62,35 +52,77 @@ public class MainActivity extends Activity {
     clientThread.exit();
   }
 
-  public void bindListeners() {
-    imageButtonAction(rewindButton, Type.BACKWARD);
-    imageButtonAction(forwardButton, Type.FORWARD);
+  /**
+   * @return the handler for player commands
+   */
+  private PlayerCommandHandler createCommandHandler() {
+    return new PlayerCommandHandler() {
 
-    playPauseButton.setOnClickListener(new View.OnClickListener() {
+      private ImageButton playPauseButton = (ImageButton) findViewById(R.id.playPauseButton);
+      private SeekBar mediaProgressBar = (SeekBar) findViewById(R.id.mediaProgressBar);
+
       @Override
-      public void onClick(View v) {
-        if (isPlaying) {
-          clientThread.sendCommand(Type.PAUSE);
-          playPauseButton.setImageResource(R.drawable.btn_pause);
-        } else {
-          clientThread.sendCommand(Type.PAUSE);
-          playPauseButton.setImageResource(R.drawable.btn_play);
-        }
-        isPlaying = !isPlaying;
+      public void onBackward() {
+        // Nothing to do.
       }
-    });
 
-    imageButtonAction(previousButton, Type.PREVIOUS);
-    imageButtonAction(nextButton, Type.NEXT);
-  }
-
-  // TODO(cmihail): temporary solution
-  public void imageButtonAction(ImageButton button, final Type type) {
-    button.setOnClickListener(new View.OnClickListener() {
       @Override
-      public void onClick(View v) {
-        clientThread.sendCommand(type); // TODO(cmihail): keep state of player
+      public void onForward() {
+        // Nothing to do.
       }
-    });
+
+      @Override
+      public void onMute() {
+        // TODO Auto-generated method stub
+      }
+
+      @Override
+      public void onNext() {
+        // Nothing to do.
+      }
+
+      @Override
+      public void onPause() {
+        playPauseButton.setImageResource(R.drawable.btn_pause);
+      }
+
+      @Override
+      public void onPlay() {
+        playPauseButton.setImageResource(R.drawable.btn_play);
+      }
+
+      @Override
+      public void onPrevious() {
+        // Nothing to do.
+      }
+
+      @Override
+      public void onSetPosition(float position) {
+        mediaProgressBar.setProgress(Math.round(position * 100));
+      }
+
+      @Override
+      public void onSetVolume(int arg0) {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void onStartMovie(String arg0) {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void onStop() {
+        // TODO Auto-generated method stub
+
+      }
+
+      @Override
+      public void onToggleFullScreen() {
+        // TODO Auto-generated method stub
+      }
+    };
   }
 }

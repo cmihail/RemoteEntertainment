@@ -2,7 +2,7 @@ package com.cmihail.remoteentertainment;
 
 import client.Client;
 import client.PlayerCommand;
-import proto.ProtoPlayer.Command.Type;
+import client.PlayerCommandExecutor;
 
 /**
  * TODO(cmihail): only for dev
@@ -11,32 +11,29 @@ import proto.ProtoPlayer.Command.Type;
  */
 public class ClientThread extends Thread {
 
+  private final PlayerCommandExecutor commandExecutor;
+
   private Client client;
 
-  public ClientThread() {
+  public ClientThread(PlayerCommandExecutor commandExecutor) {
+    this.commandExecutor = commandExecutor;
     client = new Client();
+
   }
 
   @Override
   public void run() {
     // Create a client to connect to server. // TODO(cmihail): set params into settings activity
-    client.connect("192.168.2.2", 10000);
+    client.connect("192.168.2.12", 10000);
 
     while (true) {
-      PlayerCommand playerCommmand = null;
-      playerCommmand = client.receiveCommand();
-      if (playerCommmand == null) {
+      PlayerCommand command = null;
+      command = client.receiveCommand();
+      if (command == null) {
         break;
       }
 
-      // Execute command. TODO(cmihail): elaborate
-      if (playerCommmand.getType() == Type.PLAY) {
-        System.out.println("[Android] Play");
-      } else if (playerCommmand.getType() == Type.PAUSE) {
-        System.out.println("[Android] Pause");
-      } else {
-        System.out.println("[Android] Wrong command!!!"); // TODO(cmihail): use logger
-      }
+      commandExecutor.executeCommand(command, false);
     }
   }
 
@@ -44,13 +41,19 @@ public class ClientThread extends Thread {
     client.disconnect();
   }
 
-  public void sendCommand(final Type type) {
-    Thread thread = new Thread() { // TODO(cmihail): use only one thread, not multiple
-      @Override
-      public void run() {
-        client.sendCommand(new PlayerCommand(type));
-      }
-    };
-    thread.start();
+  // TODO(cmihail): sendCommand should be ran into a different thread,
+  // think about doing this with all the client class
+//  public void sendCommand(final Type type) {
+//    Thread thread = new Thread() { // TODO(cmihail): use only one thread, not multiple
+//      @Override
+//      public void run() {
+//        client.sendCommand(new PlayerCommand(type));
+//      }
+//    };
+//    thread.start();
+//  }
+
+  public Client getClient() {
+    return client;
   }
 }
