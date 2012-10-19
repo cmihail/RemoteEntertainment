@@ -1,5 +1,6 @@
 package com.cmihail.remoteentertainment;
 
+import client.Client;
 import client.PlayerCommandExecutor;
 import client.PlayerCommandHandler;
 import android.os.Bundle;
@@ -15,22 +16,30 @@ import android.widget.SeekBar;
  */
 public class MainActivity extends Activity {
 
-  private ClientThread clientThread;
-  private PlayerCommandExecutor commandExecuter;
-
+  private Client client;
+  private Player player;
+  private PlayerCommandExecutor commandExecutor;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.player);
 
-
-    // Start client thread which communicates with the server.
-    clientThread = new ClientThread(commandExecuter);
-    clientThread.start();
+    // Create a new client and connect to server.
+    client = new Client();
+    Thread thread = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        client.connect("192.168.2.12", 10000);
+      }
+    });
+    thread.start();
 
     // Create the player command executor.
-    commandExecuter = new PlayerCommandExecutor(clientThread.getClient(), createCommandHandler());
+    commandExecutor = new PlayerCommandExecutor(client, createCommandHandler());
+
+    // Create a player to handle plater media player specific actions.
+    player = new Player(this, commandExecutor);
   }
 
   @Override
@@ -49,7 +58,7 @@ public class MainActivity extends Activity {
   public void onDestroy() {
     super.onDestroy();
     // TODO(cmihail): maybe use alternative for this workaround
-    clientThread.exit();
+    client.disconnect();
   }
 
   /**

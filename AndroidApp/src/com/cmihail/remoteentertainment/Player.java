@@ -47,9 +47,9 @@ public class Player {
       public void onClick(View view) {
         if (isPlaying) {
           // TODO(cmihail): should be true, but for now false for dev (change all to true)
-          commandExecutor.executeCommand(new PlayerCommand(Type.PAUSE), false);
+          commandExecutor.executeCommand(new PlayerCommand(Type.PAUSE), true);
         } else {
-          commandExecutor.executeCommand(new PlayerCommand(Type.PLAY), false);
+          commandExecutor.executeCommand(new PlayerCommand(Type.PLAY), true);
         }
         isPlaying = !isPlaying;
       }
@@ -71,7 +71,7 @@ public class Player {
     button.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        commandExecutor.executeCommand(new PlayerCommand(type), false);
+        commandExecutor.executeCommand(new PlayerCommand(type), true);
       }
     });
   }

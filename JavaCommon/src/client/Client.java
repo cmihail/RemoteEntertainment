@@ -69,20 +69,28 @@ public class Client {
    * Sends a player command to the server as a proto command.
    * @param playerCommand the command that is sent
    */
-  public void sendCommand(PlayerCommand playerCommand) {
-    Command command = playerCommand.toProto();
-    try {
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      command.writeDelimitedTo(out);
+  public void sendCommand(final PlayerCommand playerCommand) {
+    // Workaround for Android App behavior TODO(cmihail): fina alternative
+    Thread thread = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        Command command = playerCommand.toProto();
+        try {
+          ByteArrayOutputStream out = new ByteArrayOutputStream();
+          command.writeDelimitedTo(out);
 
-      ByteBuffer commandBuffer = ByteBuffer.wrap(out.toByteArray());
-      while (commandBuffer.hasRemaining()) {
-        socketChannel.write(commandBuffer);
+          ByteBuffer commandBuffer = ByteBuffer.wrap(out.toByteArray());
+          while (commandBuffer.hasRemaining()) {
+            socketChannel.write(commandBuffer);
+          }
+          logger.log(Level.INFO, "Command sent: " + command.getType().toString());
+        } catch (IOException e) {
+          exit(e);
+        }
       }
-      logger.log(Level.INFO, "Command sent: " + command.getType().toString());
-    } catch (IOException e) {
-      exit(e);
-    }
+    });
+    thread.start();
+
   }
 
   /**
