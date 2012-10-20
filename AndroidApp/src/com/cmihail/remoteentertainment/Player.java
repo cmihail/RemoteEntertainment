@@ -8,6 +8,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 
+/**
+ * Defines the player presenter.
+ *
+ * @author cmihail (Mihail Costea)
+ */
 public class Player {
 
   private final PlayerCommandExecutor commandExecutor;
@@ -46,7 +51,6 @@ public class Player {
       @Override
       public void onClick(View view) {
         if (isPlaying) {
-          // TODO(cmihail): should be true, but for now false for dev (change all to true)
           commandExecutor.executeCommand(new PlayerCommand(Type.PAUSE), true);
         } else {
           commandExecutor.executeCommand(new PlayerCommand(Type.PLAY), true);

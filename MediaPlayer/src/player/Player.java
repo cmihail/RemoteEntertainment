@@ -1,5 +1,6 @@
 package player;
 
+import java.nio.channels.AsynchronousCloseException;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import client.Client;
 import client.PlayerCommand;
@@ -24,20 +25,25 @@ public class Player {
     commandExecutor = new PlayerCommandExecutor(client, createCommandHandler());
     playerView = new PlayerView(commandExecutor);
 
-    bindExternalCommandsThread();
+    receiveCommandsFromServer();
   }
 
   public void startMovie(String pathToMovie) { // TODO(cmihail): only for dev
     playerView.getMediaPlayer().playMedia(pathToMovie);
   }
 
-  // TODO(cmihail): notify main thread if this has failed
-  private void bindExternalCommandsThread() {
+  private void receiveCommandsFromServer() {
     Thread thread = new Thread() {
       @Override
       public void run() {
         while (true) {
-          PlayerCommand playerCommmand = client.receiveCommand();
+          final PlayerCommand playerCommmand;
+          try {
+            playerCommmand = client.receiveCommand();
+          } catch (AsynchronousCloseException e) {
+            // TODO(cmihail): maybe notify main thread to close
+            break;
+          }
 
           // Execute command.
           commandExecutor.executeCommand(playerCommmand, false);

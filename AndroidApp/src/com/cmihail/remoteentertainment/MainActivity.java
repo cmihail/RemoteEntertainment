@@ -1,6 +1,8 @@
 package com.cmihail.remoteentertainment;
 
-import client.Client;
+import java.nio.channels.AsynchronousCloseException;
+
+import client.PlayerCommand;
 import client.PlayerCommandExecutor;
 import client.PlayerCommandHandler;
 import android.os.Bundle;
@@ -16,7 +18,7 @@ import android.widget.SeekBar;
  */
 public class MainActivity extends Activity {
 
-  private Client client;
+  private AndroidClient client;
   private Player player;
   private PlayerCommandExecutor commandExecutor;
 
@@ -25,21 +27,17 @@ public class MainActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.player);
 
-    // Create a new client and connect to server.
-    client = new Client();
-    Thread thread = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        client.connect("192.168.2.12", 10000);
-      }
-    });
-    thread.start();
+    // Create a new client, connect to server and listen for incoming commands.
+    client = new AndroidClient();
+    client.connect("192.168.2.12", 10000);
 
     // Create the player command executor.
     commandExecutor = new PlayerCommandExecutor(client, createCommandHandler());
 
     // Create a player to handle plater media player specific actions.
     player = new Player(this, commandExecutor);
+
+    receiveCommandsFromServer();
   }
 
   @Override
@@ -51,14 +49,39 @@ public class MainActivity extends Activity {
   @Override
   public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    // TODO(cmihail): save clientThread state
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
-    // TODO(cmihail): maybe use alternative for this workaround
     client.disconnect();
+  }
+
+  /**
+   * Receives commands from server in an infinite loop.
+   */
+  private void receiveCommandsFromServer() {
+    Thread thread = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        while(true) {
+          final PlayerCommand command;
+          try {
+            command = client.receiveCommand();
+          } catch (AsynchronousCloseException e) {
+            break;
+          }
+
+          MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              commandExecutor.executeCommand(command, false);
+            }
+          });
+        }
+      }
+    });
+    thread.start();
   }
 
   /**

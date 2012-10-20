@@ -27,28 +27,18 @@ public class Client {
 
   private SocketChannel socketChannel = null;
 
-  public Client() {
-    try {
-      socketChannel = SocketChannel.open();
-    } catch (IOException e) {
-      exit(e);
-    }
-  }
-
   /**
    * Connects to server. The client connects only if there isn't already a successful connection.
    * @param ipAddress the ip address of the server
    * @param port the port that the server is using for listening
    */
   public void connect(String ipAddress, int port) {
-    // TODO(cmihail): see if this should be or not a part of constructor
     try {
-      if (!socketChannel.socket().isConnected()) {
-        socketChannel.socket().setReuseAddress(true);
-        socketChannel.socket().connect(new InetSocketAddress(ipAddress, port));
-        socketChannel.configureBlocking(true);
-        logger.log(Level.INFO, "Connection was successful");
-      }
+      socketChannel = SocketChannel.open();
+      socketChannel.socket().setReuseAddress(true);
+      socketChannel.socket().connect(new InetSocketAddress(ipAddress, port));
+      socketChannel.configureBlocking(true);
+      logger.log(Level.INFO, "Connection was successful");
     } catch (IOException e) {
       exit(e);
     }
@@ -70,35 +60,27 @@ public class Client {
    * @param playerCommand the command that is sent
    */
   public void sendCommand(final PlayerCommand playerCommand) {
-    // Workaround for Android App behavior TODO(cmihail): fina alternative
-    Thread thread = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        Command command = playerCommand.toProto();
-        try {
-          ByteArrayOutputStream out = new ByteArrayOutputStream();
-          command.writeDelimitedTo(out);
+    Command command = playerCommand.toProto();
+    try {
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      command.writeDelimitedTo(out);
 
-          ByteBuffer commandBuffer = ByteBuffer.wrap(out.toByteArray());
-          while (commandBuffer.hasRemaining()) {
-            socketChannel.write(commandBuffer);
-          }
-          logger.log(Level.INFO, "Command sent: " + command.getType().toString());
-        } catch (IOException e) {
-          exit(e);
-        }
+      ByteBuffer commandBuffer = ByteBuffer.wrap(out.toByteArray());
+      while (commandBuffer.hasRemaining()) {
+        socketChannel.write(commandBuffer);
       }
-    });
-    thread.start();
-
+      logger.log(Level.INFO, "Command sent: " + command.getType().toString());
+    } catch (IOException e) {
+      exit(e);
+    }
   }
 
   /**
    * Receives a command from the server as a proto command and converts it to a player command.
-   * @return the command that was received, or null in case of connection lost
-   * TODO(cmihail): a more elegant way to deal with the asynchronous close exception
+   * @return the command that was received
+   * @throws AsynchronousCloseException if connection is lost when waiting for a command
    */
-  public PlayerCommand receiveCommand() {
+  public PlayerCommand receiveCommand() throws AsynchronousCloseException {
     Command command = null;
     try {
       CodedInputStream codedInputStream =
@@ -109,7 +91,7 @@ public class Client {
       logger.log(Level.INFO, "Command received: " + command.getType().toString());
     } catch (AsynchronousCloseException e) {
       logger.log(Level.WARNING, "Connection lost");
-      return null;
+      throw e; // TODO(cmihail): maybe throw a exception with a more sugestive name
     } catch (IOException e) {
       exit(e);
     }
@@ -125,6 +107,7 @@ public class Client {
    */
   private void exit(Exception e) {
     logger.log(Level.SEVERE, e.getMessage());
-    e.printStackTrace(CommonLogger.getPrintStream()); // TODO(cmihail): doesn't print anything
+    e.printStackTrace();
+//    e.printStackTrace(CommonLogger.getPrintStream()); // TODO(cmihail): doesn't print anything
   }
 }
