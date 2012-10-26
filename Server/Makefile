@@ -2,7 +2,8 @@ CC = g++
 CFLAGS = -Wall -g
 HEADERS = src/
 
-COMMON_DEPS = bin/Main.o bin/Message.o bin/Logger.o bin/Client.o bin/Server.o bin/player.pb.o bin/PlayerCommand.o
+COMMON_DEPS = bin/Main.o bin/Message.o bin/Logger.o bin/Client.o bin/Server.o bin/player.pb.o\
+bin/PlayerCommand.o bin/PlayerMessageHeader.o
 
 # Default platform is Mac. On Linux run as "make PLATFORM=Linux" and on Windows as "make PLATFORM=Windows"
 PLATFORM = Mac
@@ -59,6 +60,8 @@ endif
 bin/player.pb.o: src/proto/player.pb.cc
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 bin/PlayerCommand.o: src/proto/PlayerCommand.cpp
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+bin/PlayerMessageHeader.o: src/proto/PlayerMessageHeader.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 
 # server package

@@ -7,6 +7,8 @@ message MessageHeader {
     COMMAND = 1;
     // TODO(cmihail): add more types
   }
+
+  required Type messageType = 1;
 }
 
 message Command {

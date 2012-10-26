@@ -20,14 +20,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import proto.PlayerCommand;
 import proto.ProtoPlayer.Command.Type;
-
-import client.PlayerCommand;
-import client.PlayerCommandExecutor;
-
 import uk.co.caprica.vlcj.binding.LibVlcConst;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
+import client.PlayerCommandExecutor;
 
 /**
  * Defines the player controls used in {@link PlayerView}.

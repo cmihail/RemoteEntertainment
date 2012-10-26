@@ -89,7 +89,7 @@ Message PlayerCommand::toCodedMessage() {
   google::protobuf::io::CodedOutputStream * codedOutputStream =
       new google::protobuf::io::CodedOutputStream(zeroCopyOutputStream);
   codedOutputStream->WriteVarint32(command.ByteSize());
-  assert(command.SerializeToCodedStream(codedOutputStream));
+  assert(command.SerializeToCodedStream(codedOutputStream)); // TODO(cmihail): logger
 
   // Free space.
   delete codedOutputStream;

@@ -8,15 +8,14 @@ import java.awt.event.MouseListener;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import proto.PlayerCommand;
 import proto.ProtoPlayer.Command.Type;
-
-import client.PlayerCommand;
-import client.PlayerCommandExecutor;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.DefaultFullScreenStrategy;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.FullScreenStrategy;
 import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
+import client.PlayerCommandExecutor;
 
 /**
  * Defines the view for {@link Player} which consists in the player itself

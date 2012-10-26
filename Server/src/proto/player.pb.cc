@@ -40,6 +40,7 @@ void protobuf_AssignDesc_player_2eproto() {
   GOOGLE_CHECK(file != NULL);
   MessageHeader_descriptor_ = file->message_type(0);
   static const int MessageHeader_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageHeader, messagetype_),
   };
   MessageHeader_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -123,16 +124,17 @@ void protobuf_AddDesc_player_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\014player.proto\022\005proto\"$\n\rMessageHeader\"\023"
-    "\n\004Type\022\013\n\007COMMAND\020\001\"\256\002\n\007Command\022!\n\004type\030"
-    "\001 \002(\0162\023.proto.Command.Type\022(\n\004info\030\002 \001(\013"
-    "2\032.proto.Command.Information\032\034\n\013Informat"
-    "ion\022\r\n\005value\030\001 \002(\t\"\267\001\n\004Type\022\010\n\004NONE\020\001\022\020\n"
-    "\014SET_POSITION\020\002\022\014\n\010PREVIOUS\020\003\022\010\n\004NEXT\020\004\022"
-    "\014\n\010BACKWARD\020\005\022\013\n\007FORWARD\020\006\022\010\n\004STOP\020\007\022\010\n\004"
-    "PLAY\020\010\022\t\n\005PAUSE\020\t\022\010\n\004MUTE\020\n\022\016\n\nSET_VOLUM"
-    "E\020\013\022\026\n\022TOGGLE_FULL_SCREEN\020\014\022\017\n\013START_MOV"
-    "IE\020\rB\rB\013ProtoPlayer", 379);
+    "\n\014player.proto\022\005proto\"T\n\rMessageHeader\022."
+    "\n\013messageType\030\001 \002(\0162\031.proto.MessageHeade"
+    "r.Type\"\023\n\004Type\022\013\n\007COMMAND\020\001\"\256\002\n\007Command\022"
+    "!\n\004type\030\001 \002(\0162\023.proto.Command.Type\022(\n\004in"
+    "fo\030\002 \001(\0132\032.proto.Command.Information\032\034\n\013"
+    "Information\022\r\n\005value\030\001 \002(\t\"\267\001\n\004Type\022\010\n\004N"
+    "ONE\020\001\022\020\n\014SET_POSITION\020\002\022\014\n\010PREVIOUS\020\003\022\010\n"
+    "\004NEXT\020\004\022\014\n\010BACKWARD\020\005\022\013\n\007FORWARD\020\006\022\010\n\004ST"
+    "OP\020\007\022\010\n\004PLAY\020\010\022\t\n\005PAUSE\020\t\022\010\n\004MUTE\020\n\022\016\n\nS"
+    "ET_VOLUME\020\013\022\026\n\022TOGGLE_FULL_SCREEN\020\014\022\017\n\013S"
+    "TART_MOVIE\020\rB\rB\013ProtoPlayer", 427);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "player.proto", &protobuf_RegisterTypes);
   MessageHeader::default_instance_ = new MessageHeader();
@@ -174,6 +176,7 @@ const MessageHeader_Type MessageHeader::Type_MAX;
 const int MessageHeader::Type_ARRAYSIZE;
 #endif  // _MSC_VER
 #ifndef _MSC_VER
+const int MessageHeader::kMessageTypeFieldNumber;
 #endif  // !_MSC_VER
 
 MessageHeader::MessageHeader()
@@ -192,6 +195,7 @@ MessageHeader::MessageHeader(const MessageHeader& from)
 
 void MessageHeader::SharedCtor() {
   _cached_size_ = 0;
+  messagetype_ = 1;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -225,6 +229,9 @@ MessageHeader* MessageHeader::New() const {
 }
 
 void MessageHeader::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    messagetype_ = 1;
+  }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -234,12 +241,38 @@ bool MessageHeader::MergePartialFromCodedStream(
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
-    if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-        ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-      return true;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .proto.MessageHeader.Type messageType = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (::proto::MessageHeader_Type_IsValid(value)) {
+            set_messagetype(static_cast< ::proto::MessageHeader_Type >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(1, value);
+          }
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
     }
-    DO_(::google::protobuf::internal::WireFormat::SkipField(
-          input, tag, mutable_unknown_fields()));
   }
   return true;
 #undef DO_
@@ -247,6 +280,12 @@ bool MessageHeader::MergePartialFromCodedStream(
 
 void MessageHeader::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .proto.MessageHeader.Type messageType = 1;
+  if (has_messagetype()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->messagetype(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -255,6 +294,12 @@ void MessageHeader::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* MessageHeader::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // required .proto.MessageHeader.Type messageType = 1;
+  if (has_messagetype()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->messagetype(), target);
+  }
+  
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -265,6 +310,14 @@ void MessageHeader::SerializeWithCachedSizes(
 int MessageHeader::ByteSize() const {
   int total_size = 0;
   
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .proto.MessageHeader.Type messageType = 1;
+    if (has_messagetype()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->messagetype());
+    }
+    
+  }
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -290,6 +343,11 @@ void MessageHeader::MergeFrom(const ::google::protobuf::Message& from) {
 
 void MessageHeader::MergeFrom(const MessageHeader& from) {
   GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_messagetype()) {
+      set_messagetype(from.messagetype());
+    }
+  }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
@@ -306,12 +364,15 @@ void MessageHeader::CopyFrom(const MessageHeader& from) {
 }
 
 bool MessageHeader::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
   return true;
 }
 
 void MessageHeader::Swap(MessageHeader* other) {
   if (other != this) {
+    std::swap(messagetype_, other->messagetype_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
   }

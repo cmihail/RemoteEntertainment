@@ -15,9 +15,6 @@
  * Defines a wrapper for player commands from proto file.
  */
 class PlayerCommand {
-  proto::Command_Type type;
-  std::string info;
-
 public:
   /**
    * @param type the type of the command
@@ -56,6 +53,10 @@ public:
    * @return command as a coded message
    */
   Message toCodedMessage();
+
+private:
+  proto::Command_Type type;
+  std::string info;
 };
 
 #endif /* PLAYERCOMMAND_H */

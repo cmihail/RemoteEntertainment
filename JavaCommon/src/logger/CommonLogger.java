@@ -26,7 +26,7 @@ public class CommonLogger {
     logger = Logger.getLogger(header);
 
     // Remove any existing handlers.
-    for (Handler handler : logger.getHandlers().clone()) {
+    for (Handler handler : logger.getHandlers()) { // TODO: test
       logger.removeHandler(handler);
     }
 

@@ -44,8 +44,9 @@ public:
   /**
    * @param socketDescriptor the socket on which the message is received
    * @return the message that contains the transmitted data
+   * (it's allocated dynamically so it should be freed when not needed any more)
    */
-  Message receiveMessage(socket_descriptor_t socketDescriptor);
+  Message * receiveMessage(socket_descriptor_t socketDescriptor);
 
   /**
    * @param socketDescriptor the socket where the message is sent

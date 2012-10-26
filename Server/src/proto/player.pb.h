@@ -163,14 +163,24 @@ class MessageHeader : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
+  // required .proto.MessageHeader.Type messageType = 1;
+  inline bool has_messagetype() const;
+  inline void clear_messagetype();
+  static const int kMessageTypeFieldNumber = 1;
+  inline ::proto::MessageHeader_Type messagetype() const;
+  inline void set_messagetype(::proto::MessageHeader_Type value);
+  
   // @@protoc_insertion_point(class_scope:proto.MessageHeader)
  private:
+  inline void set_has_messagetype();
+  inline void clear_has_messagetype();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
+  int messagetype_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[1];
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
   
   friend void  protobuf_AddDesc_player_2eproto();
   friend void protobuf_AssignDesc_player_2eproto();
@@ -401,6 +411,29 @@ class Command : public ::google::protobuf::Message {
 // ===================================================================
 
 // MessageHeader
+
+// required .proto.MessageHeader.Type messageType = 1;
+inline bool MessageHeader::has_messagetype() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void MessageHeader::set_has_messagetype() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void MessageHeader::clear_has_messagetype() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void MessageHeader::clear_messagetype() {
+  messagetype_ = 1;
+  clear_has_messagetype();
+}
+inline ::proto::MessageHeader_Type MessageHeader::messagetype() const {
+  return static_cast< ::proto::MessageHeader_Type >(messagetype_);
+}
+inline void MessageHeader::set_messagetype(::proto::MessageHeader_Type value) {
+  GOOGLE_DCHECK(::proto::MessageHeader_Type_IsValid(value));
+  set_has_messagetype();
+  messagetype_ = value;
+}
 
 // -------------------------------------------------------------------
 

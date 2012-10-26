@@ -17,6 +17,7 @@
 #include "logger/Logger.h"
 #include "proto/player.pb.h"
 #include "proto/PlayerCommand.h"
+#include "proto/PlayerMessageHeader.h"
 #include "server/Client.h"
 #include "server/Server.h"
 
@@ -25,6 +26,8 @@
 #include <cstdlib>
 #include <map>
 #include <sstream>
+
+#include <iostream> // TODO
 
 using namespace std;
 
@@ -53,76 +56,58 @@ Server::~Server() {
   delete eventListener;
 }
 
-static void registerNewClient(Server * server, socket_descriptor_t listenSocket) {
-  // Create new socket for the new connection.
-  int clientSocket = server->newConnection(listenSocket);
-  if (clientSocket == -1) {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Maximum number of clients received");
-    // TODO(cmihail): alternative for workaround and must be tested more
-    eventListener->deleteEvent(listenSocket);
-    eventListener->addEvent(listenSocket);
-    return;
-  }
-
+Message * Server::receiveMessage(socket_descriptor_t socketDescriptor) {
+  // Error message.
   stringstream out;
-  out << "New client " << clientSocket;
-  Logger::print(__FILE__, __LINE__, Logger::INFO, out.str());
+  out << "Problem at receiving data from " << socketDescriptor;
 
-  // Add read event for the newly created socket.
-  if (eventListener->addEvent(clientSocket) != true) {
-    out.clear();
-    out << "EventListener->addEvent() failed for " << clientSocket;
-    Logger::print(__FILE__, __LINE__, Logger::WARNING, out.str());
+  // Get number of bytes that must be read.
+  int numOfBytes;
+  int n = recv(socketDescriptor, &numOfBytes, 4, 0);
+  if (n < 0) {
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str());
+    return new Message();
+  }
+  cout << "T1: " << numOfBytes << "\n\n";
+
+  // End of connection.
+  if (n == 0) {
+    return new Message();
   }
 
-  clientsMap.insert(pair<socket_descriptor_t, Client>(clientSocket, Client(clientSocket)));
-}
-
-// TODO(cmihail): only for dev, it should be send to all other clients
-static void printCommand(PlayerCommand * playerCommand) {
-  if (playerCommand->getType() == proto::Command::PAUSE) {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Pause");
-  } else if (playerCommand->getType() == proto::Command::PLAY) {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Play");
-  } else  if (playerCommand->getType() == proto::Command::BACKWARD) {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Rewind");
-  } else  if (playerCommand->getType() == proto::Command::FORWARD) {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Forward");
-  } else {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Another command");
+  // Get actual message.
+  Message * message = new Message(numOfBytes);
+  n = recv(socketDescriptor, message->getContent(), message->getLength(), 0);
+  if (n <= 0) {
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str());
+    return new Message();
   }
+
+  return message;
 }
 
-static void receiveCommand(Server * server, socket_descriptor_t clientSocket) {
-  // Receive data from server.
-  Message inputMessage = server->receiveMessage(clientSocket);
+void Server::sendMessage(socket_descriptor_t socketDescriptor, Message & message) {
+  int n = send(socketDescriptor, message.getContent(), message.getLength(), 0);
 
-  // Check if connection with client has ended.
-  if (!inputMessage.hasContent()) {
+  Logger::Type type;
+  bool hasWarning = false;
+  if (n < 0) {
+    type = Logger::SEVERE;
+    hasWarning = true;
+  } else if (n != message.getLength()) {
+    type = Logger::WARNING;
+    hasWarning = true;
+  }
+
+  if (hasWarning) {
     stringstream out;
-    out << "Connection ended for " << clientSocket;
-    Logger::print(__FILE__, __LINE__, Logger::INFO, out.str());
-    eventListener->deleteEvent(clientSocket);
-    server->endConnection(clientSocket);
-    clientsMap.erase(clientSocket);
-    return;
+    out << "Problem at sending data to " << socketDescriptor;
+    Logger::print(__FILE__, __LINE__, type, out.str());
   }
-
-  PlayerCommand * playerCommand = new PlayerCommand(inputMessage);
-  printCommand(playerCommand);
-
-  // Send command to all other clients.
-  map<socket_descriptor_t, Client>::iterator it = clientsMap.begin();
-  map<socket_descriptor_t, Client>::iterator itEnd = clientsMap.end();
-  Message outputMessage = playerCommand->toCodedMessage();
-  for (; it != itEnd; it++) {
-    if (it->first != clientSocket) {
-      server->sendMessage(it->first, outputMessage);
-    }
-  }
-
-  delete playerCommand;
 }
+
+static void registerNewClient(Server * server, socket_descriptor_t listenSocket);
+static void receiveCommand(Server * server, socket_descriptor_t clientSocket);
 
 void Server::run() {
   while(true) {
@@ -158,38 +143,95 @@ void Server::run() {
   }
 }
 
-Message Server::receiveMessage(socket_descriptor_t socketDescriptor) {
-  Message message(2000); // TODO(cmihail): change 2000 to something more relevant
-  int n = recv(socketDescriptor, message.getContent(), message.getLength(), 0);
-  if (n < 0) {
-    stringstream out;
-    out << "Problem at receiving data from " << socketDescriptor;
-    Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str());
-    message = Message();
+static void registerNewClient(Server * server, socket_descriptor_t listenSocket) {
+  // Create new socket for the new connection.
+  int clientSocket = server->newConnection(listenSocket);
+  if (clientSocket == -1) {
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Maximum number of clients received");
+    // TODO(cmihail): alternative for workaround and must be tested more
+    eventListener->deleteEvent(listenSocket);
+    eventListener->addEvent(listenSocket);
+    return;
   }
 
-  if (n == 0) {
-    message = Message();
+  stringstream out;
+  out << "New client " << clientSocket;
+  Logger::print(__FILE__, __LINE__, Logger::INFO, out.str());
+
+  // Add read event for the newly created socket.
+  if (eventListener->addEvent(clientSocket) != true) {
+    out.clear();
+    out << "EventListener->addEvent() failed for " << clientSocket;
+    Logger::print(__FILE__, __LINE__, Logger::WARNING, out.str());
   }
-  return message;
+
+  clientsMap.insert(pair<socket_descriptor_t, Client>(clientSocket, Client(clientSocket)));
 }
 
-void Server::sendMessage(socket_descriptor_t socketDescriptor, Message & message) {
-  int n = send(socketDescriptor, message.getContent(), message.getLength(), 0);
-
-  Logger::Type type;
-  bool hasWarning = false;
-  if (n < 0) {
-    type = Logger::SEVERE;
-    hasWarning = true;
-  } else if (n != message.getLength()) {
-    type = Logger::WARNING;
-    hasWarning = true;
+// TODO(cmihail): only for dev, it should be send to all other clients
+static void printCommand(PlayerCommand * playerCommand) {
+  if (playerCommand->getType() == proto::Command::PAUSE) {
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Pause");
+  } else if (playerCommand->getType() == proto::Command::PLAY) {
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Play");
+  } else  if (playerCommand->getType() == proto::Command::BACKWARD) {
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Rewind");
+  } else  if (playerCommand->getType() == proto::Command::SET_VOLUME) {
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Set Volume");
+  } else {
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Another command");
   }
+}
 
-  if (hasWarning) {
+static void receiveCommand(Server * server, socket_descriptor_t clientSocket) {
+  // Receive message header from client.
+  Message * inputMessage = server->receiveMessage(clientSocket);
+
+  // Check if connection with client has ended.
+  if (!inputMessage->hasContent()) {
+    eventListener->deleteEvent(clientSocket);
+    server->endConnection(clientSocket);
+    clientsMap.erase(clientSocket);
+
     stringstream out;
-    out << "Problem at sending data to " << socketDescriptor;
-    Logger::print(__FILE__, __LINE__, type, out.str());
+    out << "Connection ended for " << clientSocket;
+    Logger::print(__FILE__, __LINE__, Logger::INFO, out.str());
+    return;
   }
+  PlayerMessageHeader * header = new PlayerMessageHeader(*inputMessage);
+  delete inputMessage;
+
+  // Receive command from client.
+  if (header->getMessageType() == proto::MessageHeader_Type_COMMAND) {
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Received header COMMAND"); // TODO
+
+    Message * inputMessage = server->receiveMessage(clientSocket);
+    // Check if connection with client has ended.
+    if (!inputMessage->hasContent()) {
+      Logger::print(__FILE__, __LINE__, Logger::WARNING, "Didn't receive command from client");
+      // TODO(cmihail): delete client
+      return;
+    }
+
+    PlayerCommand * playerCommand = new PlayerCommand(*inputMessage);
+    delete inputMessage;
+    printCommand(playerCommand);
+
+    // Send command to all other clients.
+    map<socket_descriptor_t, Client>::iterator it = clientsMap.begin();
+    map<socket_descriptor_t, Client>::iterator itEnd = clientsMap.end();
+    Message outputMessage = playerCommand->toCodedMessage();
+    for (; it != itEnd; it++) {
+      if (it->first != clientSocket) {
+        server->sendMessage(it->first, outputMessage);
+      }
+    }
+
+    delete playerCommand;
+  } else {
+    // TODO(cmihail): not severe + other types
+    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Invalid message");
+  }
+
+  delete header;
 }

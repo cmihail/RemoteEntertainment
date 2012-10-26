@@ -2,9 +2,9 @@ package player;
 
 import java.nio.channels.AsynchronousCloseException;
 
+import proto.PlayerCommand;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import client.Client;
-import client.PlayerCommand;
 import client.PlayerCommandExecutor;
 import client.PlayerCommandHandler;
 
