@@ -8,7 +8,7 @@
  * Message format: [SERVER] (<file>, line <line_num>, <warning level>): <message>
  */
 
-#include "Logger.h"
+#include "logger/Logger.h"
 
 #include <cstdlib>
 #include <iostream>

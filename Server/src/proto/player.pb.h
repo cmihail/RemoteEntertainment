@@ -32,9 +32,28 @@ void  protobuf_AddDesc_player_2eproto();
 void protobuf_AssignDesc_player_2eproto();
 void protobuf_ShutdownFile_player_2eproto();
 
+class MessageHeader;
 class Command;
 class Command_Information;
 
+enum MessageHeader_Type {
+  MessageHeader_Type_COMMAND = 1
+};
+bool MessageHeader_Type_IsValid(int value);
+const MessageHeader_Type MessageHeader_Type_Type_MIN = MessageHeader_Type_COMMAND;
+const MessageHeader_Type MessageHeader_Type_Type_MAX = MessageHeader_Type_COMMAND;
+const int MessageHeader_Type_Type_ARRAYSIZE = MessageHeader_Type_Type_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* MessageHeader_Type_descriptor();
+inline const ::std::string& MessageHeader_Type_Name(MessageHeader_Type value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    MessageHeader_Type_descriptor(), value);
+}
+inline bool MessageHeader_Type_Parse(
+    const ::std::string& name, MessageHeader_Type* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<MessageHeader_Type>(
+    MessageHeader_Type_descriptor(), name, value);
+}
 enum Command_Type {
   Command_Type_NONE = 1,
   Command_Type_SET_POSITION = 2,
@@ -66,6 +85,101 @@ inline bool Command_Type_Parse(
     Command_Type_descriptor(), name, value);
 }
 // ===================================================================
+
+class MessageHeader : public ::google::protobuf::Message {
+ public:
+  MessageHeader();
+  virtual ~MessageHeader();
+  
+  MessageHeader(const MessageHeader& from);
+  
+  inline MessageHeader& operator=(const MessageHeader& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MessageHeader& default_instance();
+  
+  void Swap(MessageHeader* other);
+  
+  // implements Message ----------------------------------------------
+  
+  MessageHeader* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MessageHeader& from);
+  void MergeFrom(const MessageHeader& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef MessageHeader_Type Type;
+  static const Type COMMAND = MessageHeader_Type_COMMAND;
+  static inline bool Type_IsValid(int value) {
+    return MessageHeader_Type_IsValid(value);
+  }
+  static const Type Type_MIN =
+    MessageHeader_Type_Type_MIN;
+  static const Type Type_MAX =
+    MessageHeader_Type_Type_MAX;
+  static const int Type_ARRAYSIZE =
+    MessageHeader_Type_Type_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  Type_descriptor() {
+    return MessageHeader_Type_descriptor();
+  }
+  static inline const ::std::string& Type_Name(Type value) {
+    return MessageHeader_Type_Name(value);
+  }
+  static inline bool Type_Parse(const ::std::string& name,
+      Type* value) {
+    return MessageHeader_Type_Parse(name, value);
+  }
+  
+  // accessors -------------------------------------------------------
+  
+  // @@protoc_insertion_point(class_scope:proto.MessageHeader)
+ private:
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[1];
+  
+  friend void  protobuf_AddDesc_player_2eproto();
+  friend void protobuf_AssignDesc_player_2eproto();
+  friend void protobuf_ShutdownFile_player_2eproto();
+  
+  void InitAsDefaultInstance();
+  static MessageHeader* default_instance_;
+};
+// -------------------------------------------------------------------
 
 class Command_Information : public ::google::protobuf::Message {
  public:
@@ -286,6 +400,10 @@ class Command : public ::google::protobuf::Message {
 
 // ===================================================================
 
+// MessageHeader
+
+// -------------------------------------------------------------------
+
 // Command_Information
 
 // required string value = 1;
@@ -411,6 +529,10 @@ inline ::proto::Command_Information* Command::release_info() {
 namespace google {
 namespace protobuf {
 
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::proto::MessageHeader_Type>() {
+  return ::proto::MessageHeader_Type_descriptor();
+}
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::proto::Command_Type>() {
   return ::proto::Command_Type_descriptor();

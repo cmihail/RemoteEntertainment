@@ -4,8 +4,9 @@ import java.nio.channels.AsynchronousCloseException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import proto.PlayerCommand;
+
 import client.Client;
-import client.PlayerCommand;
 
 public class AndroidClient extends Client {
 

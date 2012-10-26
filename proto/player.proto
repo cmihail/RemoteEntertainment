@@ -2,6 +2,13 @@ package proto;
 
 option java_outer_classname = "ProtoPlayer";
 
+message MessageHeader {
+  enum Type {
+    COMMAND = 1;
+    // TODO(cmihail): add more types
+  }
+}
+
 message Command {
   enum Type {
     NONE = 1;

@@ -5,7 +5,7 @@ mak * ServerUnix.cpp
  *      Author: cmihail (Mihail Costea)
  */
 
-#include "Logger.h"
+#include "logger/Logger.h"
 #include "server/Server.h"
 
 #include <cstdlib>

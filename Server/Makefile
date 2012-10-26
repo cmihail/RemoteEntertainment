@@ -27,7 +27,38 @@ bin/Main.o: src/Main.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 bin/Message.o: src/Message.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-bin/Logger.o: src/Logger.cpp
+
+# event package
+ifeq ($(PLATFORM), Windows)
+bin/EventListener.o: src/event/EventListenerWindows.cpp
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+else
+ifeq ($(PLATFORM), Linux)
+bin/EventListener.o: src/event/EventListenerLinux.cpp
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+else # default MAC
+bin/EventListener.o: src/event/EventListenerMac.cpp
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+endif
+endif
+
+# logger package
+bin/Logger.o: src/logger/Logger.cpp
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+
+# process package
+ifeq ($(PLATFORM), Windows)
+bin/Process.o: src/process/ProcessWindows.cpp
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+else # default unix
+bin/Process.o: src/process/ProcessUnix.cpp
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+endif
+
+# proto pacakge
+bin/player.pb.o: src/proto/player.pb.cc
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+bin/PlayerCommand.o: src/proto/PlayerCommand.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 
 # server package
@@ -36,38 +67,14 @@ bin/Client.o: src/server/Client.cpp
 bin/Server.o: src/server/Server.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 
-# proto pacakge
-bin/player.pb.o: src/proto/player.pb.cc
-	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-bin/PlayerCommand.o: src/proto/PlayerCommand.cpp
-	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-
-# platform pacakge
 ifeq ($(PLATFORM), Windows)
-bin/Process.o: src/platform/windows/Process.cpp
+bin/ServerWindows.o: src/server/ServerWindows.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-bin/EventListener.o: src/platform/windows/EventListener.cpp
+bin/sock_util.o: src/server/windows/sock_util.c
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-bin/ServerWindows.o: src/platform/windows/ServerWindows.cpp
+else # default unix
+bin/ServerUnix.o: src/server/ServerUnix.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-bin/sock_util.o: src/platform/windows/sock_util.c
-	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-
-else
-bin/Process.o: src/platform/unix/Process.cpp
-	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-bin/ServerUnix.o: src/platform/unix/ServerUnix.cpp
-	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-
-ifeq ($(PLATFORM), Linux)
-bin/EventListener.o: src/platform/unix/linux/EventListener.cpp
-	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-
-else
-bin/EventListener.o: src/platform/unix/mac/EventListener.cpp
-	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-
-endif
 endif
 
 clean:

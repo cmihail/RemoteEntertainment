@@ -7,8 +7,8 @@
  * Defines the main function which starts the server and the media player.
  */
 
-#include "Logger.h"
-#include "platform/Process.h"
+#include "logger/Logger.h"
+#include "process/Process.h"
 #include "server/Server.h"
 
 #include <cstdlib>

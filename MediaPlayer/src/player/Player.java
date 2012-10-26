@@ -1,6 +1,7 @@
 package player;
 
 import java.nio.channels.AsynchronousCloseException;
+
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import client.Client;
 import client.PlayerCommand;

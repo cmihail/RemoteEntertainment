@@ -7,8 +7,8 @@
  * Defines the implementation of Process.h.
  */
 
-#include "Logger.h"
-#include "platform/Process.h"
+#include "logger/Logger.h"
+#include "process/Process.h"
 
 #include <cstdlib>
 #include <cstring>

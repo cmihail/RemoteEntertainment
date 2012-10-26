@@ -12,9 +12,9 @@
   #include <sys/types.h>
 #endif
 
-#include "Logger.h"
 #include "Message.h"
-#include "platform/EventListener.h"
+#include "event/EventListener.h"
+#include "logger/Logger.h"
 #include "proto/player.pb.h"
 #include "proto/PlayerCommand.h"
 #include "server/Client.h"

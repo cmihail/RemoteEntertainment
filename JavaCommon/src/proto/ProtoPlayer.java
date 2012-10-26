@@ -8,6 +8,348 @@ public final class ProtoPlayer {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
+  public interface MessageHeaderOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+  }
+  public static final class MessageHeader extends
+      com.google.protobuf.GeneratedMessage
+      implements MessageHeaderOrBuilder {
+    // Use MessageHeader.newBuilder() to construct.
+    private MessageHeader(Builder builder) {
+      super(builder);
+    }
+    private MessageHeader(boolean noInit) {}
+    
+    private static final MessageHeader defaultInstance;
+    public static MessageHeader getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public MessageHeader getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return proto.ProtoPlayer.internal_static_proto_MessageHeader_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return proto.ProtoPlayer.internal_static_proto_MessageHeader_fieldAccessorTable;
+    }
+    
+    public enum Type
+        implements com.google.protobuf.ProtocolMessageEnum {
+      COMMAND(0, 1),
+      ;
+      
+      public static final int COMMAND_VALUE = 1;
+      
+      
+      public final int getNumber() { return value; }
+      
+      public static Type valueOf(int value) {
+        switch (value) {
+          case 1: return COMMAND;
+          default: return null;
+        }
+      }
+      
+      public static com.google.protobuf.Internal.EnumLiteMap<Type>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static com.google.protobuf.Internal.EnumLiteMap<Type>
+          internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<Type>() {
+              public Type findValueByNumber(int number) {
+                return Type.valueOf(number);
+              }
+            };
+      
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return proto.ProtoPlayer.MessageHeader.getDescriptor().getEnumTypes().get(0);
+      }
+      
+      private static final Type[] VALUES = {
+        COMMAND, 
+      };
+      
+      public static Type valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+      
+      private final int index;
+      private final int value;
+      
+      private Type(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+      
+      // @@protoc_insertion_point(enum_scope:proto.MessageHeader.Type)
+    }
+    
+    private void initFields() {
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static proto.ProtoPlayer.MessageHeader parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static proto.ProtoPlayer.MessageHeader parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static proto.ProtoPlayer.MessageHeader parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static proto.ProtoPlayer.MessageHeader parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static proto.ProtoPlayer.MessageHeader parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static proto.ProtoPlayer.MessageHeader parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static proto.ProtoPlayer.MessageHeader parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static proto.ProtoPlayer.MessageHeader parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static proto.ProtoPlayer.MessageHeader parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static proto.ProtoPlayer.MessageHeader parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(proto.ProtoPlayer.MessageHeader prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements proto.ProtoPlayer.MessageHeaderOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return proto.ProtoPlayer.internal_static_proto_MessageHeader_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return proto.ProtoPlayer.internal_static_proto_MessageHeader_fieldAccessorTable;
+      }
+      
+      // Construct using proto.ProtoPlayer.MessageHeader.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private Builder(BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return proto.ProtoPlayer.MessageHeader.getDescriptor();
+      }
+      
+      public proto.ProtoPlayer.MessageHeader getDefaultInstanceForType() {
+        return proto.ProtoPlayer.MessageHeader.getDefaultInstance();
+      }
+      
+      public proto.ProtoPlayer.MessageHeader build() {
+        proto.ProtoPlayer.MessageHeader result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private proto.ProtoPlayer.MessageHeader buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        proto.ProtoPlayer.MessageHeader result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public proto.ProtoPlayer.MessageHeader buildPartial() {
+        proto.ProtoPlayer.MessageHeader result = new proto.ProtoPlayer.MessageHeader(this);
+        onBuilt();
+        return result;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof proto.ProtoPlayer.MessageHeader) {
+          return mergeFrom((proto.ProtoPlayer.MessageHeader)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(proto.ProtoPlayer.MessageHeader other) {
+        if (other == proto.ProtoPlayer.MessageHeader.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              onChanged();
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              }
+              break;
+            }
+          }
+        }
+      }
+      
+      
+      // @@protoc_insertion_point(builder_scope:proto.MessageHeader)
+    }
+    
+    static {
+      defaultInstance = new MessageHeader(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:proto.MessageHeader)
+  }
+  
   public interface CommandOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
@@ -1004,6 +1346,11 @@ public final class ProtoPlayer {
   }
   
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_proto_MessageHeader_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_proto_MessageHeader_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_proto_Command_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -1022,23 +1369,32 @@ public final class ProtoPlayer {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014player.proto\022\005proto\"\256\002\n\007Command\022!\n\004typ" +
-      "e\030\001 \002(\0162\023.proto.Command.Type\022(\n\004info\030\002 \001" +
-      "(\0132\032.proto.Command.Information\032\034\n\013Inform" +
-      "ation\022\r\n\005value\030\001 \002(\t\"\267\001\n\004Type\022\010\n\004NONE\020\001\022" +
-      "\020\n\014SET_POSITION\020\002\022\014\n\010PREVIOUS\020\003\022\010\n\004NEXT\020" +
-      "\004\022\014\n\010BACKWARD\020\005\022\013\n\007FORWARD\020\006\022\010\n\004STOP\020\007\022\010" +
-      "\n\004PLAY\020\010\022\t\n\005PAUSE\020\t\022\010\n\004MUTE\020\n\022\016\n\nSET_VOL" +
-      "UME\020\013\022\026\n\022TOGGLE_FULL_SCREEN\020\014\022\017\n\013START_M" +
-      "OVIE\020\rB\rB\013ProtoPlayer"
+      "\n\014player.proto\022\005proto\"$\n\rMessageHeader\"\023" +
+      "\n\004Type\022\013\n\007COMMAND\020\001\"\256\002\n\007Command\022!\n\004type\030" +
+      "\001 \002(\0162\023.proto.Command.Type\022(\n\004info\030\002 \001(\013" +
+      "2\032.proto.Command.Information\032\034\n\013Informat" +
+      "ion\022\r\n\005value\030\001 \002(\t\"\267\001\n\004Type\022\010\n\004NONE\020\001\022\020\n" +
+      "\014SET_POSITION\020\002\022\014\n\010PREVIOUS\020\003\022\010\n\004NEXT\020\004\022" +
+      "\014\n\010BACKWARD\020\005\022\013\n\007FORWARD\020\006\022\010\n\004STOP\020\007\022\010\n\004" +
+      "PLAY\020\010\022\t\n\005PAUSE\020\t\022\010\n\004MUTE\020\n\022\016\n\nSET_VOLUM" +
+      "E\020\013\022\026\n\022TOGGLE_FULL_SCREEN\020\014\022\017\n\013START_MOV" +
+      "IE\020\rB\rB\013ProtoPlayer"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
         public com.google.protobuf.ExtensionRegistry assignDescriptors(
             com.google.protobuf.Descriptors.FileDescriptor root) {
           descriptor = root;
-          internal_static_proto_Command_descriptor =
+          internal_static_proto_MessageHeader_descriptor =
             getDescriptor().getMessageTypes().get(0);
+          internal_static_proto_MessageHeader_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_proto_MessageHeader_descriptor,
+              new java.lang.String[] { },
+              proto.ProtoPlayer.MessageHeader.class,
+              proto.ProtoPlayer.MessageHeader.Builder.class);
+          internal_static_proto_Command_descriptor =
+            getDescriptor().getMessageTypes().get(1);
           internal_static_proto_Command_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_proto_Command_descriptor,

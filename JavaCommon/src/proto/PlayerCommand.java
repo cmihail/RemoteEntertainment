@@ -1,4 +1,4 @@
-package client;
+package proto;
 
 import proto.ProtoPlayer.Command;
 import proto.ProtoPlayer.Command.Information;

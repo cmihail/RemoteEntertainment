@@ -1,8 +1,9 @@
 package com.cmihail.remoteentertainment;
 
-import client.PlayerCommand;
 import client.PlayerCommandExecutor;
+import proto.PlayerCommand;
 import proto.ProtoPlayer.Command.Type;
+
 import android.app.Activity;
 import android.view.View;
 import android.widget.ImageButton;

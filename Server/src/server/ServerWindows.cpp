@@ -5,9 +5,9 @@
  *      Author: Mihail Costea
  */
 
-#include "Logger.h"
+#include "logger/Logger.h"
 #include "server/Server.h"
-#include "platform/windows/sock_util.h"
+#include "server/windows/sock_util.h"
 
 #include <sstream>
 

@@ -5,8 +5,8 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
-import client.Client;
 import logger.CommonLogger;
+import client.Client;
 
 /**
  * TODO(cmihail): comments

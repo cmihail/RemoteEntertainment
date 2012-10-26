@@ -19,7 +19,7 @@
  */
 
 #ifndef SOCK_UTIL_H_
-#define SOCK_UTIL_H_	1
+#define SOCK_UTIL_H_  1
 
 #include <stdio.h>
 #include <winsock2.h>
@@ -29,7 +29,7 @@
 #pragma comment (lib, "Mswsock.lib")
 
 
-#define SSA	struct sockaddr
+#define SSA struct sockaddr
 
 int wsa_init(void);
 void wsa_cleanup(void);
@@ -44,3 +44,4 @@ int xsend(SOCKET sock, void * buffer, int len);
 int xrecv(SOCKET sock, void * buffer, int len);
 
 #endif
+

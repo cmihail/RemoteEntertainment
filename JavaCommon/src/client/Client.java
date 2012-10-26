@@ -10,10 +10,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import logger.CommonLogger;
+import proto.PlayerCommand;
+import proto.ProtoPlayer.Command;
 
 import com.google.protobuf.CodedInputStream;
-
-import proto.ProtoPlayer.Command;
 
 /**
  * Defines the client methods needed for connecting to the server and sending/receiving

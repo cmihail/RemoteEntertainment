@@ -17,6 +17,10 @@ namespace proto {
 
 namespace {
 
+const ::google::protobuf::Descriptor* MessageHeader_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  MessageHeader_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* MessageHeader_Type_descriptor_ = NULL;
 const ::google::protobuf::Descriptor* Command_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Command_reflection_ = NULL;
@@ -34,7 +38,22 @@ void protobuf_AssignDesc_player_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "player.proto");
   GOOGLE_CHECK(file != NULL);
-  Command_descriptor_ = file->message_type(0);
+  MessageHeader_descriptor_ = file->message_type(0);
+  static const int MessageHeader_offsets_[1] = {
+  };
+  MessageHeader_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      MessageHeader_descriptor_,
+      MessageHeader::default_instance_,
+      MessageHeader_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageHeader, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageHeader, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(MessageHeader));
+  MessageHeader_Type_descriptor_ = MessageHeader_descriptor_->enum_type(0);
+  Command_descriptor_ = file->message_type(1);
   static const int Command_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Command, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Command, info_),
@@ -79,6 +98,8 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    MessageHeader_descriptor_, &MessageHeader::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Command_descriptor_, &Command::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Command_Information_descriptor_, &Command_Information::default_instance());
@@ -87,6 +108,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
 }  // namespace
 
 void protobuf_ShutdownFile_player_2eproto() {
+  delete MessageHeader::default_instance_;
+  delete MessageHeader_reflection_;
   delete Command::default_instance_;
   delete Command_reflection_;
   delete Command_Information::default_instance_;
@@ -100,19 +123,22 @@ void protobuf_AddDesc_player_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\014player.proto\022\005proto\"\256\002\n\007Command\022!\n\004typ"
-    "e\030\001 \002(\0162\023.proto.Command.Type\022(\n\004info\030\002 \001"
-    "(\0132\032.proto.Command.Information\032\034\n\013Inform"
-    "ation\022\r\n\005value\030\001 \002(\t\"\267\001\n\004Type\022\010\n\004NONE\020\001\022"
-    "\020\n\014SET_POSITION\020\002\022\014\n\010PREVIOUS\020\003\022\010\n\004NEXT\020"
-    "\004\022\014\n\010BACKWARD\020\005\022\013\n\007FORWARD\020\006\022\010\n\004STOP\020\007\022\010"
-    "\n\004PLAY\020\010\022\t\n\005PAUSE\020\t\022\010\n\004MUTE\020\n\022\016\n\nSET_VOL"
-    "UME\020\013\022\026\n\022TOGGLE_FULL_SCREEN\020\014\022\017\n\013START_M"
-    "OVIE\020\rB\rB\013ProtoPlayer", 341);
+    "\n\014player.proto\022\005proto\"$\n\rMessageHeader\"\023"
+    "\n\004Type\022\013\n\007COMMAND\020\001\"\256\002\n\007Command\022!\n\004type\030"
+    "\001 \002(\0162\023.proto.Command.Type\022(\n\004info\030\002 \001(\013"
+    "2\032.proto.Command.Information\032\034\n\013Informat"
+    "ion\022\r\n\005value\030\001 \002(\t\"\267\001\n\004Type\022\010\n\004NONE\020\001\022\020\n"
+    "\014SET_POSITION\020\002\022\014\n\010PREVIOUS\020\003\022\010\n\004NEXT\020\004\022"
+    "\014\n\010BACKWARD\020\005\022\013\n\007FORWARD\020\006\022\010\n\004STOP\020\007\022\010\n\004"
+    "PLAY\020\010\022\t\n\005PAUSE\020\t\022\010\n\004MUTE\020\n\022\016\n\nSET_VOLUM"
+    "E\020\013\022\026\n\022TOGGLE_FULL_SCREEN\020\014\022\017\n\013START_MOV"
+    "IE\020\rB\rB\013ProtoPlayer", 379);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "player.proto", &protobuf_RegisterTypes);
+  MessageHeader::default_instance_ = new MessageHeader();
   Command::default_instance_ = new Command();
   Command_Information::default_instance_ = new Command_Information();
+  MessageHeader::default_instance_->InitAsDefaultInstance();
   Command::default_instance_->InitAsDefaultInstance();
   Command_Information::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_player_2eproto);
@@ -124,6 +150,180 @@ struct StaticDescriptorInitializer_player_2eproto {
     protobuf_AddDesc_player_2eproto();
   }
 } static_descriptor_initializer_player_2eproto_;
+
+
+// ===================================================================
+
+const ::google::protobuf::EnumDescriptor* MessageHeader_Type_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return MessageHeader_Type_descriptor_;
+}
+bool MessageHeader_Type_IsValid(int value) {
+  switch(value) {
+    case 1:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const MessageHeader_Type MessageHeader::COMMAND;
+const MessageHeader_Type MessageHeader::Type_MIN;
+const MessageHeader_Type MessageHeader::Type_MAX;
+const int MessageHeader::Type_ARRAYSIZE;
+#endif  // _MSC_VER
+#ifndef _MSC_VER
+#endif  // !_MSC_VER
+
+MessageHeader::MessageHeader()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void MessageHeader::InitAsDefaultInstance() {
+}
+
+MessageHeader::MessageHeader(const MessageHeader& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void MessageHeader::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+MessageHeader::~MessageHeader() {
+  SharedDtor();
+}
+
+void MessageHeader::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void MessageHeader::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* MessageHeader::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return MessageHeader_descriptor_;
+}
+
+const MessageHeader& MessageHeader::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_player_2eproto();  return *default_instance_;
+}
+
+MessageHeader* MessageHeader::default_instance_ = NULL;
+
+MessageHeader* MessageHeader::New() const {
+  return new MessageHeader;
+}
+
+void MessageHeader::Clear() {
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool MessageHeader::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+        ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+      return true;
+    }
+    DO_(::google::protobuf::internal::WireFormat::SkipField(
+          input, tag, mutable_unknown_fields()));
+  }
+  return true;
+#undef DO_
+}
+
+void MessageHeader::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* MessageHeader::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int MessageHeader::ByteSize() const {
+  int total_size = 0;
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void MessageHeader::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const MessageHeader* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const MessageHeader*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void MessageHeader::MergeFrom(const MessageHeader& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void MessageHeader::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void MessageHeader::CopyFrom(const MessageHeader& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool MessageHeader::IsInitialized() const {
+  
+  return true;
+}
+
+void MessageHeader::Swap(MessageHeader* other) {
+  if (other != this) {
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata MessageHeader::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = MessageHeader_descriptor_;
+  metadata.reflection = MessageHeader_reflection_;
+  return metadata;
+}
 
 
 // ===================================================================

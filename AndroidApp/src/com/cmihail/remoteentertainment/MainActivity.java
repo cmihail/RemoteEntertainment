@@ -2,7 +2,8 @@ package com.cmihail.remoteentertainment;
 
 import java.nio.channels.AsynchronousCloseException;
 
-import client.PlayerCommand;
+import proto.PlayerCommand;
+
 import client.PlayerCommandExecutor;
 import client.PlayerCommandHandler;
 import android.os.Bundle;
@@ -29,7 +30,7 @@ public class MainActivity extends Activity {
 
     // Create a new client, connect to server and listen for incoming commands.
     client = new AndroidClient();
-    client.connect("192.168.2.12", 10000);
+    client.connect("192.168.2.8", 10000); // TODO(cmihail): ip in settings
 
     // Create the player command executor.
     commandExecutor = new PlayerCommandExecutor(client, createCommandHandler());

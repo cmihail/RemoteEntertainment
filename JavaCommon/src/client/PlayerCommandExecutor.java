@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import logger.CommonLogger;
-import client.PlayerCommandHandler;
+import proto.PlayerCommand;
 
 /**
  * Defines the player command executor which selects the right method from the handler
