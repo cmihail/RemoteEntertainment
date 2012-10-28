@@ -1,12 +1,12 @@
 package player;
 
-import java.nio.channels.AsynchronousCloseException;
+import java.util.logging.Level;
 
+import logger.CommonLogger;
 import proto.PlayerCommand;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import client.Client;
-import client.PlayerCommandExecutor;
-import client.PlayerCommandHandler;
+import client.Client.ConnectionLostException;
 
 /**
  * Defines the player presenter.
@@ -40,9 +40,9 @@ public class Player {
         while (true) {
           final PlayerCommand playerCommmand;
           try {
-            playerCommmand = client.receiveCommand();
-          } catch (AsynchronousCloseException e) {
-            // TODO(cmihail): maybe notify main thread to close
+            playerCommmand = new PlayerCommand(client.read());
+          } catch (ConnectionLostException e) {
+            CommonLogger.log(Level.WARNING, e.getMessage());
             break;
           }
 
@@ -70,11 +70,6 @@ public class Player {
       @Override
       public void onStop() {
         playerView.getMediaPlayer().stop();
-      }
-
-      @Override
-      public void onStartMovie(String pathToMovie) {
-        // TODO(cmihail): think about this
       }
 
       @Override

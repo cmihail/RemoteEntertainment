@@ -1,9 +1,8 @@
 package com.cmihail.remoteentertainment;
 
-import client.PlayerCommandExecutor;
+import player.PlayerCommandExecutor;
 import proto.PlayerCommand;
 import proto.ProtoPlayer.Command.Type;
-
 import android.app.Activity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -16,7 +15,7 @@ import android.widget.SeekBar;
  */
 public class Player {
 
-  private final PlayerCommandExecutor commandExecutor;
+  private final player.PlayerCommandExecutor commandExecutor;
   private boolean isPlaying = true; // TODO(cmihail): move this into it's own class
 
   private ImageButton rewindButton;

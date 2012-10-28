@@ -2,13 +2,16 @@ package proto;
 
 option java_outer_classname = "ProtoPlayer";
 
+/**
+ * Contains the type of the message that will be sent.
+ */
 message MessageHeader {
   enum Type {
     COMMAND = 1;
     // TODO(cmihail): add more types
   }
 
-  required Type messageType = 1;
+  required Type type = 1;
 }
 
 message Command {
@@ -36,3 +39,4 @@ message Command {
 
   optional Information info = 2;
 }
+

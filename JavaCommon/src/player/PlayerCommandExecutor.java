@@ -1,10 +1,12 @@
-package client;
+package player;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import logger.CommonLogger;
 import proto.PlayerCommand;
+import proto.PlayerMessageHeader;
+import proto.ProtoPlayer.MessageHeader;
+import client.Client;
 
 /**
  * Defines the player command executor which selects the right method from the handler
@@ -13,8 +15,6 @@ import proto.PlayerCommand;
  * @author cmihail (Mihail Costea)
  */
 public class PlayerCommandExecutor {
-
-  private static final Logger logger = CommonLogger.getLogger("Client");
 
   private final Client client;
 	private final PlayerCommandHandler playerCommandHandler;
@@ -38,12 +38,12 @@ public class PlayerCommandExecutor {
     switch (command.getType()) {
     case SET_POSITION:
       if (info == null) {
-        logger.log(Level.WARNING, "Invalid position: " + info);
+        CommonLogger.log(Level.WARNING, "Invalid position: " + info);
       }
       try {
         playerCommandHandler.onSetPosition(Float.parseFloat(info));
       } catch (NumberFormatException e) {
-        logger.log(Level.WARNING, "Invalid position: " + info);
+        CommonLogger.log(Level.WARNING, "Invalid position: " + info);
       }
       break;
 
@@ -81,12 +81,12 @@ public class PlayerCommandExecutor {
 
     case SET_VOLUME:
       if (info == null) {
-        logger.log(Level.WARNING, "Invalid volume value: " + info);
+        CommonLogger.log(Level.WARNING, "Invalid volume value: " + info);
       }
       try {
         playerCommandHandler.onSetVolume(Integer.parseInt(info));
       } catch (NumberFormatException e) {
-        logger.log(Level.WARNING, "Invalid volume value: " + info);
+        CommonLogger.log(Level.WARNING, "Invalid volume value: " + info);
       }
       break;
 
@@ -94,21 +94,16 @@ public class PlayerCommandExecutor {
       playerCommandHandler.onToggleFullScreen();
       break;
 
-    case START_MOVIE:
-      if (info == null) {
-        logger.log(Level.WARNING, "Invalid movie: " + info);
-      }
-      playerCommandHandler.onStartMovie(info);
-      break;
-
     default:
-      logger.log(Level.WARNING, "Invalid volume command: " + command.getType().toString());
+      CommonLogger.log(Level.WARNING, "Invalid volume command: " + command.getType().toString());
       return;
     }
 
     // Send the command to the server.
     if (notifyExecution) {
-      client.sendCommand(command);
+      client.send(new PlayerMessageHeader(MessageHeader.Type.COMMAND).toByteArray());
+      client.send(command.toByteArray());
+      CommonLogger.log(Level.INFO, "Command sent: " + command.getType());
     }
 	}
 }

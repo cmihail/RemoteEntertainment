@@ -1,8 +1,11 @@
 package proto;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+
+import logger.CommonLogger;
 import proto.ProtoPlayer.Command;
-import proto.ProtoPlayer.Command.Information;
-import proto.ProtoPlayer.Command.Type;
 
 /**
  * Defines the wrapper for the proto command.
@@ -11,13 +14,13 @@ import proto.ProtoPlayer.Command.Type;
  */
 public class PlayerCommand {
 
-  private final Type type;
+  private final Command.Type type;
   private final String info;
 
   /**
    * @param type the type of the command
    */
-  public PlayerCommand(Type type) {
+  public PlayerCommand(Command.Type type) {
     this(type, null);
   }
 
@@ -25,15 +28,34 @@ public class PlayerCommand {
    * @param type the type of the command
    * @param info information about the command
    */
-  public PlayerCommand(Type type, String info) {
+  public PlayerCommand(Command.Type type, String info) {
     this.type = type;
     this.info = info;
   }
 
   /**
+   * @param bytes the bytes that contain a {@link proto.Command}
+   */
+  public PlayerCommand(byte[] bytes) {
+    Command command = null;
+    try {
+      command = Command.parseFrom(bytes);
+    } catch (IOException e) {
+      CommonLogger.logException(Level.SEVERE, e);
+    }
+
+    type = command.getType();
+    if (command.hasInfo()) {
+      info = command.getInfo().getValue();
+    } else {
+      info = null;
+    }
+  }
+
+  /**
    * @return the type of the command
    */
-  public Type getType() {
+  public Command.Type getType() {
     return type;
   }
 
@@ -50,8 +72,22 @@ public class PlayerCommand {
   public Command toProto() {
     Command.Builder builder = Command.newBuilder().setType(type);
     if (info != null) {
-      builder.setInfo(Information.newBuilder().setValue(info).build());
+      builder.setInfo(Command.Information.newBuilder().setValue(info).build());
     }
     return builder.build();
+  }
+
+  /**
+   * @return the command as a byte array
+   */
+  public byte[] toByteArray() {
+    Command command = this.toProto();
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    try {
+      command.writeDelimitedTo(out);
+    } catch (IOException e) {
+      CommonLogger.logException(Level.SEVERE, e);
+    }
+    return out.toByteArray();
   }
 }

@@ -25,7 +25,6 @@ import proto.ProtoPlayer.Command.Type;
 import uk.co.caprica.vlcj.binding.LibVlcConst;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
-import client.PlayerCommandExecutor;
 
 /**
  * Defines the player controls used in {@link PlayerView}.

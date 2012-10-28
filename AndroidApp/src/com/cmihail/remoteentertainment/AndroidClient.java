@@ -1,10 +1,7 @@
 package com.cmihail.remoteentertainment;
 
-import java.nio.channels.AsynchronousCloseException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import proto.PlayerCommand;
 
 import client.Client;
 
@@ -36,23 +33,23 @@ public class AndroidClient extends Client {
   }
 
   @Override
-  public void sendCommand(final PlayerCommand playerCommand) {
+  public void send(final byte[] buffer) {
     Thread thread = new Thread(new Runnable() {
       @Override
       public void run() {
-        AndroidClient.super.sendCommand(playerCommand);
+        AndroidClient.super.send(buffer);
       }
     });
     thread.start();
   }
 
   @Override
-  public PlayerCommand receiveCommand() throws AsynchronousCloseException {
+  public byte[] read() throws Client.ConnectionLostException {
     // Awaits for client to connect to the server.
     while (!isConnected) { // TODO(cmihail): after some time automatic break and show error
       clientLock.lock();
       clientLock.unlock();
     }
-    return super.receiveCommand();
+    return super.read();
   }
 }

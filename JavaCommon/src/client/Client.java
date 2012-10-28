@@ -1,6 +1,5 @@
 package client;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -8,14 +7,9 @@ import java.nio.ByteOrder;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.SocketChannel;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import logger.CommonLogger;
-import proto.PlayerCommand;
-import proto.PlayerMessageHeader;
-import proto.ProtoPlayer.Command;
-import proto.ProtoPlayer.MessageHeader;
-import proto.ProtoPlayer.MessageHeader.Type;
+import proto.ProtoPlayer;
 
 import com.google.protobuf.CodedInputStream;
 
@@ -27,7 +21,14 @@ import com.google.protobuf.CodedInputStream;
  */
 public class Client {
 
-  private static final Logger logger = CommonLogger.getLogger("Client");
+  public class ConnectionLostException extends Exception {
+    private static final long serialVersionUID = 1L;
+    private static final String MESSAGE = "Connection with server was lost";
+
+    public ConnectionLostException() {
+      super(MESSAGE);
+    }
+  }
 
   private SocketChannel socketChannel = null;
 
@@ -42,9 +43,9 @@ public class Client {
       socketChannel.socket().setReuseAddress(true);
       socketChannel.socket().connect(new InetSocketAddress(ipAddress, port));
       socketChannel.configureBlocking(true);
-      logger.log(Level.INFO, "Connection was successful");
+      CommonLogger.log(Level.INFO, "Connection was successful");
     } catch (IOException e) {
-      exit(e);
+      CommonLogger.logException(Level.SEVERE, e);
     }
   }
 
@@ -55,89 +56,51 @@ public class Client {
     try {
       socketChannel.close(); // TODO(cmihail): maybe use shutdown on socket
     } catch (IOException e) {
-      exit(e);
+      CommonLogger.logException(Level.SEVERE, e);
     }
   }
 
   /**
-   * TODO(cmihail): comments + describe the protocol better in .proto file
-   * @param buffer
+   * Sends a message to the server. The message will be preceded by its length before sending it.
+   * @param buffer the message to be sent as a byte array
    */
-  private void writeToSocket(ByteArrayOutputStream out) {
+  public void send(byte[] buffer) {
     try {
-      ByteBuffer buffer = ByteBuffer.allocate(4);
-      buffer.order(ByteOrder.LITTLE_ENDIAN);
-      buffer.putInt(out.size());
-      buffer.flip();
-      while (buffer.hasRemaining()) {
-        socketChannel.write(buffer);
-      }
-
-      buffer = ByteBuffer.wrap(out.toByteArray());
-      while (buffer.hasRemaining()) {
-        socketChannel.write(buffer);
+      ByteBuffer byteBuffer = ByteBuffer.allocate(4 + buffer.length);
+      byteBuffer.order(ByteOrder.LITTLE_ENDIAN); // TODO(cmihail): think about this part
+      byteBuffer.putInt(buffer.length);
+      byteBuffer.put(buffer);
+      byteBuffer.flip();
+      while (byteBuffer.hasRemaining()) {
+        socketChannel.write(byteBuffer);
       }
     } catch (IOException e) {
-      exit(e);
+      CommonLogger.logException(Level.SEVERE, e);
     }
   }
 
   /**
-   * Sends a player command to the server as a proto command.
-   * @param playerCommand the command that is sent
+   * Reads a message from server. The message can be anything contained in the {@link ProtoPlayer}
+   * class. Every message starts with a varint32 representing the number of bytes that
+   * contain the {@link ProtoPlayer} class. Those bytes will be returned by this class.
+   * Decoding the class should be done accordingly to the protocol.
+   * @return a message from server as a byte array
+   * @throws AsynchronousCloseException an exception thrown if the connection with the server
+   * was lost when waiting to receive a message
    */
-  public void sendCommand(final PlayerCommand playerCommand) {
-    Command command = playerCommand.toProto();
-    MessageHeader messageHeader = new PlayerMessageHeader(Type.COMMAND).toProto();
-    try {
-      // Send message type preceded by its length.
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      messageHeader.writeDelimitedTo(out);
-      writeToSocket(out);
-
-      // Send command preceded by its length.
-      out.reset();
-      command.writeDelimitedTo(out);
-      writeToSocket(out);
-      logger.log(Level.INFO, "Command sent: " + command.getType().toString());
-    } catch (IOException e) {
-      exit(e);
-    }
-  }
-
-  /**
-   * Receives a command from the server as a proto command and converts it to a player command.
-   * @return the command that was received
-   * @throws AsynchronousCloseException if connection is lost when waiting for a command
-   */
-  public PlayerCommand receiveCommand() throws AsynchronousCloseException {
-    Command command = null;
+  public byte[] read() throws ConnectionLostException {
     try {
       CodedInputStream codedInputStream =
           CodedInputStream.newInstance(socketChannel.socket().getInputStream());
       int varint32 = codedInputStream.readInt32();
-      byte[] bytes = codedInputStream.readRawBytes(varint32);
-      command = Command.parseFrom(bytes);
-      logger.log(Level.INFO, "Command received: " + command.getType().toString());
+      return codedInputStream.readRawBytes(varint32);
     } catch (AsynchronousCloseException e) {
-      logger.log(Level.WARNING, "Connection lost");
-      throw e; // TODO(cmihail): maybe throw a exception with a more suggestive name
+      CommonLogger.log(Level.WARNING, "Connection lost");
+      throw new ConnectionLostException(); // TODO(cmihail): maybe throw a exception with a more suggestive name
     } catch (IOException e) {
-      exit(e);
+      CommonLogger.logException(Level.SEVERE, e);
     }
 
-    if (command.hasInfo()) {
-      return new PlayerCommand(command.getType(), command.getInfo().getValue());
-    }
-    return new PlayerCommand(command.getType());
-  }
-
-  /**
-   * Terminates the client when receives an exception.
-   */
-  private void exit(Exception e) {
-    logger.log(Level.SEVERE, e.getMessage());
-    e.printStackTrace();
-//    e.printStackTrace(CommonLogger.getPrintStream()); // TODO(cmihail): doesn't print anything
+    return null;
   }
 }

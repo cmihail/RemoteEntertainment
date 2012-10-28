@@ -42,6 +42,9 @@ public:
    */
   proto::Command::Type getType();
 
+  /**
+   * @return true if command has information
+   */
   bool hasInfo();
 
   /**

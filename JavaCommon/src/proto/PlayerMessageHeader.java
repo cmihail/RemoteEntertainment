@@ -1,5 +1,10 @@
 package proto;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+
+import logger.CommonLogger;
 import proto.ProtoPlayer.MessageHeader;
 
 /**
@@ -7,19 +12,55 @@ import proto.ProtoPlayer.MessageHeader;
  *
  * @author cmihail (Mihail Costea)
  */
-public class PlayerMessageHeader { // TODO: move in proto package
+public class PlayerMessageHeader {
 
-  private final MessageHeader.Type messageType;
+  private final MessageHeader.Type type;
 
-  public PlayerMessageHeader(MessageHeader.Type messageType) {
-    this.messageType = messageType;
+  /**
+   * @param type the type of the message contained in the header
+   */
+  public PlayerMessageHeader(MessageHeader.Type type) {
+    this.type = type;
   }
 
-  // TODO(cmihail): getters
+  public PlayerMessageHeader(byte[] bytes) {
+    MessageHeader header = null;
+    try {
+      header = MessageHeader.parseFrom(bytes);
+    } catch (IOException e) {
+      CommonLogger.logException(Level.SEVERE, e);
+    }
 
+    type = header.getType();
+  }
+
+  /**
+   * @return the type of the message contained in the header
+   */
+  public MessageHeader.Type getType() {
+    return type;
+  }
+
+  /**
+   * @return the header as a proto
+   */
   public MessageHeader toProto() {
     return MessageHeader.newBuilder()
-        .setMessageType(messageType)
+        .setType(type)
         .build();
+  }
+
+  /**
+   * @return the command as a byte array
+   */
+  public byte[] toByteArray() {
+    MessageHeader header = this.toProto();
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    try {
+      header.writeDelimitedTo(out);
+    } catch (IOException e) {
+      CommonLogger.logException(Level.SEVERE, e);
+    }
+    return out.toByteArray();
   }
 }

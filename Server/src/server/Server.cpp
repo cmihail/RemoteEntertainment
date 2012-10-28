@@ -68,7 +68,6 @@ Message * Server::receiveMessage(socket_descriptor_t socketDescriptor) {
     Logger::print(__FILE__, __LINE__, Logger::SEVERE, out.str());
     return new Message();
   }
-  cout << "T1: " << numOfBytes << "\n\n";
 
   // End of connection.
   if (n == 0) {
@@ -131,7 +130,6 @@ void Server::run() {
        // Receive commands from clients.
        map<socket_descriptor_t, Client>::iterator it = clientsMap.find(socketDescriptor);
        if (it != clientsMap.end()) {
-         Logger::print(__FILE__, __LINE__, Logger::INFO, "Command received ");
          receiveCommand(this, socketDescriptor);
          continue;
        } else {
@@ -171,15 +169,15 @@ static void registerNewClient(Server * server, socket_descriptor_t listenSocket)
 // TODO(cmihail): only for dev, it should be send to all other clients
 static void printCommand(PlayerCommand * playerCommand) {
   if (playerCommand->getType() == proto::Command::PAUSE) {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Pause");
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Command received: Pause");
   } else if (playerCommand->getType() == proto::Command::PLAY) {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Play");
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Command received: Play");
   } else  if (playerCommand->getType() == proto::Command::BACKWARD) {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Rewind");
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Command received: Rewind");
   } else  if (playerCommand->getType() == proto::Command::SET_VOLUME) {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Set Volume");
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Command received: Set Volume");
   } else {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Another command");
+    Logger::print(__FILE__, __LINE__, Logger::INFO, "Command received: Another command");
   }
 }
 
@@ -220,10 +218,12 @@ static void receiveCommand(Server * server, socket_descriptor_t clientSocket) {
     // Send command to all other clients.
     map<socket_descriptor_t, Client>::iterator it = clientsMap.begin();
     map<socket_descriptor_t, Client>::iterator itEnd = clientsMap.end();
-    Message outputMessage = playerCommand->toCodedMessage();
+    Message headerOutputMessage = header->toCodedMessage();
+    Message commandOutputMessage = playerCommand->toCodedMessage();
     for (; it != itEnd; it++) {
       if (it->first != clientSocket) {
-        server->sendMessage(it->first, outputMessage);
+        // server->sendMessage(it->first, headerOutputMessage); TODO
+        server->sendMessage(it->first, commandOutputMessage);
       }
     }
 

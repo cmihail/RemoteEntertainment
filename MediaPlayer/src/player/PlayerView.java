@@ -15,7 +15,7 @@ import uk.co.caprica.vlcj.player.embedded.DefaultFullScreenStrategy;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.FullScreenStrategy;
 import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
-import client.PlayerCommandExecutor;
+import player.PlayerCommandExecutor;
 
 /**
  * Defines the view for {@link Player} which consists in the player itself

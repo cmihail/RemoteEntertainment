@@ -1,4 +1,4 @@
-package client;
+package player;
 
 /**
  * Defines the handler for player commands.
@@ -6,8 +6,6 @@ package client;
  * @author cmihail (Mihail Costea)
  */
 public interface PlayerCommandHandler {
-  void onStartMovie(String pathToMovie); // TODO(cmihail): only for dev, must use another name
-
   /**
    * Defines actions to be performed on setting the position in the media which is playing.
    * @param position the position in [0-1] interval which was set

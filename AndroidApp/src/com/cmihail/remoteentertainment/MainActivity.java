@@ -1,16 +1,14 @@
 package com.cmihail.remoteentertainment;
 
-import java.nio.channels.AsynchronousCloseException;
-
+import player.PlayerCommandExecutor;
+import player.PlayerCommandHandler;
 import proto.PlayerCommand;
-
-import client.PlayerCommandExecutor;
-import client.PlayerCommandHandler;
-import android.os.Bundle;
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import client.Client;
 
 /**
  * Defines the main activity of the remote player.
@@ -68,8 +66,8 @@ public class MainActivity extends Activity {
         while(true) {
           final PlayerCommand command;
           try {
-            command = client.receiveCommand();
-          } catch (AsynchronousCloseException e) {
+            command = new PlayerCommand(client.read());
+          } catch (Client.ConnectionLostException e) {
             break;
           }
 
@@ -137,13 +135,6 @@ public class MainActivity extends Activity {
       @Override
       public void onSetVolume(int arg0) {
         // TODO Auto-generated method stub
-
-      }
-
-      @Override
-      public void onStartMovie(String arg0) {
-        // TODO Auto-generated method stub
-
       }
 
       @Override

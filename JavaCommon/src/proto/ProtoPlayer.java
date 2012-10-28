@@ -11,9 +11,9 @@ public final class ProtoPlayer {
   public interface MessageHeaderOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // required .proto.MessageHeader.Type messageType = 1;
-    boolean hasMessageType();
-    proto.ProtoPlayer.MessageHeader.Type getMessageType();
+    // required .proto.MessageHeader.Type type = 1;
+    boolean hasType();
+    proto.ProtoPlayer.MessageHeader.Type getType();
   }
   public static final class MessageHeader extends
       com.google.protobuf.GeneratedMessage
@@ -110,25 +110,25 @@ public final class ProtoPlayer {
     }
     
     private int bitField0_;
-    // required .proto.MessageHeader.Type messageType = 1;
-    public static final int MESSAGETYPE_FIELD_NUMBER = 1;
-    private proto.ProtoPlayer.MessageHeader.Type messageType_;
-    public boolean hasMessageType() {
+    // required .proto.MessageHeader.Type type = 1;
+    public static final int TYPE_FIELD_NUMBER = 1;
+    private proto.ProtoPlayer.MessageHeader.Type type_;
+    public boolean hasType() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
-    public proto.ProtoPlayer.MessageHeader.Type getMessageType() {
-      return messageType_;
+    public proto.ProtoPlayer.MessageHeader.Type getType() {
+      return type_;
     }
     
     private void initFields() {
-      messageType_ = proto.ProtoPlayer.MessageHeader.Type.COMMAND;
+      type_ = proto.ProtoPlayer.MessageHeader.Type.COMMAND;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
       
-      if (!hasMessageType()) {
+      if (!hasType()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -140,7 +140,7 @@ public final class ProtoPlayer {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeEnum(1, messageType_.getNumber());
+        output.writeEnum(1, type_.getNumber());
       }
       getUnknownFields().writeTo(output);
     }
@@ -153,7 +153,7 @@ public final class ProtoPlayer {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, messageType_.getNumber());
+          .computeEnumSize(1, type_.getNumber());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -279,7 +279,7 @@ public final class ProtoPlayer {
       
       public Builder clear() {
         super.clear();
-        messageType_ = proto.ProtoPlayer.MessageHeader.Type.COMMAND;
+        type_ = proto.ProtoPlayer.MessageHeader.Type.COMMAND;
         bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
@@ -322,7 +322,7 @@ public final class ProtoPlayer {
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.messageType_ = messageType_;
+        result.type_ = type_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -339,15 +339,15 @@ public final class ProtoPlayer {
       
       public Builder mergeFrom(proto.ProtoPlayer.MessageHeader other) {
         if (other == proto.ProtoPlayer.MessageHeader.getDefaultInstance()) return this;
-        if (other.hasMessageType()) {
-          setMessageType(other.getMessageType());
+        if (other.hasType()) {
+          setType(other.getType());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
       
       public final boolean isInitialized() {
-        if (!hasMessageType()) {
+        if (!hasType()) {
           
           return false;
         }
@@ -384,7 +384,7 @@ public final class ProtoPlayer {
                 unknownFields.mergeVarintField(1, rawValue);
               } else {
                 bitField0_ |= 0x00000001;
-                messageType_ = value;
+                type_ = value;
               }
               break;
             }
@@ -394,26 +394,26 @@ public final class ProtoPlayer {
       
       private int bitField0_;
       
-      // required .proto.MessageHeader.Type messageType = 1;
-      private proto.ProtoPlayer.MessageHeader.Type messageType_ = proto.ProtoPlayer.MessageHeader.Type.COMMAND;
-      public boolean hasMessageType() {
+      // required .proto.MessageHeader.Type type = 1;
+      private proto.ProtoPlayer.MessageHeader.Type type_ = proto.ProtoPlayer.MessageHeader.Type.COMMAND;
+      public boolean hasType() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
-      public proto.ProtoPlayer.MessageHeader.Type getMessageType() {
-        return messageType_;
+      public proto.ProtoPlayer.MessageHeader.Type getType() {
+        return type_;
       }
-      public Builder setMessageType(proto.ProtoPlayer.MessageHeader.Type value) {
+      public Builder setType(proto.ProtoPlayer.MessageHeader.Type value) {
         if (value == null) {
           throw new NullPointerException();
         }
         bitField0_ |= 0x00000001;
-        messageType_ = value;
+        type_ = value;
         onChanged();
         return this;
       }
-      public Builder clearMessageType() {
+      public Builder clearType() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        messageType_ = proto.ProtoPlayer.MessageHeader.Type.COMMAND;
+        type_ = proto.ProtoPlayer.MessageHeader.Type.COMMAND;
         onChanged();
         return this;
       }
@@ -1448,17 +1448,17 @@ public final class ProtoPlayer {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014player.proto\022\005proto\"T\n\rMessageHeader\022." +
-      "\n\013messageType\030\001 \002(\0162\031.proto.MessageHeade" +
-      "r.Type\"\023\n\004Type\022\013\n\007COMMAND\020\001\"\256\002\n\007Command\022" +
-      "!\n\004type\030\001 \002(\0162\023.proto.Command.Type\022(\n\004in" +
-      "fo\030\002 \001(\0132\032.proto.Command.Information\032\034\n\013" +
-      "Information\022\r\n\005value\030\001 \002(\t\"\267\001\n\004Type\022\010\n\004N" +
-      "ONE\020\001\022\020\n\014SET_POSITION\020\002\022\014\n\010PREVIOUS\020\003\022\010\n" +
-      "\004NEXT\020\004\022\014\n\010BACKWARD\020\005\022\013\n\007FORWARD\020\006\022\010\n\004ST" +
-      "OP\020\007\022\010\n\004PLAY\020\010\022\t\n\005PAUSE\020\t\022\010\n\004MUTE\020\n\022\016\n\nS" +
-      "ET_VOLUME\020\013\022\026\n\022TOGGLE_FULL_SCREEN\020\014\022\017\n\013S",
-      "TART_MOVIE\020\rB\rB\013ProtoPlayer"
+      "\n\014player.proto\022\005proto\"M\n\rMessageHeader\022\'" +
+      "\n\004type\030\001 \002(\0162\031.proto.MessageHeader.Type\"" +
+      "\023\n\004Type\022\013\n\007COMMAND\020\001\"\256\002\n\007Command\022!\n\004type" +
+      "\030\001 \002(\0162\023.proto.Command.Type\022(\n\004info\030\002 \001(" +
+      "\0132\032.proto.Command.Information\032\034\n\013Informa" +
+      "tion\022\r\n\005value\030\001 \002(\t\"\267\001\n\004Type\022\010\n\004NONE\020\001\022\020" +
+      "\n\014SET_POSITION\020\002\022\014\n\010PREVIOUS\020\003\022\010\n\004NEXT\020\004" +
+      "\022\014\n\010BACKWARD\020\005\022\013\n\007FORWARD\020\006\022\010\n\004STOP\020\007\022\010\n" +
+      "\004PLAY\020\010\022\t\n\005PAUSE\020\t\022\010\n\004MUTE\020\n\022\016\n\nSET_VOLU" +
+      "ME\020\013\022\026\n\022TOGGLE_FULL_SCREEN\020\014\022\017\n\013START_MO",
+      "VIE\020\rB\rB\013ProtoPlayer"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1470,7 +1470,7 @@ public final class ProtoPlayer {
           internal_static_proto_MessageHeader_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_proto_MessageHeader_descriptor,
-              new java.lang.String[] { "MessageType", },
+              new java.lang.String[] { "Type", },
               proto.ProtoPlayer.MessageHeader.class,
               proto.ProtoPlayer.MessageHeader.Builder.class);
           internal_static_proto_Command_descriptor =
