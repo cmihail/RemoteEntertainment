@@ -1,14 +1,19 @@
 package com.cmihail.remoteentertainment;
 
+import java.util.logging.Level;
+
+import logger.CommonLogger;
 import player.PlayerCommandExecutor;
 import player.PlayerCommandHandler;
 import proto.PlayerCommand;
+import proto.PlayerMessageHeader;
+import proto.ProtoPlayer.MessageHeader.Type;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
-import client.Client;
+import client.Client.ConnectionLostException;
 
 /**
  * Defines the main activity of the remote player.
@@ -64,10 +69,18 @@ public class MainActivity extends Activity {
       @Override
       public void run() {
         while(true) {
+
           final PlayerCommand command;
           try {
-            command = new PlayerCommand(client.read());
-          } catch (Client.ConnectionLostException e) {
+            PlayerMessageHeader header = new PlayerMessageHeader(client.read());
+            if (header.getType() == Type.COMMAND) {
+              command = new PlayerCommand(client.read());
+            } else {
+              CommonLogger.log(Level.SEVERE, "Something else then a command was sent");
+              break;
+            }
+          } catch (ConnectionLostException e) {
+            CommonLogger.log(Level.SEVERE, e.getMessage());
             break;
           }
 

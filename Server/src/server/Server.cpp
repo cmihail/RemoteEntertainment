@@ -106,6 +106,8 @@ void Server::sendMessage(socket_descriptor_t socketDescriptor, Message & message
 }
 
 static void registerNewClient(Server * server, socket_descriptor_t listenSocket);
+static PlayerMessageHeader * receiveMessageHeader(Server * server,
+    socket_descriptor_t clientSocket);
 static void receiveCommand(Server * server, socket_descriptor_t clientSocket);
 
 void Server::run() {
@@ -130,8 +132,15 @@ void Server::run() {
        // Receive commands from clients.
        map<socket_descriptor_t, Client>::iterator it = clientsMap.find(socketDescriptor);
        if (it != clientsMap.end()) {
-         receiveCommand(this, socketDescriptor);
-         continue;
+         PlayerMessageHeader * header = receiveMessageHeader(this, it->first);
+         // Receive command from client.
+         if (header->getMessageType() == proto::MessageHeader_Type_COMMAND) {
+           receiveCommand(this, it->first);
+         } else {
+           // TODO(cmihail): not severe + other types
+           Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Invalid message");
+         }
+         delete header;
        } else {
          stringstream out;
          out << "Not a valid socket descriptor: " << socketDescriptor;
@@ -181,7 +190,8 @@ static void printCommand(PlayerCommand * playerCommand) {
   }
 }
 
-static void receiveCommand(Server * server, socket_descriptor_t clientSocket) {
+static PlayerMessageHeader * receiveMessageHeader(Server * server,
+    socket_descriptor_t clientSocket) {
   // Receive message header from client.
   Message * inputMessage = server->receiveMessage(clientSocket);
 
@@ -194,44 +204,43 @@ static void receiveCommand(Server * server, socket_descriptor_t clientSocket) {
     stringstream out;
     out << "Connection ended for " << clientSocket;
     Logger::print(__FILE__, __LINE__, Logger::INFO, out.str());
-    return;
+    return NULL;
   }
+
+  // Transform input message into player message header.
   PlayerMessageHeader * header = new PlayerMessageHeader(*inputMessage);
   delete inputMessage;
 
-  // Receive command from client.
-  if (header->getMessageType() == proto::MessageHeader_Type_COMMAND) {
-    Logger::print(__FILE__, __LINE__, Logger::INFO, "Received header COMMAND"); // TODO
+  return header;
+}
 
-    Message * inputMessage = server->receiveMessage(clientSocket);
-    // Check if connection with client has ended.
-    if (!inputMessage->hasContent()) {
-      Logger::print(__FILE__, __LINE__, Logger::WARNING, "Didn't receive command from client");
-      // TODO(cmihail): delete client
-      return;
-    }
+static void receiveCommand(Server * server, socket_descriptor_t clientSocket) {
+  Message * inputMessage = server->receiveMessage(clientSocket);
 
-    PlayerCommand * playerCommand = new PlayerCommand(*inputMessage);
-    delete inputMessage;
-    printCommand(playerCommand);
-
-    // Send command to all other clients.
-    map<socket_descriptor_t, Client>::iterator it = clientsMap.begin();
-    map<socket_descriptor_t, Client>::iterator itEnd = clientsMap.end();
-    Message headerOutputMessage = header->toCodedMessage();
-    Message commandOutputMessage = playerCommand->toCodedMessage();
-    for (; it != itEnd; it++) {
-      if (it->first != clientSocket) {
-        // server->sendMessage(it->first, headerOutputMessage); TODO
-        server->sendMessage(it->first, commandOutputMessage);
-      }
-    }
-
-    delete playerCommand;
-  } else {
-    // TODO(cmihail): not severe + other types
-    Logger::print(__FILE__, __LINE__, Logger::SEVERE, "Invalid message");
+  // Check if any command was sent.
+  if (!inputMessage->hasContent()) {
+    Logger::print(__FILE__, __LINE__, Logger::WARNING, "Didn't receive command from client");
+    // TODO(cmihail): delete client
+    return;
   }
 
-  delete header;
+  // Transform input message into player command.
+  PlayerCommand * command = new PlayerCommand(*inputMessage);
+  printCommand(command);
+  delete inputMessage;
+
+  // Send command to all other clients.
+  map<socket_descriptor_t, Client>::iterator it = clientsMap.begin();
+  map<socket_descriptor_t, Client>::iterator itEnd = clientsMap.end();
+  Message headerOutputMessage =
+      PlayerMessageHeader(proto::MessageHeader_Type_COMMAND).toCodedMessage();
+  Message commandOutputMessage = command->toCodedMessage();
+  for (; it != itEnd; it++) {
+    if (it->first != clientSocket) {
+      server->sendMessage(it->first, headerOutputMessage);
+      server->sendMessage(it->first, commandOutputMessage);
+    }
+  }
+
+  delete command;
 }

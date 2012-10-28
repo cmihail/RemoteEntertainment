@@ -4,6 +4,8 @@ import java.util.logging.Level;
 
 import logger.CommonLogger;
 import proto.PlayerCommand;
+import proto.PlayerMessageHeader;
+import proto.ProtoPlayer.MessageHeader.Type;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import client.Client;
 import client.Client.ConnectionLostException;
@@ -38,16 +40,22 @@ public class Player {
       @Override
       public void run() {
         while (true) {
-          final PlayerCommand playerCommmand;
+          final PlayerCommand command;
           try {
-            playerCommmand = new PlayerCommand(client.read());
+            PlayerMessageHeader header = new PlayerMessageHeader(client.read());
+            if (header.getType() == Type.COMMAND) {
+              command = new PlayerCommand(client.read());
+            } else {
+              CommonLogger.log(Level.SEVERE, "Something else then a command was sent");
+              break;
+            }
           } catch (ConnectionLostException e) {
-            CommonLogger.log(Level.WARNING, e.getMessage());
+            CommonLogger.log(Level.SEVERE, e.getMessage());
             break;
           }
 
-          // Execute command.
-          commandExecutor.executeCommand(playerCommmand, false);
+          // Execute command. TODO(cmihail): synchronize
+          commandExecutor.executeCommand(command, false);
         }
       }
     };
