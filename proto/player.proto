@@ -8,12 +8,17 @@ option java_outer_classname = "ProtoPlayer";
 message MessageHeader {
   enum Type {
     COMMAND = 1;
-    // TODO(cmihail): add more types
+    CHANGE_DIRECTORY = 2;
+    GET_DIRECTORY_FILES = 3;
+    START_MEDIA = 4;
   }
 
   required Type type = 1;
 }
 
+/**
+ * Defines a  player command that can be executed to change the player state.
+ */
 message Command {
   enum Type {
     NONE = 1;
@@ -28,15 +33,58 @@ message Command {
     MUTE = 10;
     SET_VOLUME = 11;
     TOGGLE_FULL_SCREEN = 12;
-    START_MOVIE = 13; // TODO(cmihail): only for dev, move it into another message
   }
 
-  required Type type = 1;
-
+  /**
+   * Contains extra info about a command, if necessary
+   * (e.g.: for SET_POSITION we need the value where the position must be set).
+   */
   message Information {
     required string value = 1;
   }
 
+  required Type type = 1;
+
   optional Information info = 2;
+}
+
+/**
+ * Defines a directory structure.
+ * If directory member (3) has no elements then the results for the directory where not cached yet
+ * (it should have at least '.' and if not root '..' too).
+ */
+message Directory {
+  /**
+   * Defines files that are send with a directory.
+   */
+  message File {
+    enum Type {
+      MOVIE = 1;
+      SONG = 2;
+    }
+
+    required string name = 1;
+
+    required Type type = 2;
+  }
+
+  required string path = 1;
+
+  required string name = 2;
+
+  repeated Directory directory = 3;
+
+  repeated File file = 4;
+}
+
+/**
+ * Defines the necessary information about a media (a media represents a movie or a song).
+ */
+message Media {
+  required string path = 1;
+
+  required string name = 2;
+
+  optional string time = 3;
 }
 
