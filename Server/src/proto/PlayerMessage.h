@@ -1,7 +1,7 @@
 /*
  * PlayerMessage.h
  *
- *  Created on: Sep 27, 2012
+ *  Created on: Nov 5, 2012
  *      Author: cmihail (Mihail Costea)
  */
 
@@ -16,7 +16,7 @@
  *
  * A good practice would be to define a constructor with parameter <Message & codedMessage>
  * in order to create an object from a coded message (use <parseFromCodedMessage> method
- * to get the proto message from the coded message).
+ * to get the proto message from the coded message), but only if necessary.
  */
 class PlayerMessage {
 public:

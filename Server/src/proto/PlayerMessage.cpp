@@ -1,7 +1,7 @@
 /*
- * PlayerCommand.cpp
+ * PlayerMessage.cpp
  *
- *  Created on: Sep 27, 2012
+ *  Created on: Nov 5, 2012
  *      Author: cmihail (Mihail Costea)
  *
  * Defines the implementation of PlayerMessage.h.

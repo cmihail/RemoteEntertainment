@@ -52,6 +52,7 @@ message Command {
  * Defines a directory structure.
  * If directory member (3) has no elements then the results for the directory where not cached yet
  * (it should have at least '.' and if not root '..' too).
+ * Should only be used to send directories from server to client, not to receive them.
  */
 message Directory {
   /**
