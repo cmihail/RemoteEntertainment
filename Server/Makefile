@@ -3,7 +3,7 @@ CFLAGS = -Wall -g
 HEADERS = src/
 
 COMMON_DEPS = bin/Main.o bin/Message.o bin/Logger.o bin/Client.o bin/Server.o bin/player.pb.o\
-bin/PlayerCommand.o bin/PlayerMessageHeader.o
+bin/PlayerCommand.o bin/PlayerMessageHeader.o bin/PlayerMessage.o
 
 # Default platform is Mac. On Linux run as "make PLATFORM=Linux" and on Windows as "make PLATFORM=Windows"
 PLATFORM = Mac
@@ -29,20 +29,6 @@ bin/Main.o: src/Main.cpp
 bin/Message.o: src/Message.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 
-# event package
-ifeq ($(PLATFORM), Windows)
-bin/EventListener.o: src/event/EventListenerWindows.cpp
-	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-else
-ifeq ($(PLATFORM), Linux)
-bin/EventListener.o: src/event/EventListenerLinux.cpp
-	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-else # default MAC
-bin/EventListener.o: src/event/EventListenerMac.cpp
-	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
-endif
-endif
-
 # logger package
 bin/Logger.o: src/logger/Logger.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
@@ -58,6 +44,8 @@ endif
 
 # proto pacakge
 bin/player.pb.o: src/proto/player.pb.cc
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+bin/PlayerMessage.o: src/proto/PlayerMessage.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 bin/PlayerCommand.o: src/proto/PlayerCommand.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
@@ -78,6 +66,20 @@ bin/sock_util.o: src/server/windows/sock_util.c
 else # default unix
 bin/ServerUnix.o: src/server/ServerUnix.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+endif
+
+# server/event package
+ifeq ($(PLATFORM), Windows)
+bin/EventListener.o: src/server/event/EventListenerWindows.cpp
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+else
+ifeq ($(PLATFORM), Linux)
+bin/EventListener.o: src/server/event/EventListenerLinux.cpp
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+else # default MAC
+bin/EventListener.o: src/server/event/EventListenerMac.cpp
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+endif
 endif
 
 clean:

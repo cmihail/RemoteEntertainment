@@ -10,11 +10,12 @@
 
 #include "Message.h"
 #include "proto/player.pb.h"
+#include "proto/PlayerMessage.h"
 
 /**
- * Defines a wrapper for player commands from proto file.
+ * Defines a wrapper for Command class contained in proto file.
  */
-class PlayerCommand {
+class PlayerCommand : public PlayerMessage {
 public:
   /**
    * @param type the type of the command
@@ -33,11 +34,6 @@ public:
   PlayerCommand(Message & codedBuffer);
 
   /**
-   * @return command as proto
-   */
-  proto::Command toProto();
-
-  /**
    * @return the type of the command
    */
   proto::Command::Type getType();
@@ -52,10 +48,8 @@ public:
    */
   std::string getInfo();
 
-  /**
-   * @return command as a coded message
-   */
-  Message toCodedMessage();
+protected:
+  virtual google::protobuf::Message * toProto();
 
 private:
   proto::Command_Type type;

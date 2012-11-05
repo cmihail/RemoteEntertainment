@@ -35,13 +35,19 @@ void protobuf_ShutdownFile_player_2eproto();
 class MessageHeader;
 class Command;
 class Command_Information;
+class Directory;
+class Directory_File;
+class Media;
 
 enum MessageHeader_Type {
-  MessageHeader_Type_COMMAND = 1
+  MessageHeader_Type_COMMAND = 1,
+  MessageHeader_Type_CHANGE_DIRECTORY = 2,
+  MessageHeader_Type_GET_DIRECTORY_FILES = 3,
+  MessageHeader_Type_START_MEDIA = 4
 };
 bool MessageHeader_Type_IsValid(int value);
 const MessageHeader_Type MessageHeader_Type_Type_MIN = MessageHeader_Type_COMMAND;
-const MessageHeader_Type MessageHeader_Type_Type_MAX = MessageHeader_Type_COMMAND;
+const MessageHeader_Type MessageHeader_Type_Type_MAX = MessageHeader_Type_START_MEDIA;
 const int MessageHeader_Type_Type_ARRAYSIZE = MessageHeader_Type_Type_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* MessageHeader_Type_descriptor();
@@ -66,12 +72,11 @@ enum Command_Type {
   Command_Type_PAUSE = 9,
   Command_Type_MUTE = 10,
   Command_Type_SET_VOLUME = 11,
-  Command_Type_TOGGLE_FULL_SCREEN = 12,
-  Command_Type_START_MOVIE = 13
+  Command_Type_TOGGLE_FULL_SCREEN = 12
 };
 bool Command_Type_IsValid(int value);
 const Command_Type Command_Type_Type_MIN = Command_Type_NONE;
-const Command_Type Command_Type_Type_MAX = Command_Type_START_MOVIE;
+const Command_Type Command_Type_Type_MAX = Command_Type_TOGGLE_FULL_SCREEN;
 const int Command_Type_Type_ARRAYSIZE = Command_Type_Type_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Command_Type_descriptor();
@@ -83,6 +88,25 @@ inline bool Command_Type_Parse(
     const ::std::string& name, Command_Type* value) {
   return ::google::protobuf::internal::ParseNamedEnum<Command_Type>(
     Command_Type_descriptor(), name, value);
+}
+enum Directory_File_Type {
+  Directory_File_Type_MOVIE = 1,
+  Directory_File_Type_SONG = 2
+};
+bool Directory_File_Type_IsValid(int value);
+const Directory_File_Type Directory_File_Type_Type_MIN = Directory_File_Type_MOVIE;
+const Directory_File_Type Directory_File_Type_Type_MAX = Directory_File_Type_SONG;
+const int Directory_File_Type_Type_ARRAYSIZE = Directory_File_Type_Type_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* Directory_File_Type_descriptor();
+inline const ::std::string& Directory_File_Type_Name(Directory_File_Type value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    Directory_File_Type_descriptor(), value);
+}
+inline bool Directory_File_Type_Parse(
+    const ::std::string& name, Directory_File_Type* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<Directory_File_Type>(
+    Directory_File_Type_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -140,6 +164,9 @@ class MessageHeader : public ::google::protobuf::Message {
   
   typedef MessageHeader_Type Type;
   static const Type COMMAND = MessageHeader_Type_COMMAND;
+  static const Type CHANGE_DIRECTORY = MessageHeader_Type_CHANGE_DIRECTORY;
+  static const Type GET_DIRECTORY_FILES = MessageHeader_Type_GET_DIRECTORY_FILES;
+  static const Type START_MEDIA = MessageHeader_Type_START_MEDIA;
   static inline bool Type_IsValid(int value) {
     return MessageHeader_Type_IsValid(value);
   }
@@ -163,21 +190,21 @@ class MessageHeader : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required .proto.MessageHeader.Type messageType = 1;
-  inline bool has_messagetype() const;
-  inline void clear_messagetype();
-  static const int kMessageTypeFieldNumber = 1;
-  inline ::proto::MessageHeader_Type messagetype() const;
-  inline void set_messagetype(::proto::MessageHeader_Type value);
+  // required .proto.MessageHeader.Type type = 1;
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 1;
+  inline ::proto::MessageHeader_Type type() const;
+  inline void set_type(::proto::MessageHeader_Type value);
   
   // @@protoc_insertion_point(class_scope:proto.MessageHeader)
  private:
-  inline void set_has_messagetype();
-  inline void clear_has_messagetype();
+  inline void set_has_type();
+  inline void clear_has_type();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  int messagetype_;
+  int type_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
@@ -344,7 +371,6 @@ class Command : public ::google::protobuf::Message {
   static const Type MUTE = Command_Type_MUTE;
   static const Type SET_VOLUME = Command_Type_SET_VOLUME;
   static const Type TOGGLE_FULL_SCREEN = Command_Type_TOGGLE_FULL_SCREEN;
-  static const Type START_MOVIE = Command_Type_START_MOVIE;
   static inline bool Type_IsValid(int value) {
     return Command_Type_IsValid(value);
   }
@@ -405,6 +431,368 @@ class Command : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static Command* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class Directory_File : public ::google::protobuf::Message {
+ public:
+  Directory_File();
+  virtual ~Directory_File();
+  
+  Directory_File(const Directory_File& from);
+  
+  inline Directory_File& operator=(const Directory_File& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Directory_File& default_instance();
+  
+  void Swap(Directory_File* other);
+  
+  // implements Message ----------------------------------------------
+  
+  Directory_File* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Directory_File& from);
+  void MergeFrom(const Directory_File& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef Directory_File_Type Type;
+  static const Type MOVIE = Directory_File_Type_MOVIE;
+  static const Type SONG = Directory_File_Type_SONG;
+  static inline bool Type_IsValid(int value) {
+    return Directory_File_Type_IsValid(value);
+  }
+  static const Type Type_MIN =
+    Directory_File_Type_Type_MIN;
+  static const Type Type_MAX =
+    Directory_File_Type_Type_MAX;
+  static const int Type_ARRAYSIZE =
+    Directory_File_Type_Type_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  Type_descriptor() {
+    return Directory_File_Type_descriptor();
+  }
+  static inline const ::std::string& Type_Name(Type value) {
+    return Directory_File_Type_Name(value);
+  }
+  static inline bool Type_Parse(const ::std::string& name,
+      Type* value) {
+    return Directory_File_Type_Parse(name, value);
+  }
+  
+  // accessors -------------------------------------------------------
+  
+  // required string name = 1;
+  inline bool has_name() const;
+  inline void clear_name();
+  static const int kNameFieldNumber = 1;
+  inline const ::std::string& name() const;
+  inline void set_name(const ::std::string& value);
+  inline void set_name(const char* value);
+  inline void set_name(const char* value, size_t size);
+  inline ::std::string* mutable_name();
+  inline ::std::string* release_name();
+  
+  // required .proto.Directory.File.Type type = 2;
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 2;
+  inline ::proto::Directory_File_Type type() const;
+  inline void set_type(::proto::Directory_File_Type value);
+  
+  // @@protoc_insertion_point(class_scope:proto.Directory.File)
+ private:
+  inline void set_has_name();
+  inline void clear_has_name();
+  inline void set_has_type();
+  inline void clear_has_type();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* name_;
+  int type_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_player_2eproto();
+  friend void protobuf_AssignDesc_player_2eproto();
+  friend void protobuf_ShutdownFile_player_2eproto();
+  
+  void InitAsDefaultInstance();
+  static Directory_File* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Directory : public ::google::protobuf::Message {
+ public:
+  Directory();
+  virtual ~Directory();
+  
+  Directory(const Directory& from);
+  
+  inline Directory& operator=(const Directory& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Directory& default_instance();
+  
+  void Swap(Directory* other);
+  
+  // implements Message ----------------------------------------------
+  
+  Directory* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Directory& from);
+  void MergeFrom(const Directory& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef Directory_File File;
+  
+  // accessors -------------------------------------------------------
+  
+  // required string path = 1;
+  inline bool has_path() const;
+  inline void clear_path();
+  static const int kPathFieldNumber = 1;
+  inline const ::std::string& path() const;
+  inline void set_path(const ::std::string& value);
+  inline void set_path(const char* value);
+  inline void set_path(const char* value, size_t size);
+  inline ::std::string* mutable_path();
+  inline ::std::string* release_path();
+  
+  // required string name = 2;
+  inline bool has_name() const;
+  inline void clear_name();
+  static const int kNameFieldNumber = 2;
+  inline const ::std::string& name() const;
+  inline void set_name(const ::std::string& value);
+  inline void set_name(const char* value);
+  inline void set_name(const char* value, size_t size);
+  inline ::std::string* mutable_name();
+  inline ::std::string* release_name();
+  
+  // repeated .proto.Directory directory = 3;
+  inline int directory_size() const;
+  inline void clear_directory();
+  static const int kDirectoryFieldNumber = 3;
+  inline const ::proto::Directory& directory(int index) const;
+  inline ::proto::Directory* mutable_directory(int index);
+  inline ::proto::Directory* add_directory();
+  inline const ::google::protobuf::RepeatedPtrField< ::proto::Directory >&
+      directory() const;
+  inline ::google::protobuf::RepeatedPtrField< ::proto::Directory >*
+      mutable_directory();
+  
+  // repeated .proto.Directory.File file = 4;
+  inline int file_size() const;
+  inline void clear_file();
+  static const int kFileFieldNumber = 4;
+  inline const ::proto::Directory_File& file(int index) const;
+  inline ::proto::Directory_File* mutable_file(int index);
+  inline ::proto::Directory_File* add_file();
+  inline const ::google::protobuf::RepeatedPtrField< ::proto::Directory_File >&
+      file() const;
+  inline ::google::protobuf::RepeatedPtrField< ::proto::Directory_File >*
+      mutable_file();
+  
+  // @@protoc_insertion_point(class_scope:proto.Directory)
+ private:
+  inline void set_has_path();
+  inline void clear_has_path();
+  inline void set_has_name();
+  inline void clear_has_name();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* path_;
+  ::std::string* name_;
+  ::google::protobuf::RepeatedPtrField< ::proto::Directory > directory_;
+  ::google::protobuf::RepeatedPtrField< ::proto::Directory_File > file_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_player_2eproto();
+  friend void protobuf_AssignDesc_player_2eproto();
+  friend void protobuf_ShutdownFile_player_2eproto();
+  
+  void InitAsDefaultInstance();
+  static Directory* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Media : public ::google::protobuf::Message {
+ public:
+  Media();
+  virtual ~Media();
+  
+  Media(const Media& from);
+  
+  inline Media& operator=(const Media& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Media& default_instance();
+  
+  void Swap(Media* other);
+  
+  // implements Message ----------------------------------------------
+  
+  Media* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Media& from);
+  void MergeFrom(const Media& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required string path = 1;
+  inline bool has_path() const;
+  inline void clear_path();
+  static const int kPathFieldNumber = 1;
+  inline const ::std::string& path() const;
+  inline void set_path(const ::std::string& value);
+  inline void set_path(const char* value);
+  inline void set_path(const char* value, size_t size);
+  inline ::std::string* mutable_path();
+  inline ::std::string* release_path();
+  
+  // required string name = 2;
+  inline bool has_name() const;
+  inline void clear_name();
+  static const int kNameFieldNumber = 2;
+  inline const ::std::string& name() const;
+  inline void set_name(const ::std::string& value);
+  inline void set_name(const char* value);
+  inline void set_name(const char* value, size_t size);
+  inline ::std::string* mutable_name();
+  inline ::std::string* release_name();
+  
+  // optional string time = 3;
+  inline bool has_time() const;
+  inline void clear_time();
+  static const int kTimeFieldNumber = 3;
+  inline const ::std::string& time() const;
+  inline void set_time(const ::std::string& value);
+  inline void set_time(const char* value);
+  inline void set_time(const char* value, size_t size);
+  inline ::std::string* mutable_time();
+  inline ::std::string* release_time();
+  
+  // @@protoc_insertion_point(class_scope:proto.Media)
+ private:
+  inline void set_has_path();
+  inline void clear_has_path();
+  inline void set_has_name();
+  inline void clear_has_name();
+  inline void set_has_time();
+  inline void clear_has_time();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* path_;
+  ::std::string* name_;
+  ::std::string* time_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_player_2eproto();
+  friend void protobuf_AssignDesc_player_2eproto();
+  friend void protobuf_ShutdownFile_player_2eproto();
+  
+  void InitAsDefaultInstance();
+  static Media* default_instance_;
+};
 // ===================================================================
 
 
@@ -412,27 +800,27 @@ class Command : public ::google::protobuf::Message {
 
 // MessageHeader
 
-// required .proto.MessageHeader.Type messageType = 1;
-inline bool MessageHeader::has_messagetype() const {
+// required .proto.MessageHeader.Type type = 1;
+inline bool MessageHeader::has_type() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void MessageHeader::set_has_messagetype() {
+inline void MessageHeader::set_has_type() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void MessageHeader::clear_has_messagetype() {
+inline void MessageHeader::clear_has_type() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void MessageHeader::clear_messagetype() {
-  messagetype_ = 1;
-  clear_has_messagetype();
+inline void MessageHeader::clear_type() {
+  type_ = 1;
+  clear_has_type();
 }
-inline ::proto::MessageHeader_Type MessageHeader::messagetype() const {
-  return static_cast< ::proto::MessageHeader_Type >(messagetype_);
+inline ::proto::MessageHeader_Type MessageHeader::type() const {
+  return static_cast< ::proto::MessageHeader_Type >(type_);
 }
-inline void MessageHeader::set_messagetype(::proto::MessageHeader_Type value) {
+inline void MessageHeader::set_type(::proto::MessageHeader_Type value) {
   GOOGLE_DCHECK(::proto::MessageHeader_Type_IsValid(value));
-  set_has_messagetype();
-  messagetype_ = value;
+  set_has_type();
+  type_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -553,6 +941,439 @@ inline ::proto::Command_Information* Command::release_info() {
   return temp;
 }
 
+// -------------------------------------------------------------------
+
+// Directory_File
+
+// required string name = 1;
+inline bool Directory_File::has_name() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Directory_File::set_has_name() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Directory_File::clear_has_name() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Directory_File::clear_name() {
+  if (name_ != &::google::protobuf::internal::kEmptyString) {
+    name_->clear();
+  }
+  clear_has_name();
+}
+inline const ::std::string& Directory_File::name() const {
+  return *name_;
+}
+inline void Directory_File::set_name(const ::std::string& value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void Directory_File::set_name(const char* value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void Directory_File::set_name(const char* value, size_t size) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Directory_File::mutable_name() {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  return name_;
+}
+inline ::std::string* Directory_File::release_name() {
+  clear_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = name_;
+    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required .proto.Directory.File.Type type = 2;
+inline bool Directory_File::has_type() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Directory_File::set_has_type() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Directory_File::clear_has_type() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void Directory_File::clear_type() {
+  type_ = 1;
+  clear_has_type();
+}
+inline ::proto::Directory_File_Type Directory_File::type() const {
+  return static_cast< ::proto::Directory_File_Type >(type_);
+}
+inline void Directory_File::set_type(::proto::Directory_File_Type value) {
+  GOOGLE_DCHECK(::proto::Directory_File_Type_IsValid(value));
+  set_has_type();
+  type_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// Directory
+
+// required string path = 1;
+inline bool Directory::has_path() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Directory::set_has_path() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Directory::clear_has_path() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Directory::clear_path() {
+  if (path_ != &::google::protobuf::internal::kEmptyString) {
+    path_->clear();
+  }
+  clear_has_path();
+}
+inline const ::std::string& Directory::path() const {
+  return *path_;
+}
+inline void Directory::set_path(const ::std::string& value) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(value);
+}
+inline void Directory::set_path(const char* value) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(value);
+}
+inline void Directory::set_path(const char* value, size_t size) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Directory::mutable_path() {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  return path_;
+}
+inline ::std::string* Directory::release_path() {
+  clear_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = path_;
+    path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string name = 2;
+inline bool Directory::has_name() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Directory::set_has_name() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Directory::clear_has_name() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void Directory::clear_name() {
+  if (name_ != &::google::protobuf::internal::kEmptyString) {
+    name_->clear();
+  }
+  clear_has_name();
+}
+inline const ::std::string& Directory::name() const {
+  return *name_;
+}
+inline void Directory::set_name(const ::std::string& value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void Directory::set_name(const char* value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void Directory::set_name(const char* value, size_t size) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Directory::mutable_name() {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  return name_;
+}
+inline ::std::string* Directory::release_name() {
+  clear_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = name_;
+    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// repeated .proto.Directory directory = 3;
+inline int Directory::directory_size() const {
+  return directory_.size();
+}
+inline void Directory::clear_directory() {
+  directory_.Clear();
+}
+inline const ::proto::Directory& Directory::directory(int index) const {
+  return directory_.Get(index);
+}
+inline ::proto::Directory* Directory::mutable_directory(int index) {
+  return directory_.Mutable(index);
+}
+inline ::proto::Directory* Directory::add_directory() {
+  return directory_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::proto::Directory >&
+Directory::directory() const {
+  return directory_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::proto::Directory >*
+Directory::mutable_directory() {
+  return &directory_;
+}
+
+// repeated .proto.Directory.File file = 4;
+inline int Directory::file_size() const {
+  return file_.size();
+}
+inline void Directory::clear_file() {
+  file_.Clear();
+}
+inline const ::proto::Directory_File& Directory::file(int index) const {
+  return file_.Get(index);
+}
+inline ::proto::Directory_File* Directory::mutable_file(int index) {
+  return file_.Mutable(index);
+}
+inline ::proto::Directory_File* Directory::add_file() {
+  return file_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::proto::Directory_File >&
+Directory::file() const {
+  return file_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::proto::Directory_File >*
+Directory::mutable_file() {
+  return &file_;
+}
+
+// -------------------------------------------------------------------
+
+// Media
+
+// required string path = 1;
+inline bool Media::has_path() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Media::set_has_path() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Media::clear_has_path() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Media::clear_path() {
+  if (path_ != &::google::protobuf::internal::kEmptyString) {
+    path_->clear();
+  }
+  clear_has_path();
+}
+inline const ::std::string& Media::path() const {
+  return *path_;
+}
+inline void Media::set_path(const ::std::string& value) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(value);
+}
+inline void Media::set_path(const char* value) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(value);
+}
+inline void Media::set_path(const char* value, size_t size) {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  path_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Media::mutable_path() {
+  set_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    path_ = new ::std::string;
+  }
+  return path_;
+}
+inline ::std::string* Media::release_path() {
+  clear_has_path();
+  if (path_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = path_;
+    path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string name = 2;
+inline bool Media::has_name() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Media::set_has_name() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Media::clear_has_name() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void Media::clear_name() {
+  if (name_ != &::google::protobuf::internal::kEmptyString) {
+    name_->clear();
+  }
+  clear_has_name();
+}
+inline const ::std::string& Media::name() const {
+  return *name_;
+}
+inline void Media::set_name(const ::std::string& value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void Media::set_name(const char* value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void Media::set_name(const char* value, size_t size) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Media::mutable_name() {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  return name_;
+}
+inline ::std::string* Media::release_name() {
+  clear_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = name_;
+    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional string time = 3;
+inline bool Media::has_time() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void Media::set_has_time() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void Media::clear_has_time() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void Media::clear_time() {
+  if (time_ != &::google::protobuf::internal::kEmptyString) {
+    time_->clear();
+  }
+  clear_has_time();
+}
+inline const ::std::string& Media::time() const {
+  return *time_;
+}
+inline void Media::set_time(const ::std::string& value) {
+  set_has_time();
+  if (time_ == &::google::protobuf::internal::kEmptyString) {
+    time_ = new ::std::string;
+  }
+  time_->assign(value);
+}
+inline void Media::set_time(const char* value) {
+  set_has_time();
+  if (time_ == &::google::protobuf::internal::kEmptyString) {
+    time_ = new ::std::string;
+  }
+  time_->assign(value);
+}
+inline void Media::set_time(const char* value, size_t size) {
+  set_has_time();
+  if (time_ == &::google::protobuf::internal::kEmptyString) {
+    time_ = new ::std::string;
+  }
+  time_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Media::mutable_time() {
+  set_has_time();
+  if (time_ == &::google::protobuf::internal::kEmptyString) {
+    time_ = new ::std::string;
+  }
+  return time_;
+}
+inline ::std::string* Media::release_time() {
+  clear_has_time();
+  if (time_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = time_;
+    time_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -569,6 +1390,10 @@ inline const EnumDescriptor* GetEnumDescriptor< ::proto::MessageHeader_Type>() {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::proto::Command_Type>() {
   return ::proto::Command_Type_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::proto::Directory_File_Type>() {
+  return ::proto::Directory_File_Type_descriptor();
 }
 
 }  // namespace google

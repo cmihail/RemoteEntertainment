@@ -46,9 +46,15 @@ public final class ProtoPlayer {
     public enum Type
         implements com.google.protobuf.ProtocolMessageEnum {
       COMMAND(0, 1),
+      CHANGE_DIRECTORY(1, 2),
+      GET_DIRECTORY_FILES(2, 3),
+      START_MEDIA(3, 4),
       ;
       
       public static final int COMMAND_VALUE = 1;
+      public static final int CHANGE_DIRECTORY_VALUE = 2;
+      public static final int GET_DIRECTORY_FILES_VALUE = 3;
+      public static final int START_MEDIA_VALUE = 4;
       
       
       public final int getNumber() { return value; }
@@ -56,6 +62,9 @@ public final class ProtoPlayer {
       public static Type valueOf(int value) {
         switch (value) {
           case 1: return COMMAND;
+          case 2: return CHANGE_DIRECTORY;
+          case 3: return GET_DIRECTORY_FILES;
+          case 4: return START_MEDIA;
           default: return null;
         }
       }
@@ -86,7 +95,7 @@ public final class ProtoPlayer {
       }
       
       private static final Type[] VALUES = {
-        COMMAND, 
+        COMMAND, CHANGE_DIRECTORY, GET_DIRECTORY_FILES, START_MEDIA, 
       };
       
       public static Type valueOf(
@@ -483,7 +492,6 @@ public final class ProtoPlayer {
       MUTE(9, 10),
       SET_VOLUME(10, 11),
       TOGGLE_FULL_SCREEN(11, 12),
-      START_MOVIE(12, 13),
       ;
       
       public static final int NONE_VALUE = 1;
@@ -498,7 +506,6 @@ public final class ProtoPlayer {
       public static final int MUTE_VALUE = 10;
       public static final int SET_VOLUME_VALUE = 11;
       public static final int TOGGLE_FULL_SCREEN_VALUE = 12;
-      public static final int START_MOVIE_VALUE = 13;
       
       
       public final int getNumber() { return value; }
@@ -517,7 +524,6 @@ public final class ProtoPlayer {
           case 10: return MUTE;
           case 11: return SET_VOLUME;
           case 12: return TOGGLE_FULL_SCREEN;
-          case 13: return START_MOVIE;
           default: return null;
         }
       }
@@ -548,7 +554,7 @@ public final class ProtoPlayer {
       }
       
       private static final Type[] VALUES = {
-        NONE, SET_POSITION, PREVIOUS, NEXT, BACKWARD, FORWARD, STOP, PLAY, PAUSE, MUTE, SET_VOLUME, TOGGLE_FULL_SCREEN, START_MOVIE, 
+        NONE, SET_POSITION, PREVIOUS, NEXT, BACKWARD, FORWARD, STOP, PLAY, PAUSE, MUTE, SET_VOLUME, TOGGLE_FULL_SCREEN, 
       };
       
       public static Type valueOf(
@@ -1424,6 +1430,2166 @@ public final class ProtoPlayer {
     // @@protoc_insertion_point(class_scope:proto.Command)
   }
   
+  public interface DirectoryOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+    
+    // required string path = 1;
+    boolean hasPath();
+    String getPath();
+    
+    // required string name = 2;
+    boolean hasName();
+    String getName();
+    
+    // repeated .proto.Directory directory = 3;
+    java.util.List<proto.ProtoPlayer.Directory> 
+        getDirectoryList();
+    proto.ProtoPlayer.Directory getDirectory(int index);
+    int getDirectoryCount();
+    java.util.List<? extends proto.ProtoPlayer.DirectoryOrBuilder> 
+        getDirectoryOrBuilderList();
+    proto.ProtoPlayer.DirectoryOrBuilder getDirectoryOrBuilder(
+        int index);
+    
+    // repeated .proto.Directory.File file = 4;
+    java.util.List<proto.ProtoPlayer.Directory.File> 
+        getFileList();
+    proto.ProtoPlayer.Directory.File getFile(int index);
+    int getFileCount();
+    java.util.List<? extends proto.ProtoPlayer.Directory.FileOrBuilder> 
+        getFileOrBuilderList();
+    proto.ProtoPlayer.Directory.FileOrBuilder getFileOrBuilder(
+        int index);
+  }
+  public static final class Directory extends
+      com.google.protobuf.GeneratedMessage
+      implements DirectoryOrBuilder {
+    // Use Directory.newBuilder() to construct.
+    private Directory(Builder builder) {
+      super(builder);
+    }
+    private Directory(boolean noInit) {}
+    
+    private static final Directory defaultInstance;
+    public static Directory getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public Directory getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return proto.ProtoPlayer.internal_static_proto_Directory_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return proto.ProtoPlayer.internal_static_proto_Directory_fieldAccessorTable;
+    }
+    
+    public interface FileOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+      
+      // required string name = 1;
+      boolean hasName();
+      String getName();
+      
+      // required .proto.Directory.File.Type type = 2;
+      boolean hasType();
+      proto.ProtoPlayer.Directory.File.Type getType();
+    }
+    public static final class File extends
+        com.google.protobuf.GeneratedMessage
+        implements FileOrBuilder {
+      // Use File.newBuilder() to construct.
+      private File(Builder builder) {
+        super(builder);
+      }
+      private File(boolean noInit) {}
+      
+      private static final File defaultInstance;
+      public static File getDefaultInstance() {
+        return defaultInstance;
+      }
+      
+      public File getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+      
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return proto.ProtoPlayer.internal_static_proto_Directory_File_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return proto.ProtoPlayer.internal_static_proto_Directory_File_fieldAccessorTable;
+      }
+      
+      public enum Type
+          implements com.google.protobuf.ProtocolMessageEnum {
+        MOVIE(0, 1),
+        SONG(1, 2),
+        ;
+        
+        public static final int MOVIE_VALUE = 1;
+        public static final int SONG_VALUE = 2;
+        
+        
+        public final int getNumber() { return value; }
+        
+        public static Type valueOf(int value) {
+          switch (value) {
+            case 1: return MOVIE;
+            case 2: return SONG;
+            default: return null;
+          }
+        }
+        
+        public static com.google.protobuf.Internal.EnumLiteMap<Type>
+            internalGetValueMap() {
+          return internalValueMap;
+        }
+        private static com.google.protobuf.Internal.EnumLiteMap<Type>
+            internalValueMap =
+              new com.google.protobuf.Internal.EnumLiteMap<Type>() {
+                public Type findValueByNumber(int number) {
+                  return Type.valueOf(number);
+                }
+              };
+        
+        public final com.google.protobuf.Descriptors.EnumValueDescriptor
+            getValueDescriptor() {
+          return getDescriptor().getValues().get(index);
+        }
+        public final com.google.protobuf.Descriptors.EnumDescriptor
+            getDescriptorForType() {
+          return getDescriptor();
+        }
+        public static final com.google.protobuf.Descriptors.EnumDescriptor
+            getDescriptor() {
+          return proto.ProtoPlayer.Directory.File.getDescriptor().getEnumTypes().get(0);
+        }
+        
+        private static final Type[] VALUES = {
+          MOVIE, SONG, 
+        };
+        
+        public static Type valueOf(
+            com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+          if (desc.getType() != getDescriptor()) {
+            throw new java.lang.IllegalArgumentException(
+              "EnumValueDescriptor is not for this type.");
+          }
+          return VALUES[desc.getIndex()];
+        }
+        
+        private final int index;
+        private final int value;
+        
+        private Type(int index, int value) {
+          this.index = index;
+          this.value = value;
+        }
+        
+        // @@protoc_insertion_point(enum_scope:proto.Directory.File.Type)
+      }
+      
+      private int bitField0_;
+      // required string name = 1;
+      public static final int NAME_FIELD_NUMBER = 1;
+      private java.lang.Object name_;
+      public boolean hasName() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public String getName() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          return (String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+            name_ = s;
+          }
+          return s;
+        }
+      }
+      private com.google.protobuf.ByteString getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      
+      // required .proto.Directory.File.Type type = 2;
+      public static final int TYPE_FIELD_NUMBER = 2;
+      private proto.ProtoPlayer.Directory.File.Type type_;
+      public boolean hasType() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public proto.ProtoPlayer.Directory.File.Type getType() {
+        return type_;
+      }
+      
+      private void initFields() {
+        name_ = "";
+        type_ = proto.ProtoPlayer.Directory.File.Type.MOVIE;
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+        
+        if (!hasName()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        if (!hasType()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+      
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeBytes(1, getNameBytes());
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          output.writeEnum(2, type_.getNumber());
+        }
+        getUnknownFields().writeTo(output);
+      }
+      
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+      
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeBytesSize(1, getNameBytes());
+        }
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeEnumSize(2, type_.getNumber());
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+      
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+      
+      public static proto.ProtoPlayer.Directory.File parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data).buildParsed();
+      }
+      public static proto.ProtoPlayer.Directory.File parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data, extensionRegistry)
+                 .buildParsed();
+      }
+      public static proto.ProtoPlayer.Directory.File parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data).buildParsed();
+      }
+      public static proto.ProtoPlayer.Directory.File parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data, extensionRegistry)
+                 .buildParsed();
+      }
+      public static proto.ProtoPlayer.Directory.File parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input).buildParsed();
+      }
+      public static proto.ProtoPlayer.Directory.File parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input, extensionRegistry)
+                 .buildParsed();
+      }
+      public static proto.ProtoPlayer.Directory.File parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        Builder builder = newBuilder();
+        if (builder.mergeDelimitedFrom(input)) {
+          return builder.buildParsed();
+        } else {
+          return null;
+        }
+      }
+      public static proto.ProtoPlayer.Directory.File parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        Builder builder = newBuilder();
+        if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+          return builder.buildParsed();
+        } else {
+          return null;
+        }
+      }
+      public static proto.ProtoPlayer.Directory.File parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input).buildParsed();
+      }
+      public static proto.ProtoPlayer.Directory.File parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input, extensionRegistry)
+                 .buildParsed();
+      }
+      
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(proto.ProtoPlayer.Directory.File prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+      
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements proto.ProtoPlayer.Directory.FileOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return proto.ProtoPlayer.internal_static_proto_Directory_File_descriptor;
+        }
+        
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return proto.ProtoPlayer.internal_static_proto_Directory_File_fieldAccessorTable;
+        }
+        
+        // Construct using proto.ProtoPlayer.Directory.File.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+        
+        private Builder(BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+        
+        public Builder clear() {
+          super.clear();
+          name_ = "";
+          bitField0_ = (bitField0_ & ~0x00000001);
+          type_ = proto.ProtoPlayer.Directory.File.Type.MOVIE;
+          bitField0_ = (bitField0_ & ~0x00000002);
+          return this;
+        }
+        
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+        
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return proto.ProtoPlayer.Directory.File.getDescriptor();
+        }
+        
+        public proto.ProtoPlayer.Directory.File getDefaultInstanceForType() {
+          return proto.ProtoPlayer.Directory.File.getDefaultInstance();
+        }
+        
+        public proto.ProtoPlayer.Directory.File build() {
+          proto.ProtoPlayer.Directory.File result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+        
+        private proto.ProtoPlayer.Directory.File buildParsed()
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          proto.ProtoPlayer.Directory.File result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(
+              result).asInvalidProtocolBufferException();
+          }
+          return result;
+        }
+        
+        public proto.ProtoPlayer.Directory.File buildPartial() {
+          proto.ProtoPlayer.Directory.File result = new proto.ProtoPlayer.Directory.File(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.name_ = name_;
+          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+            to_bitField0_ |= 0x00000002;
+          }
+          result.type_ = type_;
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+        
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof proto.ProtoPlayer.Directory.File) {
+            return mergeFrom((proto.ProtoPlayer.Directory.File)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+        
+        public Builder mergeFrom(proto.ProtoPlayer.Directory.File other) {
+          if (other == proto.ProtoPlayer.Directory.File.getDefaultInstance()) return this;
+          if (other.hasName()) {
+            setName(other.getName());
+          }
+          if (other.hasType()) {
+            setType(other.getType());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+        
+        public final boolean isInitialized() {
+          if (!hasName()) {
+            
+            return false;
+          }
+          if (!hasType()) {
+            
+            return false;
+          }
+          return true;
+        }
+        
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder(
+              this.getUnknownFields());
+          while (true) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  this.setUnknownFields(unknownFields.build());
+                  onChanged();
+                  return this;
+                }
+                break;
+              }
+              case 10: {
+                bitField0_ |= 0x00000001;
+                name_ = input.readBytes();
+                break;
+              }
+              case 16: {
+                int rawValue = input.readEnum();
+                proto.ProtoPlayer.Directory.File.Type value = proto.ProtoPlayer.Directory.File.Type.valueOf(rawValue);
+                if (value == null) {
+                  unknownFields.mergeVarintField(2, rawValue);
+                } else {
+                  bitField0_ |= 0x00000002;
+                  type_ = value;
+                }
+                break;
+              }
+            }
+          }
+        }
+        
+        private int bitField0_;
+        
+        // required string name = 1;
+        private java.lang.Object name_ = "";
+        public boolean hasName() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        public String getName() {
+          java.lang.Object ref = name_;
+          if (!(ref instanceof String)) {
+            String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+            name_ = s;
+            return s;
+          } else {
+            return (String) ref;
+          }
+        }
+        public Builder setName(String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+          name_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearName() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          name_ = getDefaultInstance().getName();
+          onChanged();
+          return this;
+        }
+        void setName(com.google.protobuf.ByteString value) {
+          bitField0_ |= 0x00000001;
+          name_ = value;
+          onChanged();
+        }
+        
+        // required .proto.Directory.File.Type type = 2;
+        private proto.ProtoPlayer.Directory.File.Type type_ = proto.ProtoPlayer.Directory.File.Type.MOVIE;
+        public boolean hasType() {
+          return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+        public proto.ProtoPlayer.Directory.File.Type getType() {
+          return type_;
+        }
+        public Builder setType(proto.ProtoPlayer.Directory.File.Type value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          bitField0_ |= 0x00000002;
+          type_ = value;
+          onChanged();
+          return this;
+        }
+        public Builder clearType() {
+          bitField0_ = (bitField0_ & ~0x00000002);
+          type_ = proto.ProtoPlayer.Directory.File.Type.MOVIE;
+          onChanged();
+          return this;
+        }
+        
+        // @@protoc_insertion_point(builder_scope:proto.Directory.File)
+      }
+      
+      static {
+        defaultInstance = new File(true);
+        defaultInstance.initFields();
+      }
+      
+      // @@protoc_insertion_point(class_scope:proto.Directory.File)
+    }
+    
+    private int bitField0_;
+    // required string path = 1;
+    public static final int PATH_FIELD_NUMBER = 1;
+    private java.lang.Object path_;
+    public boolean hasPath() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public String getPath() {
+      java.lang.Object ref = path_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          path_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getPathBytes() {
+      java.lang.Object ref = path_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        path_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    
+    // required string name = 2;
+    public static final int NAME_FIELD_NUMBER = 2;
+    private java.lang.Object name_;
+    public boolean hasName() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    public String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          name_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    
+    // repeated .proto.Directory directory = 3;
+    public static final int DIRECTORY_FIELD_NUMBER = 3;
+    private java.util.List<proto.ProtoPlayer.Directory> directory_;
+    public java.util.List<proto.ProtoPlayer.Directory> getDirectoryList() {
+      return directory_;
+    }
+    public java.util.List<? extends proto.ProtoPlayer.DirectoryOrBuilder> 
+        getDirectoryOrBuilderList() {
+      return directory_;
+    }
+    public int getDirectoryCount() {
+      return directory_.size();
+    }
+    public proto.ProtoPlayer.Directory getDirectory(int index) {
+      return directory_.get(index);
+    }
+    public proto.ProtoPlayer.DirectoryOrBuilder getDirectoryOrBuilder(
+        int index) {
+      return directory_.get(index);
+    }
+    
+    // repeated .proto.Directory.File file = 4;
+    public static final int FILE_FIELD_NUMBER = 4;
+    private java.util.List<proto.ProtoPlayer.Directory.File> file_;
+    public java.util.List<proto.ProtoPlayer.Directory.File> getFileList() {
+      return file_;
+    }
+    public java.util.List<? extends proto.ProtoPlayer.Directory.FileOrBuilder> 
+        getFileOrBuilderList() {
+      return file_;
+    }
+    public int getFileCount() {
+      return file_.size();
+    }
+    public proto.ProtoPlayer.Directory.File getFile(int index) {
+      return file_.get(index);
+    }
+    public proto.ProtoPlayer.Directory.FileOrBuilder getFileOrBuilder(
+        int index) {
+      return file_.get(index);
+    }
+    
+    private void initFields() {
+      path_ = "";
+      name_ = "";
+      directory_ = java.util.Collections.emptyList();
+      file_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      if (!hasPath()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      for (int i = 0; i < getDirectoryCount(); i++) {
+        if (!getDirectory(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getFileCount(); i++) {
+        if (!getFile(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getPathBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBytes(2, getNameBytes());
+      }
+      for (int i = 0; i < directory_.size(); i++) {
+        output.writeMessage(3, directory_.get(i));
+      }
+      for (int i = 0; i < file_.size(); i++) {
+        output.writeMessage(4, file_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, getPathBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, getNameBytes());
+      }
+      for (int i = 0; i < directory_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, directory_.get(i));
+      }
+      for (int i = 0; i < file_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, file_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static proto.ProtoPlayer.Directory parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static proto.ProtoPlayer.Directory parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static proto.ProtoPlayer.Directory parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static proto.ProtoPlayer.Directory parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static proto.ProtoPlayer.Directory parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static proto.ProtoPlayer.Directory parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static proto.ProtoPlayer.Directory parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static proto.ProtoPlayer.Directory parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static proto.ProtoPlayer.Directory parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static proto.ProtoPlayer.Directory parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(proto.ProtoPlayer.Directory prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements proto.ProtoPlayer.DirectoryOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return proto.ProtoPlayer.internal_static_proto_Directory_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return proto.ProtoPlayer.internal_static_proto_Directory_fieldAccessorTable;
+      }
+      
+      // Construct using proto.ProtoPlayer.Directory.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private Builder(BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getDirectoryFieldBuilder();
+          getFileFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        path_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        name_ = "";
+        bitField0_ = (bitField0_ & ~0x00000002);
+        if (directoryBuilder_ == null) {
+          directory_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+        } else {
+          directoryBuilder_.clear();
+        }
+        if (fileBuilder_ == null) {
+          file_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+        } else {
+          fileBuilder_.clear();
+        }
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return proto.ProtoPlayer.Directory.getDescriptor();
+      }
+      
+      public proto.ProtoPlayer.Directory getDefaultInstanceForType() {
+        return proto.ProtoPlayer.Directory.getDefaultInstance();
+      }
+      
+      public proto.ProtoPlayer.Directory build() {
+        proto.ProtoPlayer.Directory result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private proto.ProtoPlayer.Directory buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        proto.ProtoPlayer.Directory result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public proto.ProtoPlayer.Directory buildPartial() {
+        proto.ProtoPlayer.Directory result = new proto.ProtoPlayer.Directory(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.path_ = path_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.name_ = name_;
+        if (directoryBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+            directory_ = java.util.Collections.unmodifiableList(directory_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.directory_ = directory_;
+        } else {
+          result.directory_ = directoryBuilder_.build();
+        }
+        if (fileBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008)) {
+            file_ = java.util.Collections.unmodifiableList(file_);
+            bitField0_ = (bitField0_ & ~0x00000008);
+          }
+          result.file_ = file_;
+        } else {
+          result.file_ = fileBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof proto.ProtoPlayer.Directory) {
+          return mergeFrom((proto.ProtoPlayer.Directory)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(proto.ProtoPlayer.Directory other) {
+        if (other == proto.ProtoPlayer.Directory.getDefaultInstance()) return this;
+        if (other.hasPath()) {
+          setPath(other.getPath());
+        }
+        if (other.hasName()) {
+          setName(other.getName());
+        }
+        if (directoryBuilder_ == null) {
+          if (!other.directory_.isEmpty()) {
+            if (directory_.isEmpty()) {
+              directory_ = other.directory_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureDirectoryIsMutable();
+              directory_.addAll(other.directory_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.directory_.isEmpty()) {
+            if (directoryBuilder_.isEmpty()) {
+              directoryBuilder_.dispose();
+              directoryBuilder_ = null;
+              directory_ = other.directory_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              directoryBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getDirectoryFieldBuilder() : null;
+            } else {
+              directoryBuilder_.addAllMessages(other.directory_);
+            }
+          }
+        }
+        if (fileBuilder_ == null) {
+          if (!other.file_.isEmpty()) {
+            if (file_.isEmpty()) {
+              file_ = other.file_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+            } else {
+              ensureFileIsMutable();
+              file_.addAll(other.file_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.file_.isEmpty()) {
+            if (fileBuilder_.isEmpty()) {
+              fileBuilder_.dispose();
+              fileBuilder_ = null;
+              file_ = other.file_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+              fileBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getFileFieldBuilder() : null;
+            } else {
+              fileBuilder_.addAllMessages(other.file_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        if (!hasPath()) {
+          
+          return false;
+        }
+        if (!hasName()) {
+          
+          return false;
+        }
+        for (int i = 0; i < getDirectoryCount(); i++) {
+          if (!getDirectory(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getFileCount(); i++) {
+          if (!getFile(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              onChanged();
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              path_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              bitField0_ |= 0x00000002;
+              name_ = input.readBytes();
+              break;
+            }
+            case 26: {
+              proto.ProtoPlayer.Directory.Builder subBuilder = proto.ProtoPlayer.Directory.newBuilder();
+              input.readMessage(subBuilder, extensionRegistry);
+              addDirectory(subBuilder.buildPartial());
+              break;
+            }
+            case 34: {
+              proto.ProtoPlayer.Directory.File.Builder subBuilder = proto.ProtoPlayer.Directory.File.newBuilder();
+              input.readMessage(subBuilder, extensionRegistry);
+              addFile(subBuilder.buildPartial());
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // required string path = 1;
+      private java.lang.Object path_ = "";
+      public boolean hasPath() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public String getPath() {
+        java.lang.Object ref = path_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          path_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      public Builder setPath(String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        path_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearPath() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        path_ = getDefaultInstance().getPath();
+        onChanged();
+        return this;
+      }
+      void setPath(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00000001;
+        path_ = value;
+        onChanged();
+      }
+      
+      // required string name = 2;
+      private java.lang.Object name_ = "";
+      public boolean hasName() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      public Builder setName(String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearName() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      void setName(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00000002;
+        name_ = value;
+        onChanged();
+      }
+      
+      // repeated .proto.Directory directory = 3;
+      private java.util.List<proto.ProtoPlayer.Directory> directory_ =
+        java.util.Collections.emptyList();
+      private void ensureDirectoryIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          directory_ = new java.util.ArrayList<proto.ProtoPlayer.Directory>(directory_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+      
+      private com.google.protobuf.RepeatedFieldBuilder<
+          proto.ProtoPlayer.Directory, proto.ProtoPlayer.Directory.Builder, proto.ProtoPlayer.DirectoryOrBuilder> directoryBuilder_;
+      
+      public java.util.List<proto.ProtoPlayer.Directory> getDirectoryList() {
+        if (directoryBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(directory_);
+        } else {
+          return directoryBuilder_.getMessageList();
+        }
+      }
+      public int getDirectoryCount() {
+        if (directoryBuilder_ == null) {
+          return directory_.size();
+        } else {
+          return directoryBuilder_.getCount();
+        }
+      }
+      public proto.ProtoPlayer.Directory getDirectory(int index) {
+        if (directoryBuilder_ == null) {
+          return directory_.get(index);
+        } else {
+          return directoryBuilder_.getMessage(index);
+        }
+      }
+      public Builder setDirectory(
+          int index, proto.ProtoPlayer.Directory value) {
+        if (directoryBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDirectoryIsMutable();
+          directory_.set(index, value);
+          onChanged();
+        } else {
+          directoryBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      public Builder setDirectory(
+          int index, proto.ProtoPlayer.Directory.Builder builderForValue) {
+        if (directoryBuilder_ == null) {
+          ensureDirectoryIsMutable();
+          directory_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          directoryBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      public Builder addDirectory(proto.ProtoPlayer.Directory value) {
+        if (directoryBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDirectoryIsMutable();
+          directory_.add(value);
+          onChanged();
+        } else {
+          directoryBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      public Builder addDirectory(
+          int index, proto.ProtoPlayer.Directory value) {
+        if (directoryBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDirectoryIsMutable();
+          directory_.add(index, value);
+          onChanged();
+        } else {
+          directoryBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      public Builder addDirectory(
+          proto.ProtoPlayer.Directory.Builder builderForValue) {
+        if (directoryBuilder_ == null) {
+          ensureDirectoryIsMutable();
+          directory_.add(builderForValue.build());
+          onChanged();
+        } else {
+          directoryBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      public Builder addDirectory(
+          int index, proto.ProtoPlayer.Directory.Builder builderForValue) {
+        if (directoryBuilder_ == null) {
+          ensureDirectoryIsMutable();
+          directory_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          directoryBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      public Builder addAllDirectory(
+          java.lang.Iterable<? extends proto.ProtoPlayer.Directory> values) {
+        if (directoryBuilder_ == null) {
+          ensureDirectoryIsMutable();
+          super.addAll(values, directory_);
+          onChanged();
+        } else {
+          directoryBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      public Builder clearDirectory() {
+        if (directoryBuilder_ == null) {
+          directory_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          directoryBuilder_.clear();
+        }
+        return this;
+      }
+      public Builder removeDirectory(int index) {
+        if (directoryBuilder_ == null) {
+          ensureDirectoryIsMutable();
+          directory_.remove(index);
+          onChanged();
+        } else {
+          directoryBuilder_.remove(index);
+        }
+        return this;
+      }
+      public proto.ProtoPlayer.Directory.Builder getDirectoryBuilder(
+          int index) {
+        return getDirectoryFieldBuilder().getBuilder(index);
+      }
+      public proto.ProtoPlayer.DirectoryOrBuilder getDirectoryOrBuilder(
+          int index) {
+        if (directoryBuilder_ == null) {
+          return directory_.get(index);  } else {
+          return directoryBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      public java.util.List<? extends proto.ProtoPlayer.DirectoryOrBuilder> 
+           getDirectoryOrBuilderList() {
+        if (directoryBuilder_ != null) {
+          return directoryBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(directory_);
+        }
+      }
+      public proto.ProtoPlayer.Directory.Builder addDirectoryBuilder() {
+        return getDirectoryFieldBuilder().addBuilder(
+            proto.ProtoPlayer.Directory.getDefaultInstance());
+      }
+      public proto.ProtoPlayer.Directory.Builder addDirectoryBuilder(
+          int index) {
+        return getDirectoryFieldBuilder().addBuilder(
+            index, proto.ProtoPlayer.Directory.getDefaultInstance());
+      }
+      public java.util.List<proto.ProtoPlayer.Directory.Builder> 
+           getDirectoryBuilderList() {
+        return getDirectoryFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          proto.ProtoPlayer.Directory, proto.ProtoPlayer.Directory.Builder, proto.ProtoPlayer.DirectoryOrBuilder> 
+          getDirectoryFieldBuilder() {
+        if (directoryBuilder_ == null) {
+          directoryBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              proto.ProtoPlayer.Directory, proto.ProtoPlayer.Directory.Builder, proto.ProtoPlayer.DirectoryOrBuilder>(
+                  directory_,
+                  ((bitField0_ & 0x00000004) == 0x00000004),
+                  getParentForChildren(),
+                  isClean());
+          directory_ = null;
+        }
+        return directoryBuilder_;
+      }
+      
+      // repeated .proto.Directory.File file = 4;
+      private java.util.List<proto.ProtoPlayer.Directory.File> file_ =
+        java.util.Collections.emptyList();
+      private void ensureFileIsMutable() {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+          file_ = new java.util.ArrayList<proto.ProtoPlayer.Directory.File>(file_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+      
+      private com.google.protobuf.RepeatedFieldBuilder<
+          proto.ProtoPlayer.Directory.File, proto.ProtoPlayer.Directory.File.Builder, proto.ProtoPlayer.Directory.FileOrBuilder> fileBuilder_;
+      
+      public java.util.List<proto.ProtoPlayer.Directory.File> getFileList() {
+        if (fileBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(file_);
+        } else {
+          return fileBuilder_.getMessageList();
+        }
+      }
+      public int getFileCount() {
+        if (fileBuilder_ == null) {
+          return file_.size();
+        } else {
+          return fileBuilder_.getCount();
+        }
+      }
+      public proto.ProtoPlayer.Directory.File getFile(int index) {
+        if (fileBuilder_ == null) {
+          return file_.get(index);
+        } else {
+          return fileBuilder_.getMessage(index);
+        }
+      }
+      public Builder setFile(
+          int index, proto.ProtoPlayer.Directory.File value) {
+        if (fileBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFileIsMutable();
+          file_.set(index, value);
+          onChanged();
+        } else {
+          fileBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      public Builder setFile(
+          int index, proto.ProtoPlayer.Directory.File.Builder builderForValue) {
+        if (fileBuilder_ == null) {
+          ensureFileIsMutable();
+          file_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          fileBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      public Builder addFile(proto.ProtoPlayer.Directory.File value) {
+        if (fileBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFileIsMutable();
+          file_.add(value);
+          onChanged();
+        } else {
+          fileBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      public Builder addFile(
+          int index, proto.ProtoPlayer.Directory.File value) {
+        if (fileBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFileIsMutable();
+          file_.add(index, value);
+          onChanged();
+        } else {
+          fileBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      public Builder addFile(
+          proto.ProtoPlayer.Directory.File.Builder builderForValue) {
+        if (fileBuilder_ == null) {
+          ensureFileIsMutable();
+          file_.add(builderForValue.build());
+          onChanged();
+        } else {
+          fileBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      public Builder addFile(
+          int index, proto.ProtoPlayer.Directory.File.Builder builderForValue) {
+        if (fileBuilder_ == null) {
+          ensureFileIsMutable();
+          file_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          fileBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      public Builder addAllFile(
+          java.lang.Iterable<? extends proto.ProtoPlayer.Directory.File> values) {
+        if (fileBuilder_ == null) {
+          ensureFileIsMutable();
+          super.addAll(values, file_);
+          onChanged();
+        } else {
+          fileBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      public Builder clearFile() {
+        if (fileBuilder_ == null) {
+          file_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+          onChanged();
+        } else {
+          fileBuilder_.clear();
+        }
+        return this;
+      }
+      public Builder removeFile(int index) {
+        if (fileBuilder_ == null) {
+          ensureFileIsMutable();
+          file_.remove(index);
+          onChanged();
+        } else {
+          fileBuilder_.remove(index);
+        }
+        return this;
+      }
+      public proto.ProtoPlayer.Directory.File.Builder getFileBuilder(
+          int index) {
+        return getFileFieldBuilder().getBuilder(index);
+      }
+      public proto.ProtoPlayer.Directory.FileOrBuilder getFileOrBuilder(
+          int index) {
+        if (fileBuilder_ == null) {
+          return file_.get(index);  } else {
+          return fileBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      public java.util.List<? extends proto.ProtoPlayer.Directory.FileOrBuilder> 
+           getFileOrBuilderList() {
+        if (fileBuilder_ != null) {
+          return fileBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(file_);
+        }
+      }
+      public proto.ProtoPlayer.Directory.File.Builder addFileBuilder() {
+        return getFileFieldBuilder().addBuilder(
+            proto.ProtoPlayer.Directory.File.getDefaultInstance());
+      }
+      public proto.ProtoPlayer.Directory.File.Builder addFileBuilder(
+          int index) {
+        return getFileFieldBuilder().addBuilder(
+            index, proto.ProtoPlayer.Directory.File.getDefaultInstance());
+      }
+      public java.util.List<proto.ProtoPlayer.Directory.File.Builder> 
+           getFileBuilderList() {
+        return getFileFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          proto.ProtoPlayer.Directory.File, proto.ProtoPlayer.Directory.File.Builder, proto.ProtoPlayer.Directory.FileOrBuilder> 
+          getFileFieldBuilder() {
+        if (fileBuilder_ == null) {
+          fileBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              proto.ProtoPlayer.Directory.File, proto.ProtoPlayer.Directory.File.Builder, proto.ProtoPlayer.Directory.FileOrBuilder>(
+                  file_,
+                  ((bitField0_ & 0x00000008) == 0x00000008),
+                  getParentForChildren(),
+                  isClean());
+          file_ = null;
+        }
+        return fileBuilder_;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:proto.Directory)
+    }
+    
+    static {
+      defaultInstance = new Directory(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:proto.Directory)
+  }
+  
+  public interface MediaOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+    
+    // required string path = 1;
+    boolean hasPath();
+    String getPath();
+    
+    // required string name = 2;
+    boolean hasName();
+    String getName();
+    
+    // optional string time = 3;
+    boolean hasTime();
+    String getTime();
+  }
+  public static final class Media extends
+      com.google.protobuf.GeneratedMessage
+      implements MediaOrBuilder {
+    // Use Media.newBuilder() to construct.
+    private Media(Builder builder) {
+      super(builder);
+    }
+    private Media(boolean noInit) {}
+    
+    private static final Media defaultInstance;
+    public static Media getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public Media getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return proto.ProtoPlayer.internal_static_proto_Media_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return proto.ProtoPlayer.internal_static_proto_Media_fieldAccessorTable;
+    }
+    
+    private int bitField0_;
+    // required string path = 1;
+    public static final int PATH_FIELD_NUMBER = 1;
+    private java.lang.Object path_;
+    public boolean hasPath() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public String getPath() {
+      java.lang.Object ref = path_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          path_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getPathBytes() {
+      java.lang.Object ref = path_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        path_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    
+    // required string name = 2;
+    public static final int NAME_FIELD_NUMBER = 2;
+    private java.lang.Object name_;
+    public boolean hasName() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    public String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          name_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    
+    // optional string time = 3;
+    public static final int TIME_FIELD_NUMBER = 3;
+    private java.lang.Object time_;
+    public boolean hasTime() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    public String getTime() {
+      java.lang.Object ref = time_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          time_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getTimeBytes() {
+      java.lang.Object ref = time_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        time_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    
+    private void initFields() {
+      path_ = "";
+      name_ = "";
+      time_ = "";
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      if (!hasPath()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getPathBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBytes(2, getNameBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBytes(3, getTimeBytes());
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, getPathBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, getNameBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(3, getTimeBytes());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static proto.ProtoPlayer.Media parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static proto.ProtoPlayer.Media parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static proto.ProtoPlayer.Media parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static proto.ProtoPlayer.Media parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static proto.ProtoPlayer.Media parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static proto.ProtoPlayer.Media parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static proto.ProtoPlayer.Media parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static proto.ProtoPlayer.Media parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static proto.ProtoPlayer.Media parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static proto.ProtoPlayer.Media parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(proto.ProtoPlayer.Media prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements proto.ProtoPlayer.MediaOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return proto.ProtoPlayer.internal_static_proto_Media_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return proto.ProtoPlayer.internal_static_proto_Media_fieldAccessorTable;
+      }
+      
+      // Construct using proto.ProtoPlayer.Media.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private Builder(BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        path_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        name_ = "";
+        bitField0_ = (bitField0_ & ~0x00000002);
+        time_ = "";
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return proto.ProtoPlayer.Media.getDescriptor();
+      }
+      
+      public proto.ProtoPlayer.Media getDefaultInstanceForType() {
+        return proto.ProtoPlayer.Media.getDefaultInstance();
+      }
+      
+      public proto.ProtoPlayer.Media build() {
+        proto.ProtoPlayer.Media result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private proto.ProtoPlayer.Media buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        proto.ProtoPlayer.Media result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public proto.ProtoPlayer.Media buildPartial() {
+        proto.ProtoPlayer.Media result = new proto.ProtoPlayer.Media(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.path_ = path_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.name_ = name_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.time_ = time_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof proto.ProtoPlayer.Media) {
+          return mergeFrom((proto.ProtoPlayer.Media)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(proto.ProtoPlayer.Media other) {
+        if (other == proto.ProtoPlayer.Media.getDefaultInstance()) return this;
+        if (other.hasPath()) {
+          setPath(other.getPath());
+        }
+        if (other.hasName()) {
+          setName(other.getName());
+        }
+        if (other.hasTime()) {
+          setTime(other.getTime());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        if (!hasPath()) {
+          
+          return false;
+        }
+        if (!hasName()) {
+          
+          return false;
+        }
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              onChanged();
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              path_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              bitField0_ |= 0x00000002;
+              name_ = input.readBytes();
+              break;
+            }
+            case 26: {
+              bitField0_ |= 0x00000004;
+              time_ = input.readBytes();
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // required string path = 1;
+      private java.lang.Object path_ = "";
+      public boolean hasPath() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public String getPath() {
+        java.lang.Object ref = path_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          path_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      public Builder setPath(String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        path_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearPath() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        path_ = getDefaultInstance().getPath();
+        onChanged();
+        return this;
+      }
+      void setPath(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00000001;
+        path_ = value;
+        onChanged();
+      }
+      
+      // required string name = 2;
+      private java.lang.Object name_ = "";
+      public boolean hasName() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      public Builder setName(String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearName() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      void setName(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00000002;
+        name_ = value;
+        onChanged();
+      }
+      
+      // optional string time = 3;
+      private java.lang.Object time_ = "";
+      public boolean hasTime() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public String getTime() {
+        java.lang.Object ref = time_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          time_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      public Builder setTime(String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+        time_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearTime() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        time_ = getDefaultInstance().getTime();
+        onChanged();
+        return this;
+      }
+      void setTime(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00000004;
+        time_ = value;
+        onChanged();
+      }
+      
+      // @@protoc_insertion_point(builder_scope:proto.Media)
+    }
+    
+    static {
+      defaultInstance = new Media(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:proto.Media)
+  }
+  
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_proto_MessageHeader_descriptor;
   private static
@@ -1439,6 +3605,21 @@ public final class ProtoPlayer {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_proto_Command_Information_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_proto_Directory_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_proto_Directory_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_proto_Directory_File_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_proto_Directory_File_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_proto_Media_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_proto_Media_fieldAccessorTable;
   
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1448,17 +3629,25 @@ public final class ProtoPlayer {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014player.proto\022\005proto\"M\n\rMessageHeader\022\'" +
-      "\n\004type\030\001 \002(\0162\031.proto.MessageHeader.Type\"" +
-      "\023\n\004Type\022\013\n\007COMMAND\020\001\"\256\002\n\007Command\022!\n\004type" +
-      "\030\001 \002(\0162\023.proto.Command.Type\022(\n\004info\030\002 \001(" +
-      "\0132\032.proto.Command.Information\032\034\n\013Informa" +
-      "tion\022\r\n\005value\030\001 \002(\t\"\267\001\n\004Type\022\010\n\004NONE\020\001\022\020" +
-      "\n\014SET_POSITION\020\002\022\014\n\010PREVIOUS\020\003\022\010\n\004NEXT\020\004" +
-      "\022\014\n\010BACKWARD\020\005\022\013\n\007FORWARD\020\006\022\010\n\004STOP\020\007\022\010\n" +
-      "\004PLAY\020\010\022\t\n\005PAUSE\020\t\022\010\n\004MUTE\020\n\022\016\n\nSET_VOLU" +
-      "ME\020\013\022\026\n\022TOGGLE_FULL_SCREEN\020\014\022\017\n\013START_MO",
-      "VIE\020\rB\rB\013ProtoPlayer"
+      "\n\014player.proto\022\005proto\"\215\001\n\rMessageHeader\022" +
+      "\'\n\004type\030\001 \002(\0162\031.proto.MessageHeader.Type" +
+      "\"S\n\004Type\022\013\n\007COMMAND\020\001\022\024\n\020CHANGE_DIRECTOR" +
+      "Y\020\002\022\027\n\023GET_DIRECTORY_FILES\020\003\022\017\n\013START_ME" +
+      "DIA\020\004\"\235\002\n\007Command\022!\n\004type\030\001 \002(\0162\023.proto." +
+      "Command.Type\022(\n\004info\030\002 \001(\0132\032.proto.Comma" +
+      "nd.Information\032\034\n\013Information\022\r\n\005value\030\001" +
+      " \002(\t\"\246\001\n\004Type\022\010\n\004NONE\020\001\022\020\n\014SET_POSITION\020" +
+      "\002\022\014\n\010PREVIOUS\020\003\022\010\n\004NEXT\020\004\022\014\n\010BACKWARD\020\005\022" +
+      "\013\n\007FORWARD\020\006\022\010\n\004STOP\020\007\022\010\n\004PLAY\020\010\022\t\n\005PAUS",
+      "E\020\t\022\010\n\004MUTE\020\n\022\016\n\nSET_VOLUME\020\013\022\026\n\022TOGGLE_" +
+      "FULL_SCREEN\020\014\"\316\001\n\tDirectory\022\014\n\004path\030\001 \002(" +
+      "\t\022\014\n\004name\030\002 \002(\t\022#\n\tdirectory\030\003 \003(\0132\020.pro" +
+      "to.Directory\022#\n\004file\030\004 \003(\0132\025.proto.Direc" +
+      "tory.File\032[\n\004File\022\014\n\004name\030\001 \002(\t\022(\n\004type\030" +
+      "\002 \002(\0162\032.proto.Directory.File.Type\"\033\n\004Typ" +
+      "e\022\t\n\005MOVIE\020\001\022\010\n\004SONG\020\002\"1\n\005Media\022\014\n\004path\030" +
+      "\001 \002(\t\022\014\n\004name\030\002 \002(\t\022\014\n\004time\030\003 \001(\tB\rB\013Pro" +
+      "toPlayer"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1489,6 +3678,30 @@ public final class ProtoPlayer {
               new java.lang.String[] { "Value", },
               proto.ProtoPlayer.Command.Information.class,
               proto.ProtoPlayer.Command.Information.Builder.class);
+          internal_static_proto_Directory_descriptor =
+            getDescriptor().getMessageTypes().get(2);
+          internal_static_proto_Directory_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_proto_Directory_descriptor,
+              new java.lang.String[] { "Path", "Name", "Directory", "File", },
+              proto.ProtoPlayer.Directory.class,
+              proto.ProtoPlayer.Directory.Builder.class);
+          internal_static_proto_Directory_File_descriptor =
+            internal_static_proto_Directory_descriptor.getNestedTypes().get(0);
+          internal_static_proto_Directory_File_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_proto_Directory_File_descriptor,
+              new java.lang.String[] { "Name", "Type", },
+              proto.ProtoPlayer.Directory.File.class,
+              proto.ProtoPlayer.Directory.File.Builder.class);
+          internal_static_proto_Media_descriptor =
+            getDescriptor().getMessageTypes().get(3);
+          internal_static_proto_Media_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_proto_Media_descriptor,
+              new java.lang.String[] { "Path", "Name", "Time", },
+              proto.ProtoPlayer.Media.class,
+              proto.ProtoPlayer.Media.Builder.class);
           return null;
         }
       };

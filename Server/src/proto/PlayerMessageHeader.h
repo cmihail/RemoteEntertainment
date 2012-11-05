@@ -11,18 +11,30 @@
 
 #include "Message.h"
 #include "proto/player.pb.h"
+#include "proto/PlayerMessage.h"
 
-// TODO(cmihail): common code with PlayerCommand -> methods related to coded message
-class PlayerMessageHeader {
+/**
+ * Defines a wrapper for MessageHeader class contained in proto file.
+ */
+class PlayerMessageHeader : public PlayerMessage {
 public:
+  /**
+   * @param the type of the message contained in the header
+   */
   PlayerMessageHeader(proto::MessageHeader::Type messageType);
+
+  /**
+   * @param coddedBuffer a coded message that contains a proto message header
+   */
   PlayerMessageHeader(Message & codedMessage);
 
-  proto::MessageHeader toProto();
-
+  /**
+   * @return the type of the message contained in the header
+   */
   proto::MessageHeader::Type getMessageType();
 
-  Message toCodedMessage();
+protected:
+  virtual google::protobuf::Message * toProto();
 
 private:
   proto::MessageHeader::Type messageType;

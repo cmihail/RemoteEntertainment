@@ -13,21 +13,19 @@
 #endif
 
 #include "Message.h"
-#include "event/EventListener.h"
 #include "logger/Logger.h"
 #include "proto/player.pb.h"
 #include "proto/PlayerCommand.h"
 #include "proto/PlayerMessageHeader.h"
 #include "server/Client.h"
 #include "server/Server.h"
+#include "server/event/EventListener.h"
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #include <cstdlib>
 #include <map>
 #include <sstream>
-
-#include <iostream> // TODO
 
 using namespace std;
 
