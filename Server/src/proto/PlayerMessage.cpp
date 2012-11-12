@@ -3,8 +3,6 @@
  *
  *  Created on: Nov 5, 2012
  *      Author: cmihail (Mihail Costea)
- *
- * Defines the implementation of PlayerMessage.h.
  */
 
 #include "proto/PlayerMessage.h"

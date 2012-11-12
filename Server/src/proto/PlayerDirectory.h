@@ -9,7 +9,6 @@
 #define PLAYERDIRECTORY_H
 
 #include "Message.h"
-#include "proto/player.pb.h"
 #include "proto/PlayerMessage.h"
 
 #include <list>
@@ -24,14 +23,14 @@ public:
    */
   class PlayerFile {
   public:
-    PlayerFile(const std::string name, const proto::Directory::File::Type type);
+    PlayerFile(std::string name, proto::Directory::File::Type type);
 
   private:
     const std::string name;
     const proto::Directory::File::Type type;
   };
 
-  PlayerDirectory(const std::string path, const std::string name);
+  PlayerDirectory(std::string path, std::string name);
 
   void addDirectory(PlayerDirectory directory);
   void addFile(PlayerFile file);

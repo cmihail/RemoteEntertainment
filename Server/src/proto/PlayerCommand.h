@@ -9,7 +9,6 @@
 #define PLAYERCOMMAND_H
 
 #include "Message.h"
-#include "proto/player.pb.h"
 #include "proto/PlayerMessage.h"
 
 /**
@@ -52,8 +51,8 @@ protected:
   virtual google::protobuf::Message * toProto();
 
 private:
-  proto::Command_Type type;
-  std::string info;
+  const proto::Command_Type type;
+  const std::string info;
 };
 
 #endif /* PLAYERCOMMAND_H */

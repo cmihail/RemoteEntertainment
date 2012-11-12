@@ -3,13 +3,9 @@
  *
  *  Created on: Sep 27, 2012
  *      Author: cmihail (Mihail Costea)
- *
- * Defines the implementation of PlayerCommand.h.
  */
 
 #include "proto/PlayerCommand.h"
-
-#include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #define EMPTY_STRING ""
 

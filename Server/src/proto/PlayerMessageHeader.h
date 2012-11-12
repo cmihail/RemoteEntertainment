@@ -37,7 +37,7 @@ protected:
   virtual google::protobuf::Message * toProto();
 
 private:
-  proto::MessageHeader::Type messageType;
+  const proto::MessageHeader::Type messageType;
 };
 
 #endif /* PLAYERMESSAGEHEADER_H */

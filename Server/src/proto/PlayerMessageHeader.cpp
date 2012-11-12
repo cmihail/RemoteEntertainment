@@ -3,13 +3,9 @@
  *
  *  Created on: Sep 27, 2012
  *      Author: cmihail (Mihail Costea)
- *
- * Defines the implementation of PlayerMessageHeader.h.
  */
 
 #include "proto/PlayerMessageHeader.h"
-
-#include <google/protobuf/io/zero_copy_stream_impl.h>
 
 using namespace std;
 
