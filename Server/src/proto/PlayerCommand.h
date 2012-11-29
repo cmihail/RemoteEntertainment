@@ -51,8 +51,8 @@ protected:
   virtual google::protobuf::Message * toProto();
 
 private:
-  const proto::Command_Type type;
-  const std::string info;
+  proto::Command_Type type;
+  std::string info;
 };
 
 #endif /* PLAYERCOMMAND_H */

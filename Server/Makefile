@@ -3,7 +3,7 @@ CFLAGS = -Wall -g
 HEADERS = src/
 
 COMMON_DEPS = bin/Main.o bin/Message.o bin/Logger.o bin/Client.o bin/Server.o bin/player.pb.o\
-bin/PlayerCommand.o bin/PlayerMessageHeader.o bin/PlayerMessage.o
+	bin/PlayerCommand.o bin/PlayerMessageHeader.o bin/PlayerMessage.o bin/Directory.o
 
 # Default platform is Mac. On Linux run as "make PLATFORM=Linux" and on Windows as "make PLATFORM=Windows"
 PLATFORM = Mac
@@ -27,6 +27,10 @@ Main: $(COMMON_DEPS) $(PLATFORM_DEPS)
 bin/Main.o: src/Main.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 bin/Message.o: src/Message.cpp
+	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
+
+# filesystem pacakge
+bin/Directory.o: src/filesystem/Directory.cpp
 	$(CC) -I$(HEADERS) $^ $(CFLAGS) -c -o $@
 
 # logger package

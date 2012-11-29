@@ -19,7 +19,7 @@
 class PlayerDirectory : public PlayerMessage {
 public:
   /**
-   * TODO(cmihail): comments
+   * Defines a wrapeer for Player File class contained in proto file.
    */
   class PlayerFile {
   public:

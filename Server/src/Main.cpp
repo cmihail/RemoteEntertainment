@@ -13,7 +13,8 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <string>
+
+#include "filesystem/Directory.h" // TODO: only for dev
 
 using namespace std;
 
@@ -36,12 +37,25 @@ Process * createMediaPlayer(string pathToMovie, string pathToLibVLC, string port
 }
 
 int main(int argc, char ** argv) {
-  // TODO(cmihail): only for dev, only port should be as param
+  // TODO: only for dev, only port should be as param
   if (argc != 4) {
     Logger::print(__FILE__, __LINE__, Logger::SEVERE,
         "./Main <path_to_movie> <path_to_libvlc> <port>");
   }
 
+  // TODO: only for dev
+  Directory dir(".");
+  vector<string> directories = dir.getDirectories();
+  for (int i = 0, limit = directories.size(); i < limit; i++) {
+    Logger::print(__FILE__, __LINE__, Logger::INFO, directories[i]);
+  }
+  Logger::print(__FILE__, __LINE__, Logger::INFO, "");
+  vector<string> files = dir.getFiles();
+  for (int i = 0, limit = files.size(); i < limit; i++) {
+    Logger::print(__FILE__, __LINE__, Logger::INFO, files[i]);
+  }
+
+  // Starts the server.
   Server * server = new Server(atoi(argv[3]));
   createMediaPlayer(argv[1], argv[2], argv[3]);
   server->run();
